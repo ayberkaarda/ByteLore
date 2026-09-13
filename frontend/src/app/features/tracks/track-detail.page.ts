@@ -18,6 +18,7 @@ import { PlatformService } from '../../core/platform/platform.service';
 import { ContainerDownloadAction } from '../../shared/container-download-action';
 import { FallbackBadge } from '../../shared/fallback-badge';
 import { LessonDownloadControls } from '../../shared/lesson-download-controls';
+import { ProgressBar } from '../../shared/progress-bar';
 import { StateGlyph } from '../../shared/state-glyph';
 
 @Component({
@@ -29,6 +30,7 @@ import { StateGlyph } from '../../shared/state-glyph';
     FallbackBadge,
     ContainerDownloadAction,
     LessonDownloadControls,
+    ProgressBar,
     StateGlyph,
   ],
   templateUrl: './track-detail.page.html',
@@ -113,17 +115,26 @@ export class TrackDetailPage {
    * the correct answer rather than a case to suppress — for a reader who has
    * not started, where to resume is where to begin.
    */
-  protected readonly upNextLessonId = computed<string | null>(() => {
+  protected readonly upNextLesson = computed<LessonSummary | null>(() => {
     const done = this.completedLessonIds();
     for (const module of this.track()?.modules ?? []) {
       for (const lesson of module.lessons) {
         if (!done.has(lesson.id)) {
-          return lesson.id;
+          return lesson;
         }
       }
     }
     return null;
   });
+
+  /**
+   * Just the identifier, for the row-highlight check below — the summary
+   * panel reads {@link upNextLesson} itself, for the title and slug a plain
+   * id cannot carry.
+   */
+  protected readonly upNextLessonId = computed<string | null>(
+    () => this.upNextLesson()?.id ?? null,
+  );
 
   /**
    * The mind map as one more unit the track-level action can fetch. Counting

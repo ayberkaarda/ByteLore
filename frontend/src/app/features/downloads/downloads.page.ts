@@ -17,6 +17,7 @@ import { errorKey, queueErrorKey } from '../../core/platform/error-key';
 import type { DownloadScope, QueueEntry } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { BytesFormatPipe } from '../../shared/bytes.pipe';
+import { EntityGlyph, type EntityGlyphKind } from '../../shared/entity-glyph';
 import { progressPercent } from '../../shared/progress';
 import { ProgressBar } from '../../shared/progress-bar';
 
@@ -55,7 +56,7 @@ interface TrackGroup {
 @Component({
   selector: 'app-downloads-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, BytesFormatPipe, ProgressBar],
+  imports: [TranslatePipe, BytesFormatPipe, ProgressBar, EntityGlyph],
   templateUrl: './downloads.page.html',
 })
 export class DownloadsPage {
@@ -235,12 +236,14 @@ export class DownloadsPage {
     return queueErrorKey(entry.errorCode) ?? 'error.INTERNAL_ERROR';
   }
 
-  protected entityLabelKey(entry: QueueEntry): string {
-    return this.entityTypeLabelKey(entry.entityType);
-  }
-
   protected entityTypeLabelKey(entityType: QueueEntry['entityType']): string {
     return entityType === 'MIND_MAP' ? 'downloads.entityMindMap' : 'downloads.entityLesson';
+  }
+
+  /** The `EntityGlyph` kind for a row's entity type — the same split as
+   * `entityTypeLabelKey`, in the vocabulary that component's input uses. */
+  protected entityGlyphKind(entry: QueueEntry): EntityGlyphKind {
+    return entry.entityType === 'MIND_MAP' ? 'mindMap' : 'lesson';
   }
 
   /**

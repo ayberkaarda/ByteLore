@@ -88,6 +88,10 @@ function progressEntry(lessonId: string, completedAt: string | null): ProgressEn
   return { lessonId, completedAt, clientUpdatedAt: '2026-09-06T20:14:00.000Z' };
 }
 
+function mindMapSummary() {
+  return { id: 'mind-1', availability: contentAvailability('NOT_DOWNLOADED'), sizeBytes: null };
+}
+
 function summary(): DeltaSummary {
   return {
     checkedTracks: 1,
@@ -399,5 +403,93 @@ describe('TrackDetailPage', () => {
     expect(element.querySelector('[data-testid="track-completed-count"]')?.textContent).toContain(
       '0 of 4',
     );
+  });
+
+  it('gathers the path summary — completion, the one filled download button and the mind map link — in one sticky panel', async () => {
+    fake.trackDetails.set(
+      'signals',
+      trackDetail({ modules: twoModules(), mindMap: mindMapSummary() }),
+    );
+    fake.listProgress = async () => [progressEntry('lesson-1', '2026-09-06T20:14:00.000Z')];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+    const panel = element.querySelector('[data-testid="track-summary-panel"]');
+
+    expect(panel).not.toBeNull();
+    expect(panel?.getAttribute('aria-label')).toBe('Path summary');
+
+    // The completion bar and its readout live in the panel, not at the top
+    // of the page next to the heading any more.
+    expect(panel?.querySelector('[data-testid="progress-bar"]')).not.toBeNull();
+    expect(panel?.querySelector('[data-testid="track-completed-count"]')?.textContent).toContain(
+      '1 of 4',
+    );
+
+    // The screen's one accent-filled button is the track-level download
+    // action, and it now sits inside the panel.
+    const filledInPanel = panel?.querySelectorAll('button.bg-accent');
+    expect(filledInPanel).toHaveLength(1);
+    expect(
+      panel
+        ?.querySelector('[data-testid="container-download-action"]')
+        ?.contains(filledInPanel![0]),
+    ).toBe(true);
+    expect(
+      [...element.querySelectorAll('button')].filter((button) =>
+        button.classList.contains('bg-accent'),
+      ),
+    ).toHaveLength(1);
+
+    // The mind map link moved out of the header row and into the panel too.
+    const mindMapLink = panel?.querySelector('[data-testid="track-mind-map-link"]');
+    expect(mindMapLink).not.toBeNull();
+    expect(mindMapLink?.textContent).toContain('Mind map');
+  });
+
+  it('repeats the up-next hint inside the summary panel, alongside the tinted row', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [progressEntry('lesson-1', '2026-09-06T20:14:00.000Z')];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+    const panel = element.querySelector('[data-testid="track-summary-panel"]');
+
+    const panelHint = panel?.querySelector('[data-testid="track-summary-up-next"]');
+    expect(panelHint).not.toBeNull();
+    expect(panelHint?.textContent).toContain('Signals');
+
+    // The row itself keeps its own highlight — the panel is a summary, not a
+    // replacement for the reading context the row provides.
+    expect(element.querySelector('[data-testid="lesson-up-next-row"]')).not.toBeNull();
+    expect(element.querySelectorAll('[data-testid="lesson-up-next"]')).toHaveLength(1);
+  });
+
+  it('omits the up-next hint from the panel once every lesson is finished', async () => {
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+    fake.listProgress = async () => [
+      progressEntry('lesson-1', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-2', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-3', '2026-09-06T20:14:00.000Z'),
+      progressEntry('lesson-4', '2026-09-06T20:14:00.000Z'),
+    ];
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+    const panel = element.querySelector('[data-testid="track-summary-panel"]');
+
+    expect(panel?.querySelector('[data-testid="track-summary-up-next"]')).toBeNull();
+  });
+
+  it('leaves the mind map link and the accent-filled download button out of the panel when there is nothing to offer', async () => {
+    fake.capabilities = { canDownload: false, hasLocalStore: false };
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules(), mindMap: null }));
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+    const panel = element.querySelector('[data-testid="track-summary-panel"]');
+
+    expect(panel).not.toBeNull();
+    expect(panel?.querySelector('[data-testid="track-mind-map-link"]')).toBeNull();
+    expect(panel?.querySelector('[data-testid="container-download-action"]')).toBeNull();
+    // The completion bar still renders — a build that cannot download still
+    // reads a path and still finishes lessons in it.
+    expect(panel?.querySelector('[data-testid="progress-bar"]')).not.toBeNull();
   });
 });

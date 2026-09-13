@@ -1,12 +1,19 @@
 /*
  * The skip link is visible only while focused. It is not decoration: keyboard
  * users would otherwise tab through the whole header on every navigation.
+ *
+ * The header is now sticky at z-10 so it stays on screen while the page
+ * scrolls underneath it. Both elements sit in the same stacking context (the
+ * wrapping div creates none of its own), so an equal z-index would resolve by
+ * document order and the header — which comes after the link in the markup —
+ * would paint over it. The link needs a higher value, not merely an equal
+ * one, so it stays reachable once it receives focus.
  */
 .skip-link {
   position: absolute;
   left: var(--spacing-2);
   top: var(--spacing-2);
-  z-index: 10;
+  z-index: 20;
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   background: var(--color-accent);

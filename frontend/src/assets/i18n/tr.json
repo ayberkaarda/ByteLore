@@ -44,6 +44,14 @@
     "fallbackBadgeHint": "Bu dil için henüz çeviri bulunmadığından İngilizce gösteriliyor."
   },
   "tracks": {
+    "summaryLabel": "Kütüphanene genel bakış",
+    "continue": "Kaldığın yerden devam et",
+    "libraryStatus": "Kütüphane durumu",
+    "stats": {
+      "lessonsCompleted": "Tamamlanan ders",
+      "pathsCompleted": "Tamamlanan yol",
+      "updatesAvailable": "Bekleyen güncelleme"
+    },
     "heading": "Öğrenme yolları",
     "intro": "Bir öğrenme yolu seçin ve dersleri sırayla ilerleyin.",
     "empty": "Gösterilecek öğrenme yolu henüz yok.",
@@ -59,7 +67,8 @@
     "mindMap": "Zihin haritası",
     "mindMapHint": "{{title}} için zihin haritasını aç",
     "completedCount": "{{total}} dersin {{completed}} tanesi tamamlandı",
-    "upNext": "Sıradaki"
+    "upNext": "Sıradaki",
+    "summaryLabel": "Yol özeti"
   },
   "lesson": {
     "backToTrack": "Öğrenme yoluna dön",

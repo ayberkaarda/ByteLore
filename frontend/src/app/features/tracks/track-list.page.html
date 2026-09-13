@@ -1,103 +1,334 @@
-<h1 class="text-3xl font-semibold leading-tight tracking-tight">
-  {{ 'tracks.heading' | translate }}
-</h1>
-<!-- Capped at a readable measure: an introduction stretched across the full
-     content width reads as a banner rather than as a sentence. -->
-<p class="mt-2 max-w-prose text-text-muted">{{ 'tracks.intro' | translate }}</p>
+<!-- The dashboard measure. The shell no longer caps its main region, so each
+     screen states its own: this one is a three-column board at width and a
+     single stack below it, and the cap is what keeps the middle column from
+     running to the edge of a wide monitor. -->
+<div class="mx-auto w-full max-w-7xl">
+  <h1 class="text-3xl font-semibold leading-tight tracking-tight">
+    {{ 'tracks.heading' | translate }}
+  </h1>
+  <!-- Capped at a readable measure: an introduction stretched across the full
+       content width reads as a banner rather than as a sentence. -->
+  <p class="mt-2 max-w-prose text-text-muted">{{ 'tracks.intro' | translate }}</p>
 
-@if (loading()) {
-  <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
-} @else if (failure(); as failureKey) {
-  <div class="mt-8 rounded-md border-l-4 border-danger bg-danger-soft p-4" role="alert">
-    <h2 class="font-medium text-danger-strong">{{ 'error.heading' | translate }}</h2>
-    <p class="mt-1 text-text">{{ failureKey | translate }}</p>
-    <button
-      type="button"
-      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
-      (click)="load()"
+  @if (loading()) {
+    <p class="mt-8 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
+  } @else if (failure(); as failureKey) {
+    <div class="mt-8 rounded-md border-l-4 border-danger bg-danger-soft p-4" role="alert">
+      <h2 class="font-medium text-danger-strong">{{ 'error.heading' | translate }}</h2>
+      <p class="mt-1 text-text">{{ failureKey | translate }}</p>
+      <button
+        type="button"
+        class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+        (click)="load()"
+      >
+        {{ 'common.retry' | translate }}
+      </button>
+    </div>
+  } @else if (tracks().length === 0) {
+    <!-- Empty state per bytelore-ui-patterns §7: a box would read as a warning;
+         this is neither an error nor missing data, so it stays boxless
+         whitespace instead. -->
+    <div class="mt-10 text-center">
+      <p class="text-base text-text">{{ 'tracks.empty' | translate }}</p>
+      @if (noteKey(); as key) {
+        <p class="mt-2 text-sm text-text-muted" role="status" data-testid="discovery-note">
+          {{ key | translate }}
+        </p>
+      }
+    </div>
+  } @else {
+    <!--
+      Three columns, and only from `lg` up. Below that the board is one
+      ordinary column in document order — summary, then the list, then the
+      status panel — with nothing hidden behind a tab or an accordion: the
+      panels are short enough to stack, and a panel that disappears at narrow
+      widths is a panel whose contents nobody can reach on a phone.
+
+      The order utilities state that stacking explicitly rather than leaving it
+      to where the markup happens to sit, so moving a panel in the markup
+      cannot silently reorder the narrow layout.
+    -->
+    <div
+      class="mt-8 grid gap-6 lg:grid-cols-[16rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)_20rem]"
     >
-      {{ 'common.retry' | translate }}
-    </button>
-  </div>
-} @else if (tracks().length === 0) {
-  <!-- Empty state per bytelore-ui-patterns §7: a box would read as a warning;
-       this is neither an error nor missing data, so it stays boxless
-       whitespace instead. -->
-  <div class="mt-10 text-center">
-    <p class="text-base text-text">{{ 'tracks.empty' | translate }}</p>
-    @if (noteKey(); as key) {
-      <p class="mt-2 text-sm text-text-muted" role="status" data-testid="discovery-note">
-        {{ key | translate }}
-      </p>
-    }
-  </div>
-} @else {
-  <ul class="mt-8 grid gap-4 sm:grid-cols-2">
-    @for (track of tracks(); track track.id) {
-      <!-- flex-col + the meta line's mt-auto (below) keep the meta row flush
-           with each card's own bottom edge regardless of how long that
-           card's description is, instead of trailing it at a fixed mt-4. -->
-      <li class="flex flex-col rounded-lg border border-border bg-surface p-5">
-        <div class="flex items-start justify-between gap-2">
-          <a
-            class="text-lg font-semibold tracking-tight text-text no-underline hover:underline"
-            [routerLink]="['/tracks', track.slug]"
-            [attr.aria-label]="'tracks.open' | translate: { title: track.title }"
-          >
-            {{ track.title }}
-          </a>
-          <app-fallback-badge [state]="track.translation" />
-        </div>
+      <aside
+        class="order-1 flex flex-col gap-4 self-start lg:sticky lg:top-20"
+        data-testid="library-summary"
+        [attr.aria-label]="'tracks.summaryLabel' | translate"
+      >
+        <!--
+          Four figures at most, and every one of them is a real number: a tile
+          is never withheld because it would read zero. "0 of 12" is what
+          somebody who has just arrived has done, and hiding it would leave
+          them wondering whether the screen had failed to load something.
 
-        @if (track.description) {
-          <p class="mt-2 text-sm text-text-muted">{{ track.description }}</p>
-        }
+          The two download tiles exist only where there is a local store to
+          download into; on the web they are not empty, they are absent.
+        -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-lg bg-surface p-4" data-testid="stat-lessons-completed">
+            <p class="text-2xl font-semibold tabular-nums text-text">
+              {{ completedLessonTotal() }} / {{ lessonTotal() }}
+            </p>
+            <p class="text-xs text-text-muted">{{ 'tracks.stats.lessonsCompleted' | translate }}</p>
+          </div>
 
-        <!-- The two counts a card can carry — how much is stored on this
-             device and how much of the path is read — sit on their own rows
-             rather than sharing one line: the icon and the muted-only
-             colouring are what tell a reader which is which, so the two can
-             never run together into one ambiguous count. mt-auto moves here,
-             onto the row that wraps both, so the pair still sits flush with
-             the card's bottom edge as one unit; tabular-nums keeps digits on
-             one vertical rhythm across the grid. -->
-        <div class="mt-auto flex flex-col gap-1 pt-4" data-testid="track-meta">
-          <p class="text-xs tabular-nums text-text-muted">
-            {{ 'tracks.lessonCount' | translate: { count: track.lessonCount } }}
-            @if (canDownload) {
-              <span class="ml-2">
+          <div class="rounded-lg bg-surface p-4" data-testid="stat-paths-completed">
+            <p class="text-2xl font-semibold tabular-nums text-text">
+              {{ completedTrackTotal() }} / {{ tracks().length }}
+            </p>
+            <p class="text-xs text-text-muted">{{ 'tracks.stats.pathsCompleted' | translate }}</p>
+          </div>
+
+          @if (canDownload) {
+            <!--
+              The figure and its label are two fragments of one sentence, and
+              read out as two fragments they are ambiguous — "3 / 12" followed
+              by "Downloaded" could be either direction. So the pair is hidden
+              from assistive technology and the whole sentence is given
+              instead, the same split the shell's queue badge uses.
+            -->
+            <div class="rounded-lg bg-surface p-4" data-testid="stat-downloaded">
+              <p class="text-2xl font-semibold tabular-nums text-text" aria-hidden="true">
+                {{ downloadedLessonTotal() }} / {{ lessonTotal() }}
+              </p>
+              <p class="text-xs text-text-muted" aria-hidden="true">
+                {{ 'downloads.sectionDone' | translate }}
+              </p>
+              <span class="sr-only">
                 {{
                   'tracks.downloaded'
-                    | translate: { done: track.downloadedLessonCount, total: track.lessonCount }
+                    | translate: { done: downloadedLessonTotal(), total: lessonTotal() }
                 }}
               </span>
-            }
-          </p>
-          @if (track.lessonCount > 0) {
-            <!-- The same completed-count reading the track detail screen
-                 gives at the top of a path, repeated here per card. The
-                 leading glyph is the visual cue that separates this row from
-                 the downloaded row above it — the same mark a finished lesson
-                 row carries in the detail view — so the pair reads as two
-                 distinct facts even at a glance, with no wording added to
-                 either. -->
-            <p
-              class="flex items-center gap-1 text-xs tabular-nums text-text-muted"
-              data-testid="track-completed-count"
-            >
-              <app-state-glyph kind="completed" />
+            </div>
+
+            @let storage = storageBytes() | bytesFormat;
+            <div class="rounded-lg bg-surface p-4" data-testid="stat-storage">
+              <p class="text-2xl font-semibold tabular-nums text-text" aria-hidden="true">
+                {{ storage }}
+              </p>
+              <p class="text-xs text-text-muted" aria-hidden="true">
+                {{ 'nav.downloads' | translate }}
+              </p>
+              <span class="sr-only">
+                {{ 'downloads.storageUsed' | translate: { size: storage } }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <!--
+          The one tile that is allowed to be absent, because it is a
+          destination rather than a figure: with no progress to resume from
+          there is nowhere for it to lead, and a disabled card that explains
+          it would be an empty state where no state is missing. It carries the
+          accent tint, which is what makes it the one thing on this column the
+          eye lands on first.
+        -->
+        @if (continueTrack(); as next) {
+          <a
+            class="block rounded-lg bg-accent-soft p-4 text-text no-underline hover:opacity-90"
+            data-testid="continue-tile"
+            [routerLink]="['/tracks', next.slug]"
+            [attr.aria-label]="'tracks.open' | translate: { title: next.title }"
+          >
+            <p class="text-xs font-medium">{{ 'tracks.continue' | translate }}</p>
+            <p class="mt-1 text-base font-semibold tracking-tight">{{ next.title }}</p>
+            <p class="mt-1 text-xs tabular-nums">
               {{
                 'track.completedCount'
                   | translate
                     : {
-                        completed: trackCompletionCounts().get(track.id) ?? 0,
-                        total: track.lessonCount,
+                        completed: trackCompletionCounts().get(next.id) ?? 0,
+                        total: next.lessonCount,
                       }
               }}
             </p>
+          </a>
+        }
+      </aside>
+
+      <!--
+        One card per row rather than a two-up grid: the middle column of a
+        three-column board is already narrow, and splitting it again left each
+        card too tight for a title, a description and two count rows. The
+        vertical list also puts every card's monogram on the same left edge,
+        which is what makes the column scannable at all.
+      -->
+      <ul class="order-2 grid gap-4" data-testid="track-list">
+        @for (track of tracks(); track track.id) {
+          <!-- flex-col + the meta line's mt-auto (below) keep the meta row flush
+               with each card's own bottom edge regardless of how long that
+               card's description is, instead of trailing it at a fixed mt-4. -->
+          <li class="flex flex-col rounded-lg border border-border bg-surface p-5">
+            <div class="flex items-start gap-3">
+              <!--
+                A letter, not an icon. The library has no icon set and adding
+                one would be a dependency; the initial of the title is drawn
+                from the same token palette as everything else and is enough
+                to give each row a fixed anchor to scan down. The track's own
+                `icon` field is deliberately unused: it is an opaque name that
+                means nothing without a set to look it up in. Hidden from
+                assistive technology — the title it is cut from sits right
+                beside it.
+              -->
+              <span
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-soft text-lg font-medium text-text"
+                data-testid="track-monogram"
+                aria-hidden="true"
+              >
+                {{ track.title.charAt(0).toUpperCase() }}
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <div class="flex items-start justify-between gap-2">
+                  <a
+                    class="text-lg font-semibold tracking-tight text-text no-underline hover:underline"
+                    [routerLink]="['/tracks', track.slug]"
+                    [attr.aria-label]="'tracks.open' | translate: { title: track.title }"
+                  >
+                    {{ track.title }}
+                  </a>
+                  <app-fallback-badge [state]="track.translation" />
+                </div>
+
+                @if (track.description) {
+                  <p class="mt-2 text-sm text-text-muted">{{ track.description }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- The two counts a card can carry — how much is stored on this
+                 device and how much of the path is read — sit on their own rows
+                 rather than sharing one line: the icon and the muted-only
+                 colouring are what tell a reader which is which, so the two can
+                 never run together into one ambiguous count. mt-auto moves here,
+                 onto the row that wraps both, so the pair still sits flush with
+                 the card's bottom edge as one unit; tabular-nums keeps digits on
+                 one vertical rhythm across the grid. -->
+            <div class="mt-auto flex flex-col gap-1 pt-4" data-testid="track-meta">
+              <p class="text-xs tabular-nums text-text-muted">
+                {{ 'tracks.lessonCount' | translate: { count: track.lessonCount } }}
+                @if (canDownload) {
+                  <span class="ml-2">
+                    {{
+                      'tracks.downloaded'
+                        | translate: { done: track.downloadedLessonCount, total: track.lessonCount }
+                    }}
+                  </span>
+                }
+              </p>
+              @if (track.lessonCount > 0) {
+                <!-- The same completed-count reading the track detail screen
+                     gives at the top of a path, repeated here per card. The bar
+                     answers "roughly how far in" at a glance and the row under
+                     it answers "how far exactly"; neither replaces the other,
+                     which is the same pairing a download row uses. The leading
+                     glyph is the visual cue that separates this row from the
+                     downloaded row above it — the same mark a finished lesson
+                     row carries in the detail view — so the pair reads as two
+                     distinct facts even at a glance, with no wording added to
+                     either. -->
+                <app-progress-bar
+                  class="mt-1"
+                  labelKey="tracks.stats.lessonsCompleted"
+                  [done]="trackCompletionCounts().get(track.id) ?? 0"
+                  [total]="track.lessonCount"
+                />
+                <p
+                  class="flex items-center gap-1 text-xs tabular-nums text-text-muted"
+                  data-testid="track-completed-count"
+                >
+                  <app-state-glyph kind="completed" />
+                  {{
+                    'track.completedCount'
+                      | translate
+                        : {
+                            completed: trackCompletionCounts().get(track.id) ?? 0,
+                            total: track.lessonCount,
+                          }
+                  }}
+                </p>
+              }
+              @if (canDownload && track.updateAvailableCount > 0) {
+                <!-- A standing fact about this card, not an alert: the update
+                     is available, nothing is broken, and the stored copy keeps
+                     working until somebody asks for the new one. Hence the
+                     warning tint rather than the danger one, and no role. -->
+                <p
+                  class="mt-1 w-fit rounded-md bg-warning-soft px-2 py-1 text-xs font-medium text-warning-strong"
+                  data-testid="track-update-available"
+                >
+                  {{ 'download.state.UPDATE_AVAILABLE' | translate }}
+                </p>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+
+      <!--
+        The third column exists only where there is a local library to have a
+        state: on the web there is no queue, no stored bytes and nothing to
+        update, and an empty panel saying so would be three rows of nought.
+
+        Below `xl` it is not a column at all — it spans the full width under
+        the other two at `lg`, and joins the single stack below that, last,
+        because it is the part somebody consults rather than reads.
+      -->
+      @if (canDownload) {
+        <aside
+          class="order-3 flex flex-col gap-3 self-start rounded-lg bg-surface p-4 lg:col-span-2 xl:sticky xl:top-20 xl:col-span-1"
+          data-testid="library-status"
+          [attr.aria-label]="'tracks.libraryStatus' | translate"
+        >
+          <h2 class="text-sm font-medium text-text">{{ 'tracks.libraryStatus' | translate }}</h2>
+
+          <p
+            class="flex items-baseline justify-between gap-2 text-xs text-text-muted"
+            data-testid="library-status-updates"
+          >
+            <span>{{ 'tracks.stats.updatesAvailable' | translate }}</span>
+            <span class="tabular-nums text-text">{{ updateAvailableTotal() }}</span>
+          </p>
+
+          <p class="text-xs text-text-muted" data-testid="library-status-queue">
+            {{ 'nav.downloadsActive' | translate: { count: queuedTotal() } }}
+          </p>
+
+          <!--
+            Offline is an ordinary state here rather than a fault — everything
+            stored keeps working — so it is a quiet mark, and there is no
+            opposite mark for being online: "connected" is the resting state
+            and needs no announcement.
+          -->
+          @if (offline()) {
+            <span
+              class="inline-flex w-fit items-center gap-1.5 rounded-full bg-warning-soft px-2 py-0.5 text-xs font-medium text-warning-strong"
+              data-testid="library-status-offline"
+              [title]="'sync.offlineHint' | translate"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true"></span>
+              {{ 'sync.offline' | translate }}
+            </span>
           }
-        </div>
-      </li>
-    }
-  </ul>
-}
+
+          <!--
+            Secondary weight: this column reports, it does not act. The one
+            action it offers is a way out to the screen where the queue can
+            actually be worked on, and a filled button here would compete with
+            the resume tile on the other side of the board.
+          -->
+          <a
+            class="mt-1 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-center text-sm font-medium text-text no-underline hover:bg-surface-hover"
+            data-testid="library-status-link"
+            routerLink="/downloads"
+          >
+            {{ 'nav.downloads' | translate }}
+          </a>
+        </aside>
+      }
+    </div>
+  }
+</div>

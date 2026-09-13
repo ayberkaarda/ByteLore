@@ -49,7 +49,15 @@
     "empty": "There are no learning paths to show yet.",
     "lessonCount": "{{count}} lessons",
     "downloaded": "{{done}} of {{total}} downloaded",
-    "open": "Open the learning path {{title}}"
+    "open": "Open the learning path {{title}}",
+    "summaryLabel": "Your library at a glance",
+    "continue": "Continue where you left off",
+    "libraryStatus": "Library status",
+    "stats": {
+      "lessonsCompleted": "Lessons completed",
+      "pathsCompleted": "Paths completed",
+      "updatesAvailable": "Updates available"
+    }
   },
   "track": {
     "backToTracks": "All learning paths",
@@ -59,7 +67,8 @@
     "mindMap": "Mind map",
     "mindMapHint": "Open the mind map for {{title}}",
     "completedCount": "{{completed}} of {{total}} completed",
-    "upNext": "Up next"
+    "upNext": "Up next",
+    "summaryLabel": "Path summary"
   },
   "lesson": {
     "backToTrack": "Back to the learning path",

@@ -49,7 +49,15 @@
     "empty": "Aucun parcours à afficher pour le moment.",
     "lessonCount": "{{count}} leçons",
     "downloaded": "{{done}} sur {{total}} téléchargées",
-    "open": "Ouvrir le parcours {{title}}"
+    "open": "Ouvrir le parcours {{title}}",
+    "summaryLabel": "Votre bibliothèque en un coup d'œil",
+    "continue": "Reprendre là où vous en étiez",
+    "libraryStatus": "État de la bibliothèque",
+    "stats": {
+      "lessonsCompleted": "Leçons terminées",
+      "pathsCompleted": "Parcours terminés",
+      "updatesAvailable": "Mises à jour disponibles"
+    }
   },
   "track": {
     "backToTracks": "Tous les parcours",
@@ -59,7 +67,8 @@
     "mindMap": "Carte mentale",
     "mindMapHint": "Ouvrir la carte mentale de {{title}}",
     "completedCount": "{{completed}} sur {{total}} terminées",
-    "upNext": "À suivre"
+    "upNext": "À suivre",
+    "summaryLabel": "Résumé du parcours"
   },
   "lesson": {
     "backToTrack": "Retour au parcours",

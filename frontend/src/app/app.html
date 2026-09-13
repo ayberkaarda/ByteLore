@@ -8,26 +8,114 @@
     screen instead, because a control that is used once a month still costs
     attention on every screen it sits on.
   -->
-  <header class="border-b border-border bg-surface">
-    <div class="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-      <a class="text-lg font-semibold tracking-tight text-text no-underline" routerLink="/tracks">
-        {{ 'app.title' | translate }}
-      </a>
+  <header class="sticky top-0 z-10 border-b border-border bg-surface">
+    <!--
+      Below `sm` the row is two lines: the wordmark and the right-hand
+      controls share the first, primary navigation gets a full-width second
+      line of its own that scrolls sideways rather than wrapping its labels.
+      `sm:contents` is what makes the split reversible — the wrapper just
+      inside exists only to pair the wordmark with the right-hand controls on
+      that first line; from `sm` up it stops generating a box of its own, so
+      its two children rejoin this flex line directly, ordered by the `order`
+      utilities below rather than by where the wrapper happened to sit in the
+      markup.
+    -->
+    <div
+      class="flex w-full flex-col gap-2 px-6 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-2"
+    >
+      <!--
+        `items-start` rather than `items-center`: below `sm` the right-hand
+        group can run out of room next to the wordmark and wrap onto a second
+        line of its own (its `flex-wrap` already did that at in-between
+        widths before this row existed). Centering against that group's full
+        wrapped height would pull the wordmark down toward the middle of both
+        lines instead of anchoring it to the first one.
+      -->
+      <div class="flex items-start justify-between gap-4 sm:contents">
+        <a class="text-lg font-semibold tracking-tight text-text no-underline" routerLink="/tracks">
+          {{ 'app.title' | translate }}
+        </a>
+
+        <!--
+          Three controls sit here and they are three different kinds of thing, so
+          they are drawn at three different weights rather than uniformly.
+
+          The theme toggle is a preference someone flips with the time of day: no
+          edge, no fill, colour only, which is the lightest weight an interactive
+          element gets. Settings is a destination like every entry in the
+          navigation beside it, so it is drawn exactly like one — a bordered box
+          would claim it is an action. Sign in is the one real action up here, and
+          it is the only one that carries a control edge.
+
+          None of the three is filled with the accent colour: the header is
+          present on every screen, and an accent fill here would compete with
+          whatever primary action the screen below it actually has.
+
+          The edge on Sign in is the strong line weight rather than the divider
+          one. The divider colour reaches only 1.30:1 against the surface behind
+          it, well under the 3:1 an interactive boundary needs to be seen at all,
+          so a control drawn in it reads as a faint rectangle rather than as
+          something pressable.
+        -->
+        <div class="ml-auto flex flex-wrap items-center gap-2 sm:order-3">
+          <app-theme-toggle />
+          <a
+            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+            routerLink="/settings"
+            routerLinkActive="bg-surface-raised text-text"
+            ariaCurrentWhenActive="page"
+            data-testid="nav-settings"
+            [title]="'nav.settings' | translate"
+          >
+            @if (session.user(); as user) {
+              <span
+                class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-sm font-medium text-text"
+                aria-hidden="true"
+              >
+                {{ user.displayName.charAt(0).toUpperCase() }}
+              </span>
+              <span class="sr-only">{{ 'nav.settings' | translate }}</span>
+            } @else {
+              {{ 'nav.settings' | translate }}
+            }
+          </a>
+          @if (session.user() === null) {
+            <a
+              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
+              routerLink="/login"
+            >
+              {{ 'nav.signIn' | translate }}
+            </a>
+          }
+        </div>
+      </div>
 
       <!--
-        Hover and "you are here" are two different answers and are painted in
-        two different tones: the hover tone for the pointer, the raised tone for
-        the entry whose screen is on display. Painting both in the raised tone
-        made every link you pointed at claim to be the current one. The two
-        tones are only a step apart on their own, so the current entry carries a
-        second, independent mark as well — full-strength text against the muted
-        text of the rest — and the reading does not rest on the fill alone.
+        Hover and "you are here" are two different answers and are painted two
+        different ways: hover changes only the text tone, the current entry
+        additionally carries an underline in the accent colour. Full-strength
+        text against the muted text of the rest is the second, independent
+        mark, so the reading does not rest on the underline alone.
+
+        `routerLinkActive` only adds classes, it never removes the ones
+        already on the element -- so an inactive link's own `border-transparent`
+        stays in the DOM right alongside the active state's `border-accent`.
+        Tailwind resolves two same-specificity classes by which one the
+        generated stylesheet declares last, not by DOM/class-attribute order,
+        and `.border-transparent` happens to be declared after `.border-accent`
+        -- measured in the compiled CSS, not assumed. Without `!` the inactive
+        colour silently won on every link, every time, and the underline never
+        rendered. `!border-accent` forces it with `!important` regardless of
+        declaration order.
       -->
-      <nav class="flex flex-wrap items-center gap-1" [attr.aria-label]="'nav.label' | translate">
+      <nav
+        class="flex flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap sm:order-2 sm:flex-wrap sm:overflow-visible sm:whitespace-normal"
+        [attr.aria-label]="'nav.label' | translate"
+      >
         <a
-          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+          class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
           routerLink="/tracks"
-          routerLinkActive="bg-surface-raised text-text"
+          routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
         >
           {{ 'nav.tracks' | translate }}
@@ -39,9 +127,9 @@
           entry gains offline is a mark, not an absence.
         -->
         <a
-          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+          class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
           routerLink="/blog"
-          routerLinkActive="bg-surface-raised text-text"
+          routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
         >
           {{ 'nav.blog' | translate }}
@@ -58,9 +146,9 @@
         </a>
         @if (canDownload) {
           <a
-            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
             routerLink="/downloads"
-            routerLinkActive="bg-surface-raised text-text"
+            routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
           >
             {{ 'nav.downloads' | translate }}
@@ -87,57 +175,15 @@
         }
         @if (session.canAdminister()) {
           <a
-            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
             routerLink="/admin"
-            routerLinkActive="bg-surface-raised text-text"
+            routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
           >
             {{ 'nav.admin' | translate }}
           </a>
         }
       </nav>
-
-      <!--
-        Three controls sit here and they are three different kinds of thing, so
-        they are drawn at three different weights rather than uniformly.
-
-        The theme toggle is a preference someone flips with the time of day: no
-        edge, no fill, colour only, which is the lightest weight an interactive
-        element gets. Settings is a destination like every entry in the
-        navigation beside it, so it is drawn exactly like one — a bordered box
-        would claim it is an action. Sign in is the one real action up here, and
-        it is the only one that carries a control edge.
-
-        None of the three is filled with the accent colour: the header is
-        present on every screen, and an accent fill here would compete with
-        whatever primary action the screen below it actually has.
-
-        The edge on Sign in is the strong line weight rather than the divider
-        one. The divider colour reaches only 1.30:1 against the surface behind
-        it, well under the 3:1 an interactive boundary needs to be seen at all,
-        so a control drawn in it reads as a faint rectangle rather than as
-        something pressable.
-      -->
-      <div class="ml-auto flex flex-wrap items-center gap-2">
-        <app-theme-toggle />
-        <a
-          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
-          routerLink="/settings"
-          routerLinkActive="bg-surface-raised text-text"
-          ariaCurrentWhenActive="page"
-          data-testid="nav-settings"
-        >
-          {{ 'nav.settings' | translate }}
-        </a>
-        @if (session.user() === null) {
-          <a
-            class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
-            routerLink="/login"
-          >
-            {{ 'nav.signIn' | translate }}
-          </a>
-        }
-      </div>
     </div>
   </header>
 
@@ -148,7 +194,7 @@
     the exact journey the link exists to avoid. It is -1 rather than 0 so the
     region is reachable by the link and not by tabbing.
   -->
-  <main id="main-content" tabindex="-1" class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+  <main id="main-content" tabindex="-1" class="w-full flex-1 px-6 py-8">
     <router-outlet />
   </main>
 

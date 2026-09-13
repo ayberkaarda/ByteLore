@@ -49,7 +49,15 @@
     "empty": "Es gibt noch keine Lernpfade.",
     "lessonCount": "{{count}} Lektionen",
     "downloaded": "{{done}} von {{total}} heruntergeladen",
-    "open": "Lernpfad {{title}} öffnen"
+    "open": "Lernpfad {{title}} öffnen",
+    "summaryLabel": "Ihre Bibliothek auf einen Blick",
+    "continue": "Dort weitermachen, wo Sie aufgehört haben",
+    "libraryStatus": "Bibliotheksstatus",
+    "stats": {
+      "lessonsCompleted": "Abgeschlossene Lektionen",
+      "pathsCompleted": "Abgeschlossene Lernpfade",
+      "updatesAvailable": "Verfügbare Updates"
+    }
   },
   "track": {
     "backToTracks": "Alle Lernpfade",
@@ -59,7 +67,8 @@
     "mindMap": "Mindmap",
     "mindMapHint": "Mindmap für {{title}} öffnen",
     "completedCount": "{{completed}} von {{total}} abgeschlossen",
-    "upNext": "Als Nächstes"
+    "upNext": "Als Nächstes",
+    "summaryLabel": "Pfadübersicht"
   },
   "lesson": {
     "backToTrack": "Zurück zum Lernpfad",

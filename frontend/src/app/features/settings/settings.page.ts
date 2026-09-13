@@ -29,47 +29,40 @@ import { ThemeSelect } from '../../shared/theme-select';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslatePipe, LanguageSwitcher, SessionMenu, ThemeSelect],
   template: `
-    <h1 class="text-3xl font-semibold leading-tight tracking-tight">
-      {{ 'settings.heading' | translate }}
-    </h1>
-    <p class="mt-2 text-text-muted">{{ 'settings.intro' | translate }}</p>
+    <div class="mx-auto w-full max-w-3xl">
+      <h1 class="text-3xl font-semibold leading-tight tracking-tight">
+        {{ 'settings.heading' | translate }}
+      </h1>
+      <p class="mt-2 text-text-muted">{{ 'settings.intro' | translate }}</p>
 
-    <div class="mt-8 flex flex-col gap-4">
-      <section
-        class="rounded-lg border border-border bg-surface p-4"
-        data-testid="settings-language"
-        aria-labelledby="settings-language-heading"
-      >
-        <h2 id="settings-language-heading" class="text-sm font-semibold">
-          {{ 'settings.language' | translate }}
-        </h2>
-        <div class="mt-3">
+      <div class="mt-8 divide-y divide-border border-t border-border">
+        <div
+          class="flex flex-col gap-3 py-4 sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:items-start sm:gap-6"
+          data-testid="settings-language"
+        >
+          <h2 class="text-sm font-semibold">
+            {{ 'settings.language' | translate }}
+          </h2>
           <app-language-switcher />
         </div>
-      </section>
 
-      <section
-        class="rounded-lg border border-border bg-surface p-4"
-        data-testid="settings-theme"
-        aria-labelledby="settings-theme-heading"
-      >
-        <h2 id="settings-theme-heading" class="text-sm font-semibold">
-          {{ 'settings.theme' | translate }}
-        </h2>
-        <div class="mt-3">
+        <div
+          class="flex flex-col gap-3 py-4 sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:items-start sm:gap-6"
+          data-testid="settings-theme"
+        >
+          <h2 class="text-sm font-semibold">
+            {{ 'settings.theme' | translate }}
+          </h2>
           <app-theme-select />
         </div>
-      </section>
 
-      <section
-        class="rounded-lg border border-border bg-surface p-4"
-        data-testid="settings-account"
-        aria-labelledby="settings-account-heading"
-      >
-        <h2 id="settings-account-heading" class="text-sm font-semibold">
-          {{ 'settings.account' | translate }}
-        </h2>
-        <div class="mt-3">
+        <div
+          class="flex flex-col gap-3 py-4 sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:items-start sm:gap-6"
+          data-testid="settings-account"
+        >
+          <h2 class="text-sm font-semibold">
+            {{ 'settings.account' | translate }}
+          </h2>
           <!--
             Nobody signed in is a complete state rather than an incomplete
             one — reading and downloading need no account — so this offers a
@@ -93,7 +86,7 @@ import { ThemeSelect } from '../../shared/theme-select';
             <app-session-menu />
           }
         </div>
-      </section>
+      </div>
     </div>
   `,
 })

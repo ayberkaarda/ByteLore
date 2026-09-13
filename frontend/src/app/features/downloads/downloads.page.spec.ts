@@ -302,4 +302,43 @@ describe('DownloadsPage', () => {
     expect(button.getAttribute('aria-label')).toBeNull();
     expect(button.textContent).toContain('Angular Fundamentals');
   });
+
+  it('renders the storage summary and "check for updates" inside a sticky side panel', async () => {
+    rows = [];
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const panel = element.querySelector('aside');
+    expect(panel).not.toBeNull();
+
+    // The summary and the screen's one primary action live in the same
+    // panel, not scattered across the two-column layout.
+    expect(panel!.querySelector('[data-testid="downloads-summary"]')).not.toBeNull();
+    expect(panel!.querySelector('[data-testid="check-for-updates"]')).not.toBeNull();
+
+    // Sticky, and offset from the shell header, only from `lg:` up — below
+    // that width the panel sits in normal document flow instead.
+    expect(panel!.className).toContain('lg:sticky');
+    expect(panel!.className).toContain('lg:top-20');
+  });
+
+  it('puts the side panel ahead of the batches/groups in source order, for narrow-screen stacking', async () => {
+    rows = [queueEntry({ state: 'DOWNLOADING', receivedBytes: 10, totalBytes: 100 })];
+    const element = (await render()).nativeElement as HTMLElement;
+
+    const grid = element.querySelector('aside')!.parentElement!;
+    const children = [...grid.children];
+    const panelIndex = children.indexOf(element.querySelector('aside')!);
+    // The other grid child carries the batches; below `lg` the DOM order is
+    // what the browser stacks by, so the panel — and its primary action —
+    // must come first.
+    expect(panelIndex).toBe(0);
+    expect(children.length).toBe(2);
+  });
+
+  it('keeps the two-column grid closed below `lg` and only opens it there', async () => {
+    const element = (await render()).nativeElement as HTMLElement;
+    const grid = element.querySelector('aside')!.parentElement!;
+    expect(grid.className).toContain('lg:grid-cols-[minmax(0,1fr)_20rem]');
+    expect(grid.className).not.toMatch(/(?<!lg:)grid-cols-\[/);
+  });
 });

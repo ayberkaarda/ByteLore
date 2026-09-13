@@ -144,6 +144,14 @@ describe('App', () => {
     // navigation its user currently is.
     expect(current.length).toBe(1);
     expect(current[0].getAttribute('href')).toBe('/blog');
+    expect(current[0].className).toContain('border-accent');
+  });
+
+  it('keeps the header pinned to the top of the viewport while the page scrolls', async () => {
+    const fixture = await render();
+    const header = fixture.nativeElement.querySelector('header') as HTMLElement;
+    expect(header.className).toContain('sticky');
+    expect(header.className).toContain('top-0');
   });
 
   it('names the theme control with the word a person can see on it', async () => {
@@ -199,6 +207,40 @@ describe('App', () => {
     // Their absence from the header is the point of the screen existing.
     expect(fixture.nativeElement.querySelector('app-language-switcher')).toBeNull();
     expect(fixture.nativeElement.querySelector('app-session-menu')).toBeNull();
+  });
+
+  it('shows the settings entry as plain text while nobody is signed in', async () => {
+    const fixture = await render();
+
+    const settings = fixture.nativeElement.querySelector(
+      '[data-testid="nav-settings"]',
+    ) as HTMLAnchorElement;
+    const label = TestBed.inject(TranslateService).instant('nav.settings');
+    expect(settings.textContent?.trim()).toBe(label);
+    expect(settings.querySelector('.sr-only')).toBeNull();
+  });
+
+  it("shows the settings entry as the signed-in user's monogram once a session exists", async () => {
+    session.setRole('USER');
+    const fixture = await render();
+
+    const settings = fixture.nativeElement.querySelector(
+      '[data-testid="nav-settings"]',
+    ) as HTMLAnchorElement;
+    const user = session.user();
+    const initial = user!.displayName.charAt(0).toUpperCase();
+
+    const monogram = settings.querySelector('span[aria-hidden="true"]') as HTMLElement;
+    expect(monogram).not.toBeNull();
+    expect(monogram.textContent?.trim()).toBe(initial);
+
+    // The accessible name survives the switch to a glyph: a screen reader
+    // still hears "Settings" rather than a bare letter.
+    const srOnly = settings.querySelector('.sr-only') as HTMLElement;
+    expect(srOnly).not.toBeNull();
+    const label = TestBed.inject(TranslateService).instant('nav.settings');
+    expect(srOnly.textContent).toContain(label);
+    expect(settings.getAttribute('title')).toBe(label);
   });
 
   it('keeps the blog reachable, and marks it rather than removing it, while offline', async () => {
