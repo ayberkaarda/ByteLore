@@ -16,6 +16,7 @@
   "theme": {
     "light": "Açık",
     "dark": "Koyu",
+    "system": "Sistem",
     "toggle": "Temayı değiştir"
   },
   "language": {
@@ -152,6 +153,11 @@
   "mindMap": {
     "backToTrack": "Öğrenme yoluna dön",
     "heading": "Zihin haritası",
+    "legend": {
+      "heading": "Harita simgeleri",
+      "lesson": "Ders, henüz tamamlanmadı",
+      "concept": "Bir derste geçen kavram, ayrı bir ders değil"
+    },
     "loading": "Yükleniyor…",
     "notDownloaded": "Bu zihin haritası henüz bu cihaza indirilmedi.",
     "notInLibrary": "İndirilmedi",

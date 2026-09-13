@@ -218,15 +218,17 @@
 
 [data-theme='dark'] {
   /* Same ordering as light, mirrored: here elevation adds light rather than
-     tint. surface is 1.09 above bg; hover (1.12) and raised (1.22) are both
-     measured against surface, and the scale spans 1.33 from page to raised.
-     The hover tone sits roughly where the raised layer used to, so a pointer
-     hover reads as it did before while the raised layer gains a step of its
-     own above it. */
+     tint. surface is 1.09 above bg; hover (1.12) and raised (1.29) are both
+     measured against surface, and the scale spans 1.41 from page to raised.
+     Raised was retuned from #232b3a to #262f3f: measured against hover it was
+     1.09, under this file's own 1.1 "distinguishable" floor, so a pointer
+     hover and the raised layer read as nearly the same surface. The new
+     value clears hover at 1.15 while keeping border-strong on raised at
+     3.42, still past the 3:1 non-text floor. */
   --bl-bg: #0d1117;
   --bl-surface: #161b22;
   --bl-surface-hover: #1d2531;
-  --bl-surface-raised: #232b3a;
+  --bl-surface-raised: #262f3f;
 
   --bl-border: #323a48;
   --bl-border-strong: #78818f;
@@ -275,16 +277,22 @@
 /*
  * System preference, used only until the user makes a choice. The explicit
  * [data-theme] attributes above are written by the pre-paint script and by the
- * theme service, and both win over this block because they are set on the same
- * element with a higher-specificity selector. The :not() guard is what makes a
- * manual choice of light stick on a machine whose system preference is dark.
+ * theme service. Measured: this block's own selector, :root:not([data-theme=
+ * 'light']), is actually the more specific one of the two (:not() adds the
+ * specificity of its argument, so :root plus :not([data-theme='light']) beats
+ * a bare [data-theme='dark']) -- it is not the [data-theme='dark'] rule above
+ * that wins when both apply. The two blocks are kept holding identical values
+ * for the dark palette so the outcome does not depend on which one wins; if
+ * that ever changes, this block's values are the ones that take effect while
+ * the system preference is dark. The :not() guard is what makes a manual
+ * choice of light stick on a machine whose system preference is dark.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --bl-bg: #0d1117;
     --bl-surface: #161b22;
     --bl-surface-hover: #1d2531;
-    --bl-surface-raised: #232b3a;
+    --bl-surface-raised: #262f3f;
 
     --bl-border: #323a48;
     --bl-border-strong: #78818f;
@@ -294,6 +302,7 @@
 
     --bl-accent: #5b8def;
     --bl-accent-contrast: #0d1117;
+    --bl-accent-soft: #1a2a4a;
 
     --bl-success: #3fb873;
     --bl-success-soft: #103524;

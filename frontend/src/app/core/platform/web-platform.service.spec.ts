@@ -78,7 +78,8 @@ describe('WebPlatformService', () => {
           requested_locale: 'tr',
           is_fallback: false,
           module_count: 2,
-          lesson_count: 28,
+          lesson_count: 3,
+          lesson_ids: ['lesson-a', 'lesson-b', 'lesson-c'],
           content_version: 14,
           updated_at: '2026-08-29T11:20:04.771Z',
         },
@@ -95,6 +96,12 @@ describe('WebPlatformService', () => {
     // Nothing is stored, so the downloaded count is zero as a fact rather than
     // as a value the platform could not compute.
     expect(tracks[0].downloadedLessonCount).toBe(0);
+    // The lesson identifiers survive the wire-to-model step in order. They are
+    // what lets a listing count a reader's progress through a path, and they
+    // are the one field on the summary the web cannot substitute a local
+    // answer for.
+    expect(tracks[0].lessonIds).toEqual(['lesson-a', 'lesson-b', 'lesson-c']);
+    expect(tracks[0].lessonCount).toBe(3);
     expect(tracks[0].translation).toEqual({
       locale: 'tr',
       requestedLocale: 'tr',

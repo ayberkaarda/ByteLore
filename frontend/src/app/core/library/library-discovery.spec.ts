@@ -25,6 +25,7 @@ function track(overrides: Partial<TrackSummary> = {}): TrackSummary {
     icon: null,
     contentVersion: 1,
     lessonCount: 3,
+    lessonIds: ['lesson-1', 'lesson-2', 'lesson-3'],
     downloadedLessonCount: 0,
     updateAvailableCount: 0,
     availability: 'NOT_DOWNLOADED',

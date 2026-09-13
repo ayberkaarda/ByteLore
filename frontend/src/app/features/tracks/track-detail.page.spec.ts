@@ -214,6 +214,39 @@ describe('TrackDetailPage', () => {
     expect(rows[1].querySelector('[data-testid="lesson-completed"]')).toBeNull();
   });
 
+  it('fills exactly one button with the accent, and it is the path-level download', async () => {
+    // Every module offers the same download the path above it offers, narrowed
+    // to its own lessons. Drawn at the same weight, a path of three modules put
+    // four identical filled buttons on one screen and none of them read as the
+    // thing to press.
+    fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
+
+    const element = (await render('signals')).nativeElement as HTMLElement;
+
+    const filled = [...element.querySelectorAll('button')].filter((button) =>
+      // A class token rather than a substring: the row a reader is up to is
+      // tinted with bg-accent-soft, which contains the fill's name without
+      // being it.
+      button.classList.contains('bg-accent'),
+    );
+    expect(filled).toHaveLength(1);
+
+    // The module cards. The one filled button is above all of them.
+    const modules = element.querySelectorAll('section');
+    expect(modules).toHaveLength(2);
+    expect([...modules].some((module) => module.contains(filled[0]))).toBe(false);
+
+    // And each module still offers its own download, one step down.
+    for (const module of modules) {
+      const button = module.querySelector<HTMLButtonElement>(
+        '[data-testid="container-download-action"] button',
+      );
+      expect(button?.textContent).toContain('Download');
+      expect(button?.classList.contains('bg-accent')).toBe(false);
+      expect(button?.className).toContain('border-border-strong');
+    }
+  });
+
   it('counts the finished lessons per module and across the whole path', async () => {
     fake.trackDetails.set('signals', trackDetail({ modules: twoModules() }));
     fake.listProgress = async () => [

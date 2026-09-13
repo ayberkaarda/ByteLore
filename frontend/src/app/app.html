@@ -14,9 +14,18 @@
         {{ 'app.title' | translate }}
       </a>
 
+      <!--
+        Hover and "you are here" are two different answers and are painted in
+        two different tones: the hover tone for the pointer, the raised tone for
+        the entry whose screen is on display. Painting both in the raised tone
+        made every link you pointed at claim to be the current one. The two
+        tones are only a step apart on their own, so the current entry carries a
+        second, independent mark as well — full-strength text against the muted
+        text of the rest — and the reading does not rest on the fill alone.
+      -->
       <nav class="flex flex-wrap items-center gap-1" [attr.aria-label]="'nav.label' | translate">
         <a
-          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
           routerLink="/tracks"
           routerLinkActive="bg-surface-raised text-text"
           ariaCurrentWhenActive="page"
@@ -30,7 +39,7 @@
           entry gains offline is a mark, not an absence.
         -->
         <a
-          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
           routerLink="/blog"
           routerLinkActive="bg-surface-raised text-text"
           ariaCurrentWhenActive="page"
@@ -49,7 +58,7 @@
         </a>
         @if (canDownload) {
           <a
-            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
             routerLink="/downloads"
             routerLinkActive="bg-surface-raised text-text"
             ariaCurrentWhenActive="page"
@@ -78,7 +87,7 @@
         }
         @if (session.canAdminister()) {
           <a
-            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-raised"
+            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
             routerLink="/admin"
             routerLinkActive="bg-surface-raised text-text"
             ariaCurrentWhenActive="page"
@@ -88,12 +97,33 @@
         }
       </nav>
 
+      <!--
+        Three controls sit here and they are three different kinds of thing, so
+        they are drawn at three different weights rather than uniformly.
+
+        The theme toggle is a preference someone flips with the time of day: no
+        edge, no fill, colour only, which is the lightest weight an interactive
+        element gets. Settings is a destination like every entry in the
+        navigation beside it, so it is drawn exactly like one — a bordered box
+        would claim it is an action. Sign in is the one real action up here, and
+        it is the only one that carries a control edge.
+
+        None of the three is filled with the accent colour: the header is
+        present on every screen, and an accent fill here would compete with
+        whatever primary action the screen below it actually has.
+
+        The edge on Sign in is the strong line weight rather than the divider
+        one. The divider colour reaches only 1.30:1 against the surface behind
+        it, well under the 3:1 an interactive boundary needs to be seen at all,
+        so a control drawn in it reads as a faint rectangle rather than as
+        something pressable.
+      -->
       <div class="ml-auto flex flex-wrap items-center gap-2">
         <app-theme-toggle />
         <a
-          class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
+          class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
           routerLink="/settings"
-          routerLinkActive="bg-surface-raised"
+          routerLinkActive="bg-surface-raised text-text"
           ariaCurrentWhenActive="page"
           data-testid="nav-settings"
         >
@@ -101,7 +131,7 @@
         </a>
         @if (session.user() === null) {
           <a
-            class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text no-underline hover:bg-surface-raised"
+            class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
             routerLink="/login"
           >
             {{ 'nav.signIn' | translate }}

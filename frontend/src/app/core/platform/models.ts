@@ -94,6 +94,20 @@ export interface TrackSummary {
   readonly icon: string | null;
   readonly contentVersion: number;
   readonly lessonCount: number;
+  /**
+   * Every lesson of the track, by identifier, in reading order — modules in
+   * their order, lessons in theirs.
+   *
+   * Carried on the summary because completion is held per lesson identifier
+   * and a listing holds no module tree to read them from. Without it a card
+   * can only say how much of a track is downloaded, never how much of it a
+   * reader has finished, and fetching a whole tree per card to find out would
+   * cost one read per row on the screen.
+   *
+   * Its length equals `lessonCount`; both come from the same source on each
+   * platform, so they cannot drift apart.
+   */
+  readonly lessonIds: readonly string[];
   /** Zero on the web, which stores nothing — an honest count, not a stand-in. */
   readonly downloadedLessonCount: number;
   readonly updateAvailableCount: number;

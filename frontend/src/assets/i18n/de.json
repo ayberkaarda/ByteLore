@@ -16,6 +16,7 @@
   "theme": {
     "light": "Hell",
     "dark": "Dunkel",
+    "system": "System",
     "toggle": "Design wechseln"
   },
   "language": {
@@ -152,6 +153,11 @@
   "mindMap": {
     "backToTrack": "Zurück zum Lernpfad",
     "heading": "Mindmap",
+    "legend": {
+      "heading": "Kartenlegende",
+      "lesson": "Lektion, noch nicht abgeschlossen",
+      "concept": "In einer Lektion erwähntes Konzept, keine eigene Lektion"
+    },
     "loading": "Wird geladen…",
     "notDownloaded": "Diese Mindmap wurde noch nicht auf dieses Gerät heruntergeladen.",
     "notInLibrary": "Nicht heruntergeladen",

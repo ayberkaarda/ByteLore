@@ -101,6 +101,7 @@ export class WebPlatformService extends PlatformService {
       icon: item.icon,
       contentVersion: item.content_version,
       lessonCount: item.lesson_count,
+      lessonIds: item.lesson_ids,
       // Nothing is stored, so nothing is downloaded. Zero is the fact, not a
       // placeholder for a number this platform cannot compute.
       downloadedLessonCount: 0,

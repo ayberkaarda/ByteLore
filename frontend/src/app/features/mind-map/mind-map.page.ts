@@ -17,7 +17,13 @@ import { PlatformError } from '../../core/platform/errors';
 import type { LessonSummary, MindMap, MindMapNode, TrackDetail } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { ContainerDownloadAction } from '../../shared/container-download-action';
-import { MindMapTree, type NodeCompletion } from './mind-map-tree';
+import { shapeFor } from '../../shared/state-glyph';
+import {
+  CONCEPT_RADIUS,
+  GLYPH_RING_RADIUS,
+  MindMapTree,
+  type NodeCompletion,
+} from './mind-map-tree';
 
 /**
  * Loads a track's mind map and hands it to the renderer, or explains why
@@ -49,6 +55,25 @@ export class MindMapPage {
   protected readonly mindMapNotDownloaded = signal(false);
   /** A discovery attempt that failed. Non-blocking: the track above still renders. */
   protected readonly noteKey = signal<string | null>(null);
+
+  /**
+   * The stroke paths for the completed mark's tick, borrowed from
+   * `shared/state-glyph.ts` for the legend drawn above the tree — see
+   * `legendIconRadius` for why the legend's other three marks are drawn at
+   * this same glyph's ring radius rather than the tree's own node radius.
+   */
+  protected readonly legendCompletedGlyphPaths = shapeFor('completed').paths;
+  /**
+   * The radius the legend's plain lesson and not-downloaded circles are drawn
+   * at. Not `mind-map-tree.ts`'s `NODE_RADIUS`: the legend is a strip of small
+   * same-size marks meant to be read side by side, and the completed mark
+   * among them is fixed at the state-glyph ring's own radius, so the other
+   * three take that radius too rather than four marks whose relative sizes
+   * imply a difference in size that the tree itself does not carry.
+   */
+  protected readonly legendIconRadius = GLYPH_RING_RADIUS;
+  /** The concept leaf's real radius on the tree, so the legend's dot is not a second, hand-picked number. */
+  protected readonly legendConceptRadius = CONCEPT_RADIUS;
 
   /**
    * The lessons this reader has finished, by identifier.

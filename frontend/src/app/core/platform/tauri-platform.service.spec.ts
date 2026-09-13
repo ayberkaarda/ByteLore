@@ -45,7 +45,8 @@ function trackSummaryRow() {
     description: 'Signals and routing.',
     icon: 'angular',
     contentVersion: 47,
-    lessonCount: 32,
+    lessonCount: 3,
+    lessonIds: ['lesson-a', 'lesson-b', 'lesson-c'],
     downloadedLessonCount: 12,
     totalSizeBytes: 1893441,
     downloadedSizeBytes: 623104,
@@ -127,6 +128,22 @@ describe('TauriPlatformService', () => {
       downloadedLessonCount: 12,
       updateAvailableCount: 3,
     });
+  });
+
+  /*
+   * Asserted apart from the mapping above because this is the field a listing
+   * needs in order to say how much of a track a reader has finished: completion
+   * is held per lesson identifier, and a card that loses the identifiers can
+   * only report what is downloaded. The order is carried through untouched --
+   * the store already returns the lessons in reading order, and re-sorting them
+   * here would put the two platforms' answers out of step.
+   */
+  it('carries the lesson identifiers through in the order the store returns them', async () => {
+    respondWith(async () => [trackSummaryRow()]);
+
+    const tracks = await service.listTracks();
+
+    expect(tracks[0].lessonIds).toEqual(['lesson-a', 'lesson-b', 'lesson-c']);
   });
 
   it('resolves a slug to an identifier before reading the store', async () => {

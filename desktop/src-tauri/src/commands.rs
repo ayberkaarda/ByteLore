@@ -76,6 +76,18 @@ pub struct TrackSummary {
     pub icon: Option<String>,
     pub content_version: i64,
     pub lesson_count: i64,
+    /// Every lesson of the track, by identifier, in reading order -- modules in
+    /// their order, lessons in theirs.
+    ///
+    /// The listing carries these because completion is recorded per lesson and
+    /// a card holds no module tree to read the identifiers from. Answering it
+    /// here costs one extra query per track; the alternative is a full track
+    /// read per card.
+    ///
+    /// Every lesson the store knows of is listed, whether or not its content
+    /// has been downloaded: a reader can finish a lesson, delete it to reclaim
+    /// space, and still have finished it.
+    pub lesson_ids: Vec<String>,
     pub downloaded_lesson_count: i64,
     pub total_size_bytes: i64,
     pub downloaded_size_bytes: i64,
@@ -277,9 +289,14 @@ pub struct AbsorbedProgress {
 
 #[tauri::command]
 pub fn library_list_tracks(state: tauri::State<'_, AppState>) -> Command<Vec<TrackSummary>> {
-    let db = state.db();
-    db.with(|connection| {
-        let locale = settings::active_locale(connection)?;
+    state.db().with(track_summaries)
+}
+
+/// The body of [`library_list_tracks`], against a plain connection so that it
+/// can be exercised without a running application.
+fn track_summaries(connection: &rusqlite::Connection) -> rusqlite::Result<Vec<TrackSummary>> {
+    let locale = settings::active_locale(connection)?;
+    let rows: Vec<TrackSummary> = {
         let mut statement = connection.prepare(
             "SELECT t.track_id, t.slug, t.title, t.description, t.icon, t.content_version,
                     t.lesson_count, t.total_size_bytes,
@@ -295,45 +312,72 @@ pub fn library_list_tracks(state: tauri::State<'_, AppState>) -> Command<Vec<Tra
                       WHERE l.track_id = t.track_id AND l.withdrawn_at IS NOT NULL)
              FROM tracks t ORDER BY t.title;",
         )?;
-        let rows = statement.query_map([], |row| {
-            let track_id: String = row.get(0)?;
-            let lesson_count: i64 = row.get(6)?;
-            let downloaded: i64 = row.get(8)?;
-            let updates: i64 = row.get(10)?;
-            Ok(TrackSummary {
-                slug: row.get(1)?,
-                title: row.get(2)?,
-                description: row.get(3)?,
-                icon: row.get(4)?,
-                content_version: row.get(5)?,
-                lesson_count,
-                total_size_bytes: row.get(7)?,
-                downloaded_lesson_count: downloaded,
-                downloaded_size_bytes: row.get(9)?,
-                availability: track_availability(lesson_count, downloaded, updates),
-                update_available_count: updates,
-                withdrawn_count: row.get(11)?,
-                track_id,
-            })
-        })?;
+        let mapped = statement
+            .query_map([], |row| {
+                let track_id: String = row.get(0)?;
+                let lesson_count: i64 = row.get(6)?;
+                let downloaded: i64 = row.get(8)?;
+                let updates: i64 = row.get(10)?;
+                Ok(TrackSummary {
+                    slug: row.get(1)?,
+                    title: row.get(2)?,
+                    description: row.get(3)?,
+                    icon: row.get(4)?,
+                    content_version: row.get(5)?,
+                    lesson_count,
+                    // Filled in below: the statement above is still borrowed
+                    // while its rows are being mapped, so the per-track query
+                    // cannot run from inside this closure.
+                    lesson_ids: Vec::new(),
+                    total_size_bytes: row.get(7)?,
+                    downloaded_lesson_count: downloaded,
+                    downloaded_size_bytes: row.get(9)?,
+                    availability: track_availability(lesson_count, downloaded, updates),
+                    update_available_count: updates,
+                    withdrawn_count: row.get(11)?,
+                    track_id,
+                })
+            })?
+            .collect::<rusqlite::Result<_>>()?;
+        mapped
+    };
 
-        let mut summaries = Vec::new();
-        for summary in rows {
-            let mut summary = summary?;
-            if let Some((title, body)) =
-                translation(connection, "TRACK", &summary.track_id, &locale)?
-            {
-                if let Some(title) = title {
-                    summary.title = title;
-                }
-                if body.is_some() {
-                    summary.description = body;
-                }
+    let mut summaries = Vec::with_capacity(rows.len());
+    for mut summary in rows {
+        summary.lesson_ids = track_lesson_ids(connection, &summary.track_id)?;
+        if let Some((title, body)) = translation(connection, "TRACK", &summary.track_id, &locale)? {
+            if let Some(title) = title {
+                summary.title = title;
             }
-            summaries.push(summary);
+            if body.is_some() {
+                summary.description = body;
+            }
         }
-        Ok(summaries)
-    })
+        summaries.push(summary);
+    }
+    Ok(summaries)
+}
+
+/// A track's lessons in reading order.
+///
+/// The ordering is the one [`library_get_track`] renders -- modules by position
+/// then identifier, lessons the same way -- so a position counted against this
+/// list matches the row a reader's eye lands on when the track is opened. The
+/// identifier tie-breakers matter: two rows sharing a position would otherwise
+/// come back in whatever order the store felt like, and the same track would
+/// read differently between two calls.
+fn track_lesson_ids(
+    connection: &rusqlite::Connection,
+    track_id: &str,
+) -> rusqlite::Result<Vec<String>> {
+    let mut statement = connection.prepare(
+        "SELECT l.lesson_id FROM lessons l
+              JOIN modules m ON m.module_id = l.module_id
+            WHERE l.track_id = ?1
+            ORDER BY m.ordinal, m.module_id, l.ordinal, l.lesson_id;",
+    )?;
+    let ids = statement.query_map([track_id], |row| row.get(0))?;
+    ids.collect()
 }
 
 fn track_availability(lesson_count: i64, downloaded: i64, updates: i64) -> TrackAvailability {
@@ -2523,6 +2567,88 @@ mod tests {
             )
             .expect("seed structure");
         connection
+    }
+
+    // -- TrackSummary.lessonIds ----------------------------------------------
+
+    /// Two modules, inserted in the reverse of their declared positions, each
+    /// holding two lessons likewise reversed. Nothing is downloaded: the
+    /// identifiers a listing reports are a fact about the track, not about what
+    /// is on disk.
+    fn ordering_fixture() -> rusqlite::Connection {
+        let connection = open_in_memory().expect("store");
+        connection
+            .execute_batch(
+                "INSERT INTO tracks (track_id, slug, title, content_version, lesson_count)
+                     VALUES ('t1', 'angular-path', 'The Angular Path', 1, 4);
+                 INSERT INTO modules (module_id, track_id, title, ordinal)
+                     VALUES ('m2', 't1', 'Routing', 2);
+                 INSERT INTO modules (module_id, track_id, title, ordinal)
+                     VALUES ('m1', 't1', 'Signals', 1);
+                 INSERT INTO lessons (lesson_id, track_id, module_id, slug, title, ordinal)
+                     VALUES ('l-b', 't1', 'm1', 'effects', 'Effects', 2);
+                 INSERT INTO lessons (lesson_id, track_id, module_id, slug, title, ordinal)
+                     VALUES ('l-a', 't1', 'm1', 'signals', 'Signals', 1);
+                 INSERT INTO lessons (lesson_id, track_id, module_id, slug, title, ordinal)
+                     VALUES ('l-d', 't1', 'm2', 'guards', 'Guards', 2);
+                 INSERT INTO lessons (lesson_id, track_id, module_id, slug, title, ordinal)
+                     VALUES ('l-c', 't1', 'm2', 'routes', 'Routes', 1);",
+            )
+            .expect("seed structure");
+        connection
+    }
+
+    #[test]
+    fn a_track_summary_lists_its_lessons_in_reading_order() {
+        let connection = ordering_fixture();
+
+        let summaries = track_summaries(&connection).expect("list tracks");
+
+        let track = summaries.iter().find(|t| t.track_id == "t1").expect("t1");
+        assert_eq!(
+            track.lesson_ids,
+            vec![
+                "l-a".to_string(),
+                "l-b".to_string(),
+                "l-c".to_string(),
+                "l-d".to_string()
+            ],
+            "modules come in their declared order and lessons in theirs, not in \
+             the order the rows were inserted"
+        );
+    }
+
+    #[test]
+    fn a_track_summary_lists_lessons_that_are_not_downloaded() {
+        let connection = ordering_fixture();
+
+        let summaries = track_summaries(&connection).expect("list tracks");
+        let track = summaries.iter().find(|t| t.track_id == "t1").expect("t1");
+
+        assert_eq!(track.downloaded_lesson_count, 0);
+        assert_eq!(
+            track.lesson_ids.len(),
+            4,
+            "a reader can finish a lesson and then delete it to reclaim space; \
+             the identifiers describe the track, not the disk"
+        );
+    }
+
+    #[test]
+    fn a_track_with_no_lessons_lists_none_rather_than_failing() {
+        let connection = open_in_memory().expect("store");
+        connection
+            .execute(
+                "INSERT INTO tracks (track_id, slug, title, content_version)
+                     VALUES ('t9', 'empty', 'Empty', 1);",
+                [],
+            )
+            .expect("seed a track with no structure");
+
+        let summaries = track_summaries(&connection).expect("list tracks");
+
+        assert_eq!(summaries.len(), 1);
+        assert!(summaries[0].lesson_ids.is_empty());
     }
 
     #[test]

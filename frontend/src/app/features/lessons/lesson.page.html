@@ -84,7 +84,7 @@
 } @else if (lesson(); as current) {
   <article>
     <header class="flex flex-wrap items-start justify-between gap-3">
-      <h1 class="text-2xl font-semibold tracking-tight">{{ current.title }}</h1>
+      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{{ current.title }}</h1>
       <app-fallback-badge [state]="current.translation" />
     </header>
 
@@ -136,9 +136,16 @@
           sharing a label — which the format permits and no loader rejects —
           would be duplicate keys and would throw instead of rendering.
         -->
+        <!--
+          Squared off like the difficulty and translation marks rather than
+          fully rounded: these labels are a piece of the lesson's metadata, and
+          the fully round shape is kept for marks that report a live state — a
+          transfer's progress, a connection that has dropped — so that the two
+          can be told apart at a glance without reading either.
+        -->
         @for (concept of concepts(); track $index) {
           <span
-            class="inline-flex items-center rounded-full bg-surface-hover px-2 py-0.5 text-xs font-medium text-text-muted"
+            class="inline-flex items-center rounded-sm bg-surface-hover px-2 py-0.5 text-xs font-medium text-text-muted"
             >{{ concept }}</span
           >
         }
@@ -223,18 +230,18 @@
                   <span>{{ example.caption }}</span>
                 }
                 <!--
-                  The same quiet pill the concept labels above wear, so the two
-                  read as one kind of thing rather than as two small-tag styles
-                  on one screen. Size and colour come from the row, which
-                  already states both.
+                  The same quiet tag the concept labels above wear, down to the
+                  squared corners, so the two read as one kind of thing rather
+                  than as two small-tag styles on one screen. Size and colour
+                  come from the row, which already states both.
 
                   Guarded only against having no value at all: the format
-                  requires a language on every listing, and an empty pill would
+                  requires a language on every listing, and an empty tag would
                   be a stray mark with nothing in it.
                 -->
                 @if (example.language) {
                   <span
-                    class="rounded-full bg-surface-hover px-2 py-0.5 font-medium"
+                    class="rounded-sm bg-surface-hover px-2 py-0.5 font-medium"
                     data-testid="lesson-example-language"
                     >{{ example.language }}</span
                   >
@@ -263,9 +270,21 @@
         state announced twice, in opposite directions. The label is the clearer
         of the two because it also tells the reader what pressing will do.
       -->
+      <!--
+        Drawn as the screen's secondary action rather than as an inline row
+        action: it is the one thing on the page that changes anything, and it
+        changes the reader's own record of the path. It was previously drawn in
+        the weight reserved for dividers, which left the only control in the
+        article looking like a rule someone had put a word inside.
+
+        Secondary and not the filled accent, even though nothing here competes
+        for it: the accent fill is what a screen uses to send a reader onward,
+        and marking a lesson read is the end of this one rather than the way to
+        the next.
+      -->
       <button
         type="button"
-        class="mt-10 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+        class="mt-10 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         data-testid="lesson-complete-toggle"
         (click)="toggleCompleted()"
       >

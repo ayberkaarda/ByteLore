@@ -258,15 +258,26 @@
       }
     } @else {
       <!--
-        The delete confirmation itself is left exactly as it was: the hint,
-        the confirm and cancel pair, and the focus it moves onto and back
-        from are a deliberately built flow, not a row action to re-tier.
+        The shape of the confirmation is left as it was — the hint, the confirm
+        and cancel pair, and the focus it moves onto and back from are a
+        deliberately built flow, not a row action to restructure. Only the two
+        buttons' drawing is brought into line with the rest of the row.
+
+        The confirm keeps the filled danger treatment: this is the press that
+        removes stored content, and it is the one place in this component that
+        earns a solid fill.
+
+        Backing out is drawn as an inline action, like every other verb in this
+        row. It was previously outlined in the weight reserved for dividers,
+        which is not a control's weight, and it carried less emphasis in its
+        label than the button it stands beside, so the two halves of one
+        question were set in two different voices.
       -->
       <span class="text-xs text-text-muted">{{ 'download.deleteHint' | translate }}</span>
       <button
         #confirmDeleteButton
         type="button"
-        class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
+        class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast"
         (click)="onConfirmDelete()"
       >
         {{ 'download.action.confirmDelete' | translate }}
@@ -274,7 +285,7 @@
       </button>
       <button
         type="button"
-        class="rounded-md border border-border px-2 py-1 text-xs text-text"
+        class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
         (click)="cancelDeleteRequest()"
       >
         {{ 'common.cancel' | translate }}

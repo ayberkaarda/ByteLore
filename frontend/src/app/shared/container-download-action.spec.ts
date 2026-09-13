@@ -8,7 +8,7 @@ import { BundledTranslateLoader } from '../core/i18n/translations';
 import { contentAvailability } from '../core/platform/models';
 import type { Availability, LessonSummary } from '../core/platform/models';
 import { PlatformService } from '../core/platform/platform.service';
-import { ContainerDownloadAction } from './container-download-action';
+import { ContainerDownloadAction, type ContainerActionTier } from './container-download-action';
 
 function lesson(id: string, availability: Availability): LessonSummary {
   return {
@@ -47,12 +47,21 @@ describe('ContainerDownloadAction', () => {
     await TestBed.inject(LocaleService).initialize('en');
   });
 
-  function render(lessons: readonly LessonSummary[], extraUnits: readonly DownloadUnit[] = []) {
+  function render(
+    lessons: readonly LessonSummary[],
+    extraUnits: readonly DownloadUnit[] = [],
+    // Left unset rather than defaulted here, so the tests below that say
+    // nothing about the tier go through the component's own default.
+    tier?: ContainerActionTier,
+  ) {
     const fixture = TestBed.createComponent(ContainerDownloadAction);
     fixture.componentRef.setInput('scope', { kind: 'TRACK', id: 'track-1' });
     fixture.componentRef.setInput('title', 'Signals');
     fixture.componentRef.setInput('lessons', lessons);
     fixture.componentRef.setInput('extraUnits', extraUnits);
+    if (tier) {
+      fixture.componentRef.setInput('tier', tier);
+    }
     fixture.detectChanges();
     return fixture;
   }
@@ -89,14 +98,47 @@ describe('ContainerDownloadAction', () => {
     expect(element.textContent).not.toContain('Downloaded (');
   });
 
-  it('keeps the container action as the primary, accent-filled control', () => {
-    // This is the one primary action a track or module page shows; a
-    // per-lesson Download/Update nested inside it renders as secondary
-    // instead, so the accent fill never appears twice in the same view.
+  it('falls back to the accent fill when the embedding view names no tier', () => {
+    // The default a caller gets by saying nothing, which is what every view
+    // that embeds this component exactly once wants.
     const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')]);
     const button = wrapper(fixture).querySelector('button');
 
-    expect(button?.className).toContain('bg-accent');
+    expect(button?.classList.contains('bg-accent')).toBe(true);
+  });
+
+  it('drops to the outlined recipe at the secondary tier', () => {
+    // What a view asks for once it already spends its accent somewhere else —
+    // a learning path whose own download button sits above these.
+    const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')], 'secondary');
+    const button = wrapper(fixture).querySelector('button');
+
+    expect(button?.classList.contains('bg-accent')).toBe(false);
+    expect(button?.className).toContain('border-border-strong');
+    expect(button?.className).toContain('bg-surface-raised');
+  });
+
+  it('drops to the unfilled recipe at the ghost tier', () => {
+    const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')], 'ghost');
+    const button = wrapper(fixture).querySelector('button');
+
+    expect(button?.classList.contains('bg-accent')).toBe(false);
+    expect(button?.className).not.toContain('border-border-strong');
+    expect(button?.className).toContain('text-text-muted');
+  });
+
+  it('keeps the tier out of what the button does and says', async () => {
+    // The tier is a matter of weight only: the same word, the same accessible
+    // name, and the same enqueue behind it whichever recipe is drawn.
+    const fixture = render(fourDownloaded, [mindMap('NOT_DOWNLOADED')], 'secondary');
+    const button = wrapper(fixture).querySelector('button');
+
+    expect(button?.textContent?.trim()).toBe('Download Signals');
+
+    button?.click();
+    await fixture.whenStable();
+
+    expect(fake.enqueued).toEqual([{ kind: 'TRACK', id: 'track-1' }]);
   });
 
   it('enqueues the whole container when that button is pressed', async () => {

@@ -26,11 +26,14 @@ import dev.bytelore.server.domain.UserLocale;
 import dev.bytelore.server.domain.UserProgress;
 import dev.bytelore.server.domain.UserProgressId;
 import dev.bytelore.server.repository.CodeExampleRepository;
+import dev.bytelore.server.repository.LessonIdRow;
 import dev.bytelore.server.repository.LessonRepository;
 import dev.bytelore.server.repository.MindMapRepository;
 import dev.bytelore.server.repository.ModuleRepository;
 import dev.bytelore.server.repository.TrackRepository;
 import dev.bytelore.server.repository.UserProgressRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -229,8 +232,7 @@ public class PublicContentService {
         modules.findByTrackIdOrderByDisplayOrderAsc(track.getId()).stream()
             .map(Module::getId)
             .toList();
-    long lessonCount =
-        moduleIds.isEmpty() ? 0 : lessons.countByModuleIdInAndDeletedAtIsNull(moduleIds);
+    List<UUID> lessonIds = orderedLessonIds(moduleIds);
     return new TrackListItemResponse(
         track.getId(),
         track.getSlug(),
@@ -242,9 +244,31 @@ public class PublicContentService {
         requested.code(),
         isFallback(requested, translation.isPresent()),
         moduleIds.size(),
-        lessonCount,
+        lessonIds.size(),
+        lessonIds,
         track.getContentVersion(),
         track.getUpdatedAt());
+  }
+
+  /**
+   * Every visible lesson of the given modules, flattened into reading order.
+   *
+   * <p>One batched query, regrouped here against the module order the caller already resolved. The
+   * database can order lessons within a module but not across modules -- module order lives on the
+   * module row -- so the ordering is finished in memory rather than bought with a join and a second
+   * sort key.
+   */
+  private List<UUID> orderedLessonIds(List<UUID> moduleIds) {
+    if (moduleIds.isEmpty()) {
+      return List.of();
+    }
+    Map<UUID, List<UUID>> byModule = new HashMap<>();
+    for (LessonIdRow row : lessons.findIdsByModuleIds(moduleIds)) {
+      byModule.computeIfAbsent(row.moduleId(), key -> new ArrayList<>()).add(row.lessonId());
+    }
+    return moduleIds.stream()
+        .flatMap(moduleId -> byModule.getOrDefault(moduleId, List.of()).stream())
+        .toList();
   }
 
   private ModuleSummaryResponse toModuleSummary(Module module, UserLocale requested) {

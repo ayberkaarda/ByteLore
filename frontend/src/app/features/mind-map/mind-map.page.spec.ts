@@ -336,6 +336,41 @@ describe('MindMapPage', () => {
     });
   });
 
+  /**
+   * The legend drawn above the tree, one entry per mark the tree can draw:
+   * without it, a reader had no way to learn what the ring-and-tick, the
+   * filled disc, the small dot, and the dashed outline each stand for.
+   */
+  it('draws a legend entry, with descriptive text, for every mark the tree can draw', async () => {
+    fake.trackDetails.set(
+      'signals',
+      trackDetail({
+        modules: [moduleWith([lesson('lesson-1', 'DOWNLOADED')])],
+        mindMap: mindMapSummary('DOWNLOADED'),
+      }),
+    );
+    fake.getMindMap = async () =>
+      mindMap(mapNode('track', null, [mapNode('lesson-01', 'lesson-1')]));
+
+    const fixture = await render('signals');
+    const element = fixture.nativeElement as HTMLElement;
+
+    const legend = element.querySelector('[data-testid="mind-map-legend"]');
+    expect(legend).not.toBeNull();
+
+    const entries = Array.from(legend?.querySelectorAll('li') ?? []).map((li) =>
+      li.textContent?.trim(),
+    );
+    expect(entries).toEqual([
+      'Completed',
+      'Lesson, not yet completed',
+      'Concept mentioned in a lesson, not a lesson of its own',
+      'Not downloaded',
+    ]);
+    // Every mark drawn in the legend is decorative next to its own words.
+    expect(legend?.querySelectorAll('svg[aria-hidden="true"]').length).toBe(4);
+  });
+
   it('never calls refresh on a build that cannot download', async () => {
     fake.capabilities = { canDownload: false, hasLocalStore: false };
     fake.trackDetails.set('signals', trackDetail({ modules: [] }));

@@ -58,7 +58,7 @@
       <app-fallback-badge [state]="detail.translation" />
       @if (detail.mindMap) {
         <a
-          class="rounded-md border border-border px-3 py-2 text-sm text-text no-underline hover:bg-surface-raised"
+          class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
           [routerLink]="['/tracks', detail.slug, 'mindmap']"
           [title]="'track.mindMapHint' | translate: { title: detail.title }"
         >
@@ -66,11 +66,28 @@
         </a>
       }
       @if (canDownload) {
+        <!--
+          The one accent-filled button on this screen. Taking the whole path is
+          the action the page is offering; the module buttons below it narrow
+          that same offer to one section and drop to the secondary tier so the
+          fill does not repeat three or four times over. Stated here rather
+          than left to the default, because what makes it the primary is the
+          company it keeps on this page, not anything about the component.
+
+          The lesson row further down carries its own acquire button at that
+          same secondary weight, not a lighter one: it is the row's one
+          affirmative action, and once an update is available it sits next to
+          a ghost-tier delete button, where dropping it to ghost too would
+          leave the row with no visible weight difference between "get this"
+          and "remove this". The row's place inside the module, not a lighter
+          fill, is what marks it as the narrowest scope.
+        -->
         <app-container-download-action
           [scope]="{ kind: 'TRACK', id: detail.id }"
           [title]="detail.title"
           [lessons]="allLessons()"
           [extraUnits]="mindMapUnits()"
+          [tier]="'primary'"
         />
       }
     </div>
@@ -134,10 +151,17 @@
               }
             </div>
             @if (canDownload) {
+              <!--
+                One step down from the path-level button above. A path with
+                several modules would otherwise show the same filled button
+                three or four times over, which says every one of them is the
+                thing to do and so says nothing.
+              -->
               <app-container-download-action
                 [scope]="{ kind: 'MODULE', id: module.id }"
                 [title]="module.title"
                 [lessons]="module.lessons"
+                [tier]="'secondary'"
               />
             }
           </div>

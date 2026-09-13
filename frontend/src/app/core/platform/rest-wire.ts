@@ -33,6 +33,8 @@ export interface WireTrackSummary extends WireTranslated {
   readonly order: number;
   readonly module_count: number;
   readonly lesson_count: number;
+  /** Every visible lesson of the track, in reading order. Length equals `lesson_count`. */
+  readonly lesson_ids: readonly string[];
   readonly content_version: number;
   readonly updated_at: string;
 }

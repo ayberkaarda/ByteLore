@@ -3,6 +3,8 @@ package dev.bytelore.server;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,6 +82,45 @@ class PublicContentReadIT extends ContentApiTestSupport {
       }
     }
     assertThat(found).isTrue();
+  }
+
+  /**
+   * The listing carries the track's lesson identifiers, in the same order and with the same
+   * membership the track's own detail reports.
+   *
+   * <p>Asserted against the detail rather than against a literal list because the two are the same
+   * claim made twice: a listing that silently ordered lessons differently, or that included the
+   * retired one, would give a reader a completion count that disagrees with the track they open.
+   * Comparing the endpoints keeps that agreement under test without pinning the seed content.
+   */
+  @Test
+  void tracksListCarriesTheSameLessonIdsInTheSameOrderAsTheTrackDetail() throws Exception {
+    MvcResult detailResult = mockMvc.perform(get("/api/v1/tracks/" + SEED_TRACK_SLUG)).andReturn();
+    assertThat(detailResult.getResponse().getStatus()).isEqualTo(200);
+    List<String> fromDetail = new ArrayList<>();
+    for (JsonNode module : json(detailResult).path("modules")) {
+      for (JsonNode lesson : module.path("lessons")) {
+        fromDetail.add(lesson.path("id").asString());
+      }
+    }
+    assertThat(fromDetail).hasSize(SEED_TRACK_VISIBLE_LESSONS);
+
+    MvcResult listResult = mockMvc.perform(get("/api/v1/tracks")).andReturn();
+    assertThat(listResult.getResponse().getStatus()).isEqualTo(200);
+    List<String> fromList = null;
+    for (JsonNode item : json(listResult).path("items")) {
+      if (SEED_TRACK_SLUG.equals(item.path("slug").asString())) {
+        fromList = new ArrayList<>();
+        for (JsonNode id : item.path("lesson_ids")) {
+          fromList.add(id.asString());
+        }
+      }
+    }
+
+    assertThat(fromList)
+        .as("the listing must expose the track's lesson identifiers")
+        .isNotNull()
+        .containsExactlyElementsOf(fromDetail);
   }
 
   @Test

@@ -44,8 +44,12 @@ const NODE_RADIUS = 8;
  * area. Large enough to stay visible at 1x and to give the connector line
  * something to end on, small enough that the eye sorts it out of the set of
  * things it could click before reading the label.
+ *
+ * Exported so the mind map page's legend can draw its concept mark at this
+ * same radius rather than a second, hand-picked number that this one could
+ * drift away from.
  */
-const CONCEPT_RADIUS = 3.5;
+export const CONCEPT_RADIUS = 3.5;
 
 /**
  * The completed mark is `shared/state-glyph.ts`'s `completed` shape, drawn
@@ -64,7 +68,14 @@ const CONCEPT_RADIUS = 3.5;
  * relationship to its ring that it has at 16px on the track detail page.
  */
 const GLYPH_CENTER = 8;
-const GLYPH_RING_RADIUS = 6.25;
+/**
+ * Exported for the same reason `CONCEPT_RADIUS` is: the mind map page's
+ * legend draws its plain lesson and not-downloaded circles at this radius
+ * too, so every mark in the legend sits in the same 16x16 box the completed
+ * glyph itself is authored on, rather than at a size picked to merely look
+ * right next to it.
+ */
+export const GLYPH_RING_RADIUS = 6.25;
 const GLYPH_SCALE = NODE_RADIUS / GLYPH_RING_RADIUS;
 const COMPLETED_GLYPH_PATHS = shapeFor('completed').paths;
 

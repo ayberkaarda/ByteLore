@@ -60,6 +60,7 @@ interface IpcTrackSummary {
   icon: string | null;
   contentVersion: number;
   lessonCount: number;
+  lessonIds: string[];
   downloadedLessonCount: number;
   totalSizeBytes: number;
   downloadedSizeBytes: number;
@@ -260,6 +261,7 @@ export class TauriPlatformService extends PlatformService {
         icon: row.icon,
         contentVersion: row.contentVersion,
         lessonCount: row.lessonCount,
+        lessonIds: row.lessonIds,
         downloadedLessonCount: row.downloadedLessonCount,
         updateAvailableCount: row.updateAvailableCount,
         availability: row.availability,

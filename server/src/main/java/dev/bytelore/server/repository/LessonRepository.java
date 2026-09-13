@@ -41,4 +41,22 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
    */
   @Query("SELECT l.id FROM Lesson l WHERE l.id IN :ids AND l.deletedAt IS NULL")
   List<UUID> findLiveIds(@Param("ids") Collection<UUID> ids);
+
+  /**
+   * The live lessons of several modules at once, as {@code (moduleId, lessonId)} pairs ordered
+   * within each module.
+   *
+   * <p>Batched over the modules rather than asked per module: the track listing needs this for
+   * every track on the page, and a query per module would turn one page into a query count that
+   * grows with the catalogue.
+   *
+   * <p>Identifiers only, for the reason {@link #findLiveIds} gives. The secondary sort on the
+   * identifier is there so that two lessons sharing a display position still come back in a stable
+   * order across calls.
+   */
+  @Query(
+      "SELECT new dev.bytelore.server.repository.LessonIdRow(l.moduleId, l.id) FROM Lesson l "
+          + "WHERE l.moduleId IN :moduleIds AND l.deletedAt IS NULL "
+          + "ORDER BY l.displayOrder ASC, l.id ASC")
+  List<LessonIdRow> findIdsByModuleIds(@Param("moduleIds") Collection<UUID> moduleIds);
 }

@@ -1,7 +1,7 @@
 <h1 class="text-3xl font-semibold leading-tight tracking-tight">
   {{ 'downloads.heading' | translate }}
 </h1>
-<p class="mt-1 text-text-muted">{{ 'downloads.intro' | translate }}</p>
+<p class="mt-2 text-text-muted">{{ 'downloads.intro' | translate }}</p>
 
 @if (!canDownload) {
   <p class="mt-8 text-text-muted" role="status">{{ 'downloads.onlyOnDesktop' | translate }}</p>
@@ -279,7 +279,7 @@
 
   @if (doneGroups().length > 0) {
     <div class="mt-8">
-      <h2 class="text-lg font-semibold">
+      <h2 class="text-lg font-semibold tracking-tight">
         {{ 'downloads.sectionDone' | translate }}
       </h2>
 
@@ -307,18 +307,31 @@
                     <span class="text-xs text-text-muted">{{
                       'download.deleteTrackHint' | translate
                     }}</span>
+                    <!--
+                      The only button on this screen that earns the filled
+                      danger treatment: it is the second, deliberate click, and
+                      pressing it removes the track's packages for good.
+                    -->
                     <button
                       #trackConfirmButton
                       type="button"
-                      class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
+                      class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast"
                       data-testid="track-confirm-delete"
                       (click)="confirmDeleteTrack(trackId)"
                     >
                       {{ 'download.action.confirmDeleteTrack' | translate }}
                     </button>
+                    <!--
+                      The way out of the confirmation, drawn at the control
+                      weight rather than the divider weight the rest of this
+                      card uses for its edges. Backing out is the safe move of
+                      the pair and has to be as easy to see and hit as the one
+                      that deletes, so it stays a solid button rather than
+                      dropping to the bare label the row actions use.
+                    -->
                     <button
                       type="button"
-                      class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                      class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                       (click)="cancelDeleteTrackRequest()"
                     >
                       {{ 'common.cancel' | translate }}
@@ -333,11 +346,16 @@
                     and no wording rule survives four independent translations
                     - Turkish suffixes alone break any promise that the label
                     stays a substring of the sentence.
+
+                    A quiet row action carrying the danger colour on its label
+                    only: this click opens the confirmation, it does not delete
+                    anything, so it must not wear the filled treatment that
+                    marks the button which actually does.
                   -->
                   <button
                     #trackDeleteButton
                     type="button"
-                    class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-danger hover:bg-surface-hover"
                     data-testid="track-delete"
                     [attr.data-delete-track]="trackId"
                     [title]="'download.hint.deleteTrack' | translate: { title: groupTitle }"
@@ -421,10 +439,12 @@
                       <span class="ml-auto text-xs text-text-muted">{{
                         'download.deleteHint' | translate
                       }}</span>
+                      <!-- The same pair, at lesson scope: filled danger only on
+                           the click that actually removes the package. -->
                       <button
                         #entryConfirmButton
                         type="button"
-                        class="rounded-md bg-danger px-2 py-1 text-xs text-danger-contrast"
+                        class="rounded-md bg-danger px-2 py-1 text-xs font-medium text-danger-contrast"
                         data-testid="lesson-confirm-delete"
                         (click)="confirmDelete(entry.entityId)"
                       >
@@ -432,17 +452,17 @@
                       </button>
                       <button
                         type="button"
-                        class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                        class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                         (click)="cancelDeleteRequest()"
                       >
                         {{ 'common.cancel' | translate }}
                       </button>
                     } @else {
-                      <!-- Same reasoning as the track button above. -->
+                      <!-- Same reasoning, and the same tier, as the track button above. -->
                       <button
                         #entryDeleteButton
                         type="button"
-                        class="ml-auto rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
+                        class="ml-auto rounded-md px-2 py-1 text-xs font-medium text-danger hover:bg-surface-hover"
                         data-testid="lesson-delete"
                         [attr.data-delete-entry]="entry.entityId"
                         [title]="

@@ -183,6 +183,19 @@ describe('LessonPage', () => {
     expect(element.querySelector('[role="alert"]')).not.toBeNull();
   });
 
+  it('gives the rendered lesson exactly one first-level heading, and it is the title', async () => {
+    fake.lessons.set('signals', lesson({ title: 'Signals' }));
+    const element = (await render()).nativeElement as HTMLElement;
+
+    // The body's own markdown starts at h2 and the sections below it are h2s,
+    // so the lesson's title is the only first level there is. A second one
+    // would split the article into two documents for anyone navigating by
+    // heading, and the reader would have no way to tell which was the lesson.
+    const headings = element.querySelectorAll('h1');
+    expect(headings).toHaveLength(1);
+    expect(headings[0].textContent?.trim()).toBe('Signals');
+  });
+
   it('keeps the lesson on screen when recording a completion fails', async () => {
     fake.lessons.set('signals', lesson());
     fake.markProgress = async () => {

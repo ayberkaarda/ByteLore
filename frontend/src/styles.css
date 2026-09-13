@@ -41,9 +41,57 @@ body {
 }
 
 /*
+ * Press feedback, for everything a person clicks: the native button, an
+ * element that has taken the button role, and the anchors used as navigation
+ * items and as buttons. A control that looks identical between the pointer
+ * going down and coming back up leaves the reader guessing whether the click
+ * landed at all, and the cheapest honest answer is the control moving under
+ * the finger.
+ *
+ * The rule is global for the same reason the focus ring above is: a press is
+ * a property of being clickable, not of being a particular component, and a
+ * per-component version would be a list that some new button is eventually
+ * left off.
+ *
+ * Only transform and opacity are transitioned, which is the whole animatable
+ * surface this project allows -- they are also the two the compositor can run
+ * without laying the page out again, which matters more in a desktop webview
+ * than in a browser tab. Colour is deliberately left to change instantly: a
+ * hover fill that fades in trails the pointer down a list of rows, so the
+ * highlight is never quite on the row being looked at. The duration is the
+ * fast step of the scale, because feedback for a press has to arrive inside
+ * the click rather than after it.
+ *
+ * Prose links opt back out of the movement further down: inside a paragraph
+ * the same one-pixel drop pulls a word out of its line while the sentence
+ * around it stays put.
+ */
+button,
+[role='button'],
+a {
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
+}
+
+/*
+ * A disabled button is excluded rather than left to the engine: whether a
+ * control that cannot be activated still matches :active is up to the user
+ * agent, and a dead button that nods when pressed is worse feedback than none.
+ */
+button:not(:disabled):active,
+[role='button']:active,
+a:active {
+  transform: translateY(1px);
+}
+
+/*
  * Motion is opt-in for anyone who has not asked for less of it. Transitions
  * are declared on transform and opacity only, so honouring the preference is
- * a single global switch rather than a per-component audit.
+ * a single global switch rather than a per-component audit. The switch keeps
+ * the end states -- a pressed control still sits a pixel lower while it is
+ * held -- and removes only the travel between them, which is what the
+ * preference asks for.
  */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -202,12 +250,38 @@ body {
   color: var(--color-accent);
 }
 
+/*
+ * A link in running text is not a control with an edge of its own, so it does
+ * not take the global press movement: dropping a word a pixel while the rest
+ * of its line holds still reads as the text breaking, not as a button going
+ * down. The transition stays -- nothing it covers changes here -- and only the
+ * displacement is cancelled.
+ */
+.lesson-body a:active,
+.markdown-body a:active {
+  transform: none;
+}
+
+/*
+ * Inline code -- the single-backtick kind that interrupts a sentence, not the
+ * fenced block below, which is a box of its own.
+ *
+ * It is sized against the prose it sits inside rather than against the UI text
+ * scale used elsewhere on the page. The body around it reads at
+ * --text-reading, so the smaller step landed at 82% of its neighbours: small
+ * enough that an identifier in the middle of a sentence reads as a footnote,
+ * and far enough down the line that its tinted box sits visibly below the run
+ * of text it belongs to. One step up is 94% of the reading size -- close
+ * enough to keep the line even, still a shade tighter than the prose -- and
+ * the fill and the corner radius go on carrying the distinction that the size
+ * difference was being asked to make on its own.
+ */
 .lesson-body code,
 .markdown-body code {
   background: var(--color-code-bg);
   border-radius: var(--radius-sm);
   padding: 0 var(--spacing-1);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /*

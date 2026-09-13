@@ -12,6 +12,14 @@ import { AuthSession } from '../core/auth/auth-session';
  * and downloading need no account, so an anonymous visitor is in a complete
  * state, not an incomplete one, and the screen showing this control offers a
  * way in rather than a report of something missing.
+ *
+ * Signing out is a real action with a consequence, so the button carries a
+ * control edge and a resting fill. It is not filled with the accent colour:
+ * that is reserved for the one action a screen is actually for, and leaving an
+ * account is not what anyone came to the settings screen to do. The edge uses
+ * the strong line weight rather than the divider one — the divider colour
+ * reaches 1.30:1 against the surface behind it and cannot be seen as a
+ * boundary at all.
  */
 @Component({
   selector: 'app-session-menu',
@@ -25,7 +33,7 @@ import { AuthSession } from '../core/auth/auth-session';
         </span>
         <button
           type="button"
-          class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text hover:bg-surface-raised"
+          class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
           (click)="signOut()"
         >
           {{ 'auth.signOut' | translate }}

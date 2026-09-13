@@ -15,6 +15,14 @@ import { ThemeService } from '../core/theme/theme.service';
  * the interface by voice says what they can see — "click Dark" — and a name
  * that does not contain the visible label leaves that command with nothing to
  * match.
+ *
+ * Drawn at the lightest interactive weight there is — colour and a hover fill,
+ * no edge and no resting fill. It is a preference someone flips with the time
+ * of day, and it sits in the header on every screen; an edge or a fill would
+ * give it the presence of an action it does not have. It keeps the ordinary
+ * text size rather than the smaller one used for actions packed into a table
+ * row, because it is also the sole control of its section on the settings
+ * screen, where it stands beside a full-height language field.
  */
 @Component({
   selector: 'app-theme-toggle',
@@ -23,7 +31,7 @@ import { ThemeService } from '../core/theme/theme.service';
   template: `
     <button
       type="button"
-      class="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text hover:bg-surface-raised"
+      class="rounded-md px-3 py-2 text-sm font-medium text-text-muted hover:bg-surface-hover hover:text-text"
       [attr.aria-pressed]="theme.resolved() === 'dark'"
       [title]="'theme.toggle' | translate"
       data-testid="theme-toggle"

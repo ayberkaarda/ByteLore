@@ -77,7 +77,7 @@ describe('SettingsPage', () => {
     // writes the thing it names, and a second implementation here would be a
     // second answer to the same question.
     expect(fixture.nativeElement.querySelector('app-language-switcher')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('app-theme-toggle')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-theme-select')).not.toBeNull();
   });
 
   it('keeps the language control a native select with the shared look', async () => {

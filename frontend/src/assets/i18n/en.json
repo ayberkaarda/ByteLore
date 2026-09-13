@@ -16,6 +16,7 @@
   "theme": {
     "light": "Light",
     "dark": "Dark",
+    "system": "System",
     "toggle": "Change theme"
   },
   "language": {
@@ -152,6 +153,11 @@
   "mindMap": {
     "backToTrack": "Back to the learning path",
     "heading": "Mind map",
+    "legend": {
+      "heading": "Map key",
+      "lesson": "Lesson, not yet completed",
+      "concept": "Concept mentioned in a lesson, not a lesson of its own"
+    },
     "loading": "Loading…",
     "notDownloaded": "This mind map has not been downloaded to this device yet.",
     "notInLibrary": "Not downloaded",

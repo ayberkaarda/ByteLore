@@ -30,6 +30,16 @@ import { TranslatePipe } from '@ngx-translate/core';
  * top of the page. Marked this way it stays focusable, stays in the tab order
  * and is still announced as unavailable; refusing the press is then the
  * handlers' own job, and they do it on their first line.
+ *
+ * Both buttons are drawn with a control edge and a resting fill: paging is a
+ * repeated, deliberate action and the pair has to be findable under a long
+ * list without being filled with the accent colour, which belongs to whatever
+ * the screen itself is for. The edge uses the strong line weight — the divider
+ * colour these carried before reaches only 1.30:1 against the page, which is
+ * below the 3:1 a boundary needs to be visible, so the buttons read as two
+ * words rather than as two controls. While a bound is unavailable the hover
+ * fill is held back as well, so the pointer does not suggest a press that the
+ * handler will refuse.
  */
 @Component({
   selector: 'app-pagination',
@@ -43,7 +53,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <button
         type="button"
         data-testid="pagination-previous"
-        class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
         [attr.aria-disabled]="page() <= 0 ? true : null"
         [title]="'admin.common.previousPage' | translate"
         (click)="goToPrevious()"
@@ -61,7 +71,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <button
         type="button"
         data-testid="pagination-next"
-        class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
         [attr.aria-disabled]="isOnLastPage() ? true : null"
         [title]="'admin.common.nextPage' | translate"
         (click)="goToNext()"

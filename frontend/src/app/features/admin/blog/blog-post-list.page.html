@@ -15,7 +15,7 @@
     </label>
     <select
       id="posts-filter-status"
-      class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+      class="bl-select rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text"
       [value]="status()"
       (change)="onStatusChange($event)"
     >
@@ -32,7 +32,7 @@
     </label>
     <select
       id="posts-filter-source"
-      class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+      class="bl-select rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text"
       [value]="source()"
       (change)="onSourceChange($event)"
     >
@@ -49,7 +49,7 @@
     </label>
     <select
       id="posts-filter-sort"
-      class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+      class="bl-select rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text"
       [value]="sort()"
       (change)="onSortChange($event)"
     >
@@ -71,7 +71,7 @@
     -->
     <input
       id="posts-filter-search"
-      class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+      class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted"
       type="search"
       [attr.placeholder]="'admin.posts.filter.searchPlaceholder' | translate"
       [value]="qDraft()"

@@ -51,14 +51,16 @@
     @if (!counts().transfer) {
       @if (!counts().complete) {
         <!--
-          The container-level action is the one primary in whatever view
-          embeds this component — a track or module page shows this button
-          once and any per-lesson Download/Update inside it is secondary, so
-          the accent fill belongs here rather than on a row.
+          The container-level action outranks any per-lesson Download/Update
+          nested inside it, so the accent fill belongs here rather than on a
+          row. Which tier it actually takes is the embedding view's call: a
+          path that offers itself and then each of its modules has one screen
+          and several of these buttons, and only the first of them can be the
+          accent one.
         -->
         <button
           type="button"
-          class="rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast hover:opacity-90 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:opacity-50"
+          [class]="acquireButtonClass()"
           [attr.aria-disabled]="busy() ? true : null"
           [title]="
             (counts().updateAvailableCount > 0 ? 'download.hint.update' : 'download.hint.download')

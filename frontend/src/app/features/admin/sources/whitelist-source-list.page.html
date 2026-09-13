@@ -15,7 +15,7 @@
     </label>
     <select
       id="sources-filter-sort"
-      class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+      class="bl-select rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text"
       [value]="sort()"
       (change)="onSortChange($event)"
     >
@@ -120,7 +120,7 @@
                   </button>
                   <button
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
                     (click)="cancelDelete()"
                   >
                     {{ 'common.cancel' | translate }}
@@ -139,7 +139,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                     [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="toggleEnabled(source)"
                   >
@@ -149,7 +149,7 @@
                     }}
                   </button>
                   <a
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text no-underline"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-text-muted no-underline hover:bg-surface-hover hover:text-text"
                     [routerLink]="['/admin/sources', source.id]"
                   >
                     {{ 'admin.sources.edit' | translate }}
@@ -157,7 +157,7 @@
                   <button
                     #deleteButton
                     type="button"
-                    class="rounded-md border border-border px-2 py-1 text-xs text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-danger hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                     [attr.data-delete-for]="source.id"
                     [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="requestDelete(source)"

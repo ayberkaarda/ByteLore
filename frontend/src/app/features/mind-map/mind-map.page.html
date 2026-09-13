@@ -32,7 +32,7 @@
   <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight">
     {{ 'mindMap.heading' | translate }}
   </h1>
-  <p class="mt-1 text-text-muted">{{ detail.title }}</p>
+  <p class="mt-2 text-text-muted">{{ detail.title }}</p>
 
   @if (noteKey(); as key) {
     <p class="mt-2 text-xs text-text-muted" role="status" data-testid="discovery-note">
@@ -55,6 +55,65 @@
       </div>
     </div>
   } @else if (mindMap(); as map) {
+    <!--
+      What the four marks drawn on the tree below mean. Sighted-only: every
+      mark already carries its meaning in words through `aria-label` on its
+      own `treeitem` (see `mind-map-tree.html`), so this strip adds nothing a
+      screen reader needs and is not itself a `role="tree"` or `treeitem` —
+      it is a plain list, read with `role="list"` because Tailwind's
+      preflight strips the implicit list role from a styled `<ul>` in
+      Safari.
+    -->
+    <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-text-muted">
+      <span class="font-medium text-text">{{ 'mindMap.legend.heading' | translate }}</span>
+      <ul
+        role="list"
+        class="flex flex-wrap items-center gap-x-5 gap-y-2"
+        data-testid="mind-map-legend"
+      >
+        <li class="flex items-center gap-1.5">
+          <svg
+            viewBox="0 0 16 16"
+            class="h-4 w-4 shrink-0 fill-none stroke-success"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="8" cy="8" [attr.r]="legendIconRadius" class="fill-surface-raised" />
+            @for (d of legendCompletedGlyphPaths; track d) {
+              <path [attr.d]="d" />
+            }
+          </svg>
+          <span>{{ 'progress.completed' | translate }}</span>
+        </li>
+        <li class="flex items-center gap-1.5">
+          <svg viewBox="0 0 16 16" class="h-4 w-4 shrink-0" aria-hidden="true">
+            <circle cx="8" cy="8" [attr.r]="legendIconRadius" class="fill-accent" />
+          </svg>
+          <span>{{ 'mindMap.legend.lesson' | translate }}</span>
+        </li>
+        <li class="flex items-center gap-1.5">
+          <svg viewBox="0 0 16 16" class="h-4 w-4 shrink-0" aria-hidden="true">
+            <circle cx="8" cy="8" [attr.r]="legendConceptRadius" class="fill-text-muted" />
+          </svg>
+          <span>{{ 'mindMap.legend.concept' | translate }}</span>
+        </li>
+        <li class="flex items-center gap-1.5">
+          <svg
+            viewBox="0 0 16 16"
+            class="h-4 w-4 shrink-0 fill-surface-raised stroke-border"
+            stroke-width="1.5"
+            stroke-dasharray="3,2"
+            aria-hidden="true"
+          >
+            <circle cx="8" cy="8" [attr.r]="legendIconRadius" />
+          </svg>
+          <span>{{ 'mindMap.notInLibrary' | translate }}</span>
+        </li>
+      </ul>
+    </div>
+
     @defer (on immediate) {
       <div class="mt-6">
         <app-mind-map-tree

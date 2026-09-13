@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideTranslateService } from '@ngx-translate/core';
+import { TranslateService, provideTranslateService } from '@ngx-translate/core';
 
 import { FakePlatformService } from '../../testing/fake-platform.service';
 import { LocaleService } from '../core/i18n/locale.service';
@@ -51,9 +51,9 @@ describe('LessonDownloadControls', () => {
     const buttons = wrapper(fixture).querySelectorAll('button');
 
     expect(buttons.length).toBe(1);
-    // A row action, quiet rather than outlined: the ghost tier carries no
-    // border of its own, distinguishing it from the confirm/cancel pair a
-    // click on it opens.
+    // A row action, quiet rather than outlined: it carries no border of its
+    // own, which is what separates it from the acquire button that takes its
+    // place in the states where nothing is stored yet.
     expect(buttons[0].className).toContain('text-text-muted');
     expect(buttons[0].className).not.toContain('border-border');
   });
@@ -129,10 +129,26 @@ describe('LessonDownloadControls', () => {
     const after = Array.from(wrapper(fixture).querySelectorAll('button'));
     expect(after.length).toBe(2);
 
-    const confirm = after.find((button) => button.className.includes('bg-danger'));
-    const cancel = after.find((button) => button.className.includes('border-border'));
+    // Found by what they say rather than by how they are drawn. Backing out of
+    // the confirmation is an inline action like every other verb in this row
+    // and carries no border, so a search for one would have found the wrong
+    // button or none at all.
+    const translate = TestBed.inject(TranslateService);
+    const confirm = after.find((button) =>
+      button.textContent?.includes(translate.instant('download.action.confirmDelete')),
+    );
+    const cancel = after.find((button) =>
+      button.textContent?.includes(translate.instant('common.cancel')),
+    );
     expect(confirm).not.toBeUndefined();
     expect(cancel).not.toBeUndefined();
+
+    // Only the press that destroys something takes a fill; the way out of the
+    // question is drawn as quietly as the button that opened it.
+    expect(confirm!.className).toContain('bg-danger');
+    expect(cancel!.className).not.toContain('bg-danger');
+    expect(cancel!.className).not.toContain('border-border');
+    expect(cancel!.className).toContain('text-text-muted');
 
     // The original at-rest delete button — with its `download.hint.delete`
     // aria-label — is gone: what remains is only the confirm/cancel pair.

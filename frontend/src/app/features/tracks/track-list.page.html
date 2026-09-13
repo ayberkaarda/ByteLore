@@ -20,16 +20,24 @@
     </button>
   </div>
 } @else if (tracks().length === 0) {
-  <p class="mt-8 text-text-muted">{{ 'tracks.empty' | translate }}</p>
-  @if (noteKey(); as key) {
-    <p class="mt-2 text-xs text-text-muted" role="status" data-testid="discovery-note">
-      {{ key | translate }}
-    </p>
-  }
+  <!-- Empty state per bytelore-ui-patterns §7: a box would read as a warning;
+       this is neither an error nor missing data, so it stays boxless
+       whitespace instead. -->
+  <div class="mt-10 text-center">
+    <p class="text-base text-text">{{ 'tracks.empty' | translate }}</p>
+    @if (noteKey(); as key) {
+      <p class="mt-2 text-sm text-text-muted" role="status" data-testid="discovery-note">
+        {{ key | translate }}
+      </p>
+    }
+  </div>
 } @else {
   <ul class="mt-8 grid gap-4 sm:grid-cols-2">
     @for (track of tracks(); track track.id) {
-      <li class="rounded-lg border border-border bg-surface p-5">
+      <!-- flex-col + the meta line's mt-auto (below) keep the meta row flush
+           with each card's own bottom edge regardless of how long that
+           card's description is, instead of trailing it at a fixed mt-4. -->
+      <li class="flex flex-col rounded-lg border border-border bg-surface p-5">
         <div class="flex items-start justify-between gap-2">
           <a
             class="text-lg font-semibold tracking-tight text-text no-underline hover:underline"
@@ -45,20 +53,50 @@
           <p class="mt-2 text-sm text-text-muted">{{ track.description }}</p>
         }
 
-        <!-- tabular-nums keeps the counts on one vertical rhythm across the
-             grid: proportional digits make two cards of equal length look
-             ragged against each other. -->
-        <p class="mt-4 text-xs tabular-nums text-text-muted">
-          {{ 'tracks.lessonCount' | translate: { count: track.lessonCount } }}
-          @if (canDownload) {
-            <span class="ml-2">
+        <!-- The two counts a card can carry — how much is stored on this
+             device and how much of the path is read — sit on their own rows
+             rather than sharing one line: the icon and the muted-only
+             colouring are what tell a reader which is which, so the two can
+             never run together into one ambiguous count. mt-auto moves here,
+             onto the row that wraps both, so the pair still sits flush with
+             the card's bottom edge as one unit; tabular-nums keeps digits on
+             one vertical rhythm across the grid. -->
+        <div class="mt-auto flex flex-col gap-1 pt-4" data-testid="track-meta">
+          <p class="text-xs tabular-nums text-text-muted">
+            {{ 'tracks.lessonCount' | translate: { count: track.lessonCount } }}
+            @if (canDownload) {
+              <span class="ml-2">
+                {{
+                  'tracks.downloaded'
+                    | translate: { done: track.downloadedLessonCount, total: track.lessonCount }
+                }}
+              </span>
+            }
+          </p>
+          @if (track.lessonCount > 0) {
+            <!-- The same completed-count reading the track detail screen
+                 gives at the top of a path, repeated here per card. The
+                 leading glyph is the visual cue that separates this row from
+                 the downloaded row above it — the same mark a finished lesson
+                 row carries in the detail view — so the pair reads as two
+                 distinct facts even at a glance, with no wording added to
+                 either. -->
+            <p
+              class="flex items-center gap-1 text-xs tabular-nums text-text-muted"
+              data-testid="track-completed-count"
+            >
+              <app-state-glyph kind="completed" />
               {{
-                'tracks.downloaded'
-                  | translate: { done: track.downloadedLessonCount, total: track.lessonCount }
+                'track.completedCount'
+                  | translate
+                    : {
+                        completed: trackCompletionCounts().get(track.id) ?? 0,
+                        total: track.lessonCount,
+                      }
               }}
-            </span>
+            </p>
           }
-        </p>
+        </div>
       </li>
     }
   </ul>

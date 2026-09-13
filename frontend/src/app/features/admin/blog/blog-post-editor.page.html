@@ -58,7 +58,7 @@
       }}</label>
       <input
         id="editor-slug"
-        class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text disabled:opacity-60"
+        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         type="text"
         [value]="slug()"
         [disabled]="!canEditBodyNow()"
@@ -78,7 +78,7 @@
       }}</label>
       <input
         id="editor-title"
-        class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text disabled:opacity-60"
+        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         type="text"
         [value]="title()"
         [disabled]="!canEditBodyNow()"
@@ -100,7 +100,7 @@
       </label>
       <input
         id="editor-source-url"
-        class="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text disabled:opacity-60"
+        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         type="url"
         [value]="sourceUrl()"
         [disabled]="!canEditSourceUrlNow()"
@@ -133,7 +133,7 @@
         }}</label>
         <textarea
           id="editor-body"
-          class="min-h-64 rounded-md border border-border bg-surface px-3 py-2 font-mono text-sm text-text disabled:opacity-60"
+          class="min-h-64 rounded-md border border-border-strong bg-surface-raised px-3 py-2 font-mono text-sm text-text placeholder:text-text-muted disabled:opacity-60"
           [value]="bodyMarkdown()"
           [disabled]="!canEditBodyNow()"
           aria-required="true"
@@ -233,7 +233,7 @@
           <textarea
             #reasonField
             id="editor-reason"
-            class="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text"
+            class="mt-1 w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted"
             aria-required="true"
             aria-describedby="editor-reason-hint"
             [attr.placeholder]="'admin.editor.reasonPlaceholder' | translate"
@@ -272,7 +272,7 @@
             </button>
             <button
               type="button"
-              class="rounded-md border border-border px-3 py-2 text-sm text-text"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
               (click)="cancelPendingAction()"
             >
               {{ 'common.cancel' | translate }}
@@ -290,7 +290,7 @@
             -->
             <button
               type="button"
-              class="rounded-md border border-border px-3 py-2 text-sm text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
               [attr.data-action]="action"
               [attr.aria-disabled]="transitioning() ? true : null"
               (click)="onAction(action)"

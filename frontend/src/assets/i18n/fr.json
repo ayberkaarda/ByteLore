@@ -16,6 +16,7 @@
   "theme": {
     "light": "Clair",
     "dark": "Sombre",
+    "system": "Système",
     "toggle": "Changer de thème"
   },
   "language": {
@@ -152,6 +153,11 @@
   "mindMap": {
     "backToTrack": "Retour au parcours",
     "heading": "Carte mentale",
+    "legend": {
+      "heading": "Légende de la carte",
+      "lesson": "Leçon, pas encore terminée",
+      "concept": "Notion mentionnée dans une leçon, pas une leçon à part entière"
+    },
     "loading": "Chargement…",
     "notDownloaded": "Cette carte mentale n'a pas encore été téléchargée sur cet appareil.",
     "notInLibrary": "Non téléchargée",
