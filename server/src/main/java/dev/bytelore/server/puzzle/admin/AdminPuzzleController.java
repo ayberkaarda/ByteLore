@@ -78,8 +78,10 @@ public class AdminPuzzleController {
 
   @PatchMapping("/{id}")
   public AdminPuzzleResponse update(
-      @PathVariable UUID id, @Valid @RequestBody UpdatePuzzleRequest request) {
-    return service.update(id, request);
+      @PathVariable UUID id,
+      @Valid @RequestBody UpdatePuzzleRequest request,
+      @AuthenticationPrincipal AccessTokenClaims caller) {
+    return service.update(id, request, caller.userId());
   }
 
   @DeleteMapping("/{id}")

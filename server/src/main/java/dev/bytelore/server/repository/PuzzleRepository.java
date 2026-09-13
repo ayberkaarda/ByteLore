@@ -48,12 +48,18 @@ public interface PuzzleRepository extends JpaRepository<Puzzle, UUID> {
    * search term). Comparing a null parameter through {@code LOWER(...)} leaves the driver without a
    * resolved bind type, and its fallback for an untyped null is a binary type that {@code lower()}
    * has no overload for -- so the empty search box would fail rather than match everything.
+   *
+   * <p>The {@code ESCAPE} clause names the character the caller's own {@code %} and {@code _} are
+   * escaped with, so a search term is matched literally rather than being read as a pattern of its
+   * own. It is written out even though it is the database's default: the pattern builder and this
+   * query have to agree on one character, and agreeing on an unstated default is how they stop
+   * agreeing.
    */
   @Query(
       """
       SELECT p FROM Puzzle p
       WHERE (:status IS NULL OR p.status = :status)
-        AND LOWER(p.title) LIKE LOWER(:titlePattern)
+        AND LOWER(p.title) LIKE LOWER(:titlePattern) ESCAPE '\\'
       """)
   Page<Puzzle> search(
       @Param("status") PuzzleStatus status,

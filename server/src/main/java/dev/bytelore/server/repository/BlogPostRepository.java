@@ -44,13 +44,19 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID> {
    * it: {@code titlePattern} is always a non-null {@code String} ({@code "%"} when the caller
    * supplied no {@code q}, {@code "%term%"} otherwise -- see {@code AdminBlogPostService#list}), so
    * this predicate never binds a null parameter and Hibernate never has to guess its type.
+   *
+   * <p>The {@code ESCAPE} clause names the character the caller's own {@code %} and {@code _} are
+   * escaped with, so a search term is matched literally rather than being read as a pattern of its
+   * own. It is written out even though it is the database's default: the pattern builder and this
+   * query have to agree on one character, and agreeing on an unstated default is how they stop
+   * agreeing.
    */
   @Query(
       """
       SELECT p FROM BlogPost p
       WHERE (:status IS NULL OR p.status = :status)
         AND (:source IS NULL OR p.source = :source)
-        AND LOWER(p.title) LIKE LOWER(:titlePattern)
+        AND LOWER(p.title) LIKE LOWER(:titlePattern) ESCAPE '\\'
       """)
   Page<BlogPost> search(
       @Param("status") BlogStatus status,

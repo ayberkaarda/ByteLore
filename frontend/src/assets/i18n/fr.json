@@ -329,6 +329,7 @@
     "PUZZLE_ALREADY_ATTEMPTED": "Vous avez déjà répondu à l'énigme du jour.",
     "PUZZLE_DATE_ALREADY_TAKEN": "Une autre énigme est déjà programmée pour ce jour.",
     "PUZZLE_NOT_EDITABLE": "Une énigme publiée ne peut plus être modifiée.",
+    "PUBLISHED_POST_NOT_EDITABLE": "Un article publié ne peut plus être modifié directement ; annulez d'abord sa publication.",
     "PUZZLE_LINE_OUT_OF_RANGE": "Cette ligne est hors du code."
   },
   "auth": {

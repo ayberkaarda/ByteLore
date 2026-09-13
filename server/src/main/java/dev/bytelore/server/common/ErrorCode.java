@@ -77,6 +77,20 @@ public enum ErrorCode {
   SOURCE_UPDATE_NOT_VERIFIED(HttpStatus.CONFLICT),
   PARENT_NOT_EMPTY(HttpStatus.CONFLICT),
   PUBLISHED_DELETE_BLOCKED(HttpStatus.CONFLICT),
+  /**
+   * An edit to a blog post that is already published.
+   *
+   * <p>Readers are already being served the published text, and the approval that let it out was a
+   * decision about exactly that text. Editing it in place would change what an administrator signed
+   * off on without passing through review again, so a published post is frozen: it is unpublished
+   * first -- which is itself an audited transition back to {@code DRAFT} -- or superseded by a new
+   * post.
+   *
+   * <p>Deliberately a separate code from the daily puzzle's own freeze, even though the two are
+   * shaped alike: they are different resources with different remedies (a puzzle is never
+   * unpublished, it is replaced), and a client branching on one must not be made to branch on both.
+   */
+  PUBLISHED_POST_NOT_EDITABLE(HttpStatus.CONFLICT),
   ORDER_SET_INCOMPLETE(HttpStatus.CONFLICT),
   PIPELINE_RUN_IN_PROGRESS(HttpStatus.CONFLICT),
   CONTENT_VERSION_SUPERSEDED(HttpStatus.CONFLICT),

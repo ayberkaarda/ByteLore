@@ -131,8 +131,18 @@ public class AdminPuzzleService {
     return toResponse(requirePuzzle(id));
   }
 
+  /**
+   * Edits a puzzle that has not been published yet.
+   *
+   * <p>A puzzle waiting for a decision is not editable in place. A reviewer approves the listing
+   * they read, and an edit that left the row in {@code PENDING_REVIEW} would let a different
+   * listing -- possibly a different answer line -- be approved than the one that was reviewed, with
+   * nothing in the trail to show it. So a content change made while the puzzle is in review sends
+   * it back to {@code DRAFT} and records that as a transition of its own: the author resubmits, and
+   * the reviewer decides again on what they can actually see.
+   */
   @Transactional
-  public AdminPuzzleResponse update(UUID id, UpdatePuzzleRequest request) {
+  public AdminPuzzleResponse update(UUID id, UpdatePuzzleRequest request, UUID actorUserId) {
     Puzzle puzzle = requirePuzzle(id);
     requireVersion(puzzle.getVersion(), request.version());
 
@@ -181,6 +191,18 @@ public class AdminPuzzleService {
     PuzzleCode.requireLineWithinCode(puzzle.getBuggyLine(), puzzle.getCode(), "buggy_line");
 
     if (changed) {
+      if (puzzle.getStatus() == PuzzleStatus.PENDING_REVIEW) {
+        // Back to the author's desk, audited. `publishedAt` is left alone deliberately: a puzzle
+        // in review has never been published, so there is nothing there to clear.
+        puzzle.setStatus(PuzzleStatus.DRAFT);
+        auditor.record(
+            PuzzleStep.DRAFT,
+            puzzle.getId(),
+            actorUserId,
+            PuzzleStatus.PENDING_REVIEW,
+            PuzzleStatus.DRAFT,
+            null);
+      }
       puzzle.setUpdatedAt(now());
     }
     return toResponse(puzzles.save(puzzle));
@@ -390,12 +412,19 @@ public class AdminPuzzleService {
   /**
    * Builds the {@code LIKE} pattern for the title filter. A blank search term becomes {@code "%"},
    * which matches every title, so the query always receives a non-null pattern.
+   *
+   * <p>Everything the caller typed is a literal. {@code %}, {@code _} and the escape character
+   * itself are neutralised before the surrounding wildcards are added, so a search for {@code
+   * "100%"} finds the titles containing that text rather than every title containing {@code "100"};
+   * the query names the same escape character in its {@code ESCAPE} clause. The escape character is
+   * doubled first -- doing it after would escape the backslashes this method just introduced.
    */
   private static String buildTitlePattern(String query) {
     if (query == null || query.isBlank()) {
       return "%";
     }
-    return "%" + query.trim() + "%";
+    String literal = query.trim().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+    return "%" + literal + "%";
   }
 
   private static PuzzleStatus parseStatus(String value) {

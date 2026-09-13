@@ -329,6 +329,7 @@
     "PUZZLE_ALREADY_ATTEMPTED": "Bugünün bulmacasını zaten cevapladınız.",
     "PUZZLE_DATE_ALREADY_TAKEN": "O gün için başka bir bulmaca zaten planlanmış.",
     "PUZZLE_NOT_EDITABLE": "Yayımlanmış bir bulmaca artık değiştirilemez.",
+    "PUBLISHED_POST_NOT_EDITABLE": "Yayımlanmış bir yazı doğrudan düzenlenemez; önce yayından kaldırın.",
     "PUZZLE_LINE_OUT_OF_RANGE": "Bu satır kodun dışında."
   },
   "auth": {

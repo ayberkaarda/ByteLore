@@ -127,10 +127,27 @@ public class AdminBlogPostService {
     return toResponse(requireBlogPost(id));
   }
 
+  /**
+   * Edits a post that is not published.
+   *
+   * <p>Two rules beyond the field-level ones. A published post is frozen: readers are already being
+   * served it and an administrator approved exactly that text, so it is unpublished -- an audited
+   * transition of its own -- before it can be edited again. And a post waiting for a decision
+   * cannot be edited in place: a reviewer approves the text they read, so a content change made
+   * while the post sits in review sends it back to {@code DRAFT} and records that as a transition,
+   * rather than quietly handing the reviewer something other than what they opened.
+   */
   @Transactional
-  public AdminBlogPostResponse update(UUID id, UpdateBlogPostRequest request, Role callerRole) {
+  public AdminBlogPostResponse update(
+      UUID id, UpdateBlogPostRequest request, Role callerRole, UUID actorUserId) {
     BlogPost post = requireBlogPost(id);
     requireVersion(post.getVersion(), request.version());
+
+    if (post.getStatus() == BlogStatus.PUBLISHED) {
+      throw new ApiException(
+          ErrorCode.PUBLISHED_POST_NOT_EDITABLE,
+          "A published post is frozen; unpublish it first, or publish a new one.");
+    }
 
     boolean editsSourceUrl =
         request.sourceUrl() != null && !Objects.equals(request.sourceUrl(), post.getSourceUrl());
@@ -181,6 +198,20 @@ public class AdminBlogPostService {
     }
 
     if (changed) {
+      if (post.getStatus() == BlogStatus.PENDING_REVIEW) {
+        // Back to the author's desk, audited. `publishedAt` is left alone deliberately: a post in
+        // review has never been published, so there is nothing there to clear.
+        post.setStatus(BlogStatus.DRAFT);
+        auditor.record(
+            PipelineStep.DRAFT,
+            post.getId(),
+            post.getSourceUpdateId(),
+            null,
+            actorUserId,
+            BlogStatus.PENDING_REVIEW,
+            BlogStatus.DRAFT,
+            null);
+      }
       post.setUpdatedAt(now());
     }
     BlogPost saved = blogPosts.save(post);
@@ -508,12 +539,19 @@ public class AdminBlogPostService {
    * or absent {@code q} becomes {@code "%"}, which matches every title (the title column is never
    * null or blank, so this is equivalent to not filtering at all) -- the repository query always
    * receives a non-null pattern, which is the whole point (see the Javadoc on {@code search}).
+   *
+   * <p>Everything the caller typed is a literal. {@code %}, {@code _} and the escape character
+   * itself are neutralised before the surrounding wildcards are added, so a search for {@code
+   * "100%"} finds the titles containing that text rather than every title containing {@code "100"};
+   * the query names the same escape character in its {@code ESCAPE} clause. The escape character is
+   * doubled first -- doing it after would escape the backslashes this method just introduced.
    */
   private static String buildTitlePattern(String query) {
     if (query == null || query.isBlank()) {
       return "%";
     }
-    return "%" + query.trim() + "%";
+    String literal = query.trim().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+    return "%" + literal + "%";
   }
 
   private static BlogStatus parseStatus(String value) {

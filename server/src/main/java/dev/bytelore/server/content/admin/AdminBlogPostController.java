@@ -68,7 +68,7 @@ public class AdminBlogPostController {
       @PathVariable UUID id,
       @Valid @RequestBody UpdateBlogPostRequest request,
       @AuthenticationPrincipal AccessTokenClaims caller) {
-    return service.update(id, request, caller.role());
+    return service.update(id, request, caller.role(), caller.userId());
   }
 
   @DeleteMapping("/{id}")

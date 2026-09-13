@@ -329,6 +329,7 @@
     "PUZZLE_ALREADY_ATTEMPTED": "Sie haben das heutige Rätsel bereits beantwortet.",
     "PUZZLE_DATE_ALREADY_TAKEN": "Für diesen Tag ist bereits ein anderes Rätsel geplant.",
     "PUZZLE_NOT_EDITABLE": "Ein veröffentlichtes Rätsel kann nicht mehr geändert werden.",
+    "PUBLISHED_POST_NOT_EDITABLE": "Ein veröffentlichter Beitrag kann nicht mehr direkt bearbeitet werden; heben Sie zuerst die Veröffentlichung auf.",
     "PUZZLE_LINE_OUT_OF_RANGE": "Diese Zeile liegt außerhalb des Listings."
   },
   "auth": {

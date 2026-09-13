@@ -259,17 +259,24 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
-      # The Linux artifact uploaded below grew from 467 MB to 838 MB across
-      # recent runs with no known cause, while the Windows growth over the
-      # same period is explained by newly-added updater artifacts. This step
-      # inventories what is actually sitting in the bundle directory right
-      # before it is uploaded, so the next size jump can be attributed to a
-      # leftover staging directory, a duplicated file, or unstripped debug
-      # information instead of guessed at from the outside. It runs even
-      # after a failed packaging step, because a run that fails late still
-      # produced bundles worth measuring. Its own failures must never fail
-      # the build -- a broken diagnostic is not a broken package -- so every
-      # command here is best effort and the step always exits successfully.
+      # This step's own measurement (run 34768317955, 2026-09-13) found the
+      # cause of the Linux artifact's 467 MB -> 838 MB growth: `bundle/**`
+      # below used to upload Tauri's staging directories alongside the actual
+      # installers. `bundle/appimage/ByteLore.AppDir/` (504 MB -- a second,
+      # unstripped copy of the binary plus its own copies of webkit2gtk,
+      # javascriptcoregtk and icudata) and `bundle/deb/ByteLore_0.1.0_amd64/`
+      # (343 MB -- the .deb's staging tree, a third copy of the binary) are
+      # intermediate scratch space Tauri leaves behind after building the
+      # `.AppImage` and `.deb` it packages from them; nothing reads them back.
+      # The "Upload installers" step below now names only the installers and
+      # their `.sig` files. Kept here as a permanent check rather than removed
+      # once satisfied: a future Tauri version could change what it leaves in
+      # `bundle/`, and this is what would show the next such jump instead of
+      # it being guessed at from the outside. It runs even after a failed
+      # packaging step, because a run that fails late still produced bundles
+      # worth measuring. Its own failures must never fail the build -- a
+      # broken diagnostic is not a broken package -- so every command here is
+      # best effort and the step always exits successfully.
       - name: Measure bundle contents
         if: always()
         continue-on-error: true
@@ -312,11 +319,27 @@ jobs:
 
           exit 0
 
+      # Named per format rather than `bundle/**`: the latter also swept up
+      # Tauri's staging directories (see "Measure bundle contents" above),
+      # inflating the Linux artifact roughly fourfold with copies of the
+      # binary and its shared libraries that nothing downloads for. A pattern
+      # that matches nothing on one leg of the OS matrix (e.g. `msi/` on
+      # Linux) is silently skipped by upload-artifact as long as the combined
+      # set across all lines is non-empty, so one list serves both legs.
       - name: Upload installers
         uses: actions/upload-artifact@v7
         with:
           name: bytelore-${{ matrix.os }}
           path: |
-            desktop/src-tauri/target/debug/bundle/**
+            desktop/src-tauri/target/debug/bundle/appimage/*.AppImage
+            desktop/src-tauri/target/debug/bundle/appimage/*.AppImage.sig
+            desktop/src-tauri/target/debug/bundle/deb/*.deb
+            desktop/src-tauri/target/debug/bundle/deb/*.deb.sig
+            desktop/src-tauri/target/debug/bundle/rpm/*.rpm
+            desktop/src-tauri/target/debug/bundle/rpm/*.rpm.sig
+            desktop/src-tauri/target/debug/bundle/msi/*.msi
+            desktop/src-tauri/target/debug/bundle/msi/*.msi.sig
+            desktop/src-tauri/target/debug/bundle/nsis/*.exe
+            desktop/src-tauri/target/debug/bundle/nsis/*.exe.sig
           retention-days: 7
           if-no-files-found: error

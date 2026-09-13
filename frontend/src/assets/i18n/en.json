@@ -329,6 +329,7 @@
     "PUZZLE_ALREADY_ATTEMPTED": "You have already answered today's puzzle.",
     "PUZZLE_DATE_ALREADY_TAKEN": "Another puzzle is already scheduled for that day.",
     "PUZZLE_NOT_EDITABLE": "A published puzzle can no longer be changed.",
+    "PUBLISHED_POST_NOT_EDITABLE": "A published post can no longer be edited directly; unpublish it first.",
     "PUZZLE_LINE_OUT_OF_RANGE": "That line is outside the listing."
   },
   "auth": {

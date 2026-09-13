@@ -27,11 +27,19 @@ export class ElapsedPipe implements PipeTransform {
       return '';
     }
     const locale = this.activeLocale.value();
-    const totalSeconds = Math.max(0, value) / 1000;
-    const minutes = Math.floor(totalSeconds / 60);
+    // Converted to whole tenths-of-a-second in one division and kept as
+    // integers from there on. Deriving minutes and seconds by subtracting
+    // scaled floating-point seconds (`totalSeconds - minutes * 60`) hits IEEE
+    // 754 cancellation — e.g. 60.3 - 60 evaluates to 0.29999999999999972 in
+    // JS — which then truncates down to the wrong tenth. Integer subtraction
+    // has no such error, so the tenth shown always matches the tenth held.
+    const totalTenths = Math.floor(Math.max(0, value) / 100);
+    const minutes = Math.floor(totalTenths / 600);
     // Truncated to tenths rather than rounded to them: rounding 59.97 seconds
-    // up produces "0:60.0", a reading no stopwatch has ever shown.
-    const seconds = Math.floor((totalSeconds - minutes * 60) * 10) / 10;
+    // up produces "0:60.0", a reading no stopwatch has ever shown. The floor
+    // above already performs that truncation, once, at the finest unit shown.
+    const secondsTenths = totalTenths - minutes * 600;
+    const seconds = Math.floor(secondsTenths / 10) + (secondsTenths % 10) / 10;
     const minutesText = new Intl.NumberFormat(locale, { useGrouping: false }).format(minutes);
     const secondsText = new Intl.NumberFormat(locale, {
       minimumIntegerDigits: 2,

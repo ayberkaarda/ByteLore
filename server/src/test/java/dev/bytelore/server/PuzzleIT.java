@@ -312,6 +312,126 @@ class PuzzleIT extends ContentApiTestSupport {
     assertThat(errorCode(removal)).isEqualTo("PUBLISHED_DELETE_BLOCKED");
   }
 
+  /**
+   * A puzzle edited while it is waiting for a decision goes back to its author, and the trail says
+   * so.
+   *
+   * <p>The rule this protects is that a reviewer approves the listing they read. Left in {@code
+   * PENDING_REVIEW}, an edit could move the answer line under a reviewer who had already opened the
+   * puzzle, and the approval would then be recorded against a listing nobody reviewed -- with
+   * nothing in the audit trail to show that anything had changed. So the edit is allowed and the
+   * review is withdrawn: the author resubmits, and the decision is made again on what is actually
+   * there.
+   */
+  @Test
+  void editingAPuzzleAwaitingReviewWithdrawsItFromReviewAndSaysSo() throws Exception {
+    LocalDate day = nextDateBlock();
+    String editor = editorToken();
+    String admin = adminToken();
+
+    UUID puzzleId = createDraft(editor, day, "Awaiting a decision");
+    MvcResult submitted =
+        mockMvc
+            .perform(transition(editor, puzzleId, "submit", PuzzleStatus.DRAFT, null))
+            .andReturn();
+    assertThat(submitted.getResponse().getStatus()).isEqualTo(200);
+    assertThat(json(submitted).path("status").asString()).isEqualTo("PENDING_REVIEW");
+
+    MvcResult read =
+        mockMvc
+            .perform(
+                get("/api/v1/admin/puzzles/{id}", puzzleId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(editor)))
+            .andReturn();
+    long version = json(read).path("version").asLong();
+
+    MvcResult edited =
+        mockMvc
+            .perform(
+                patch("/api/v1/admin/puzzles/{id}", puzzleId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(editor))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        jsonMapper.writeValueAsString(
+                            new UpdatePuzzleRequest(
+                                version,
+                                null,
+                                "Rewritten mid-review",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null))))
+            .andReturn();
+    assertThat(edited.getResponse().getStatus()).isEqualTo(200);
+    assertThat(json(edited).path("status").asString()).isEqualTo("DRAFT");
+    assertThat(json(edited).path("published_at").isNull()).isTrue();
+
+    MvcResult trail =
+        mockMvc
+            .perform(
+                get("/api/v1/admin/puzzles/{id}/audit-log", puzzleId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(admin)))
+            .andReturn();
+    assertThat(trail.getResponse().getStatus()).isEqualTo(200);
+    List<String> steps = new ArrayList<>();
+    JsonNode withdrawal = null;
+    for (JsonNode item : json(trail).path("items")) {
+      steps.add(item.path("step").asString());
+      if ("DRAFT".equals(item.path("step").asString())
+          && "PENDING_REVIEW".equals(item.path("from_status").asString())) {
+        withdrawal = item;
+      }
+    }
+    // Two DRAFT steps: the one that created the puzzle (from nothing) and the one that took it
+    // back out of review. Same step, different origin -- which is what the from_status is for.
+    assertThat(steps).containsExactlyInAnyOrder("DRAFT", "SUBMIT", "DRAFT");
+    assertThat(withdrawal).isNotNull();
+    assertThat(withdrawal.path("to_status").asString()).isEqualTo("DRAFT");
+    assertThat(withdrawal.path("actor_user_id").isNull()).isFalse();
+
+    // And the puzzle is genuinely back in the author's hands rather than merely labelled so.
+    MvcResult resubmitted =
+        mockMvc
+            .perform(transition(editor, puzzleId, "submit", PuzzleStatus.DRAFT, null))
+            .andReturn();
+    assertThat(resubmitted.getResponse().getStatus()).isEqualTo(200);
+  }
+
+  /**
+   * The search box is a search box, not a pattern language: a term containing {@code %} or {@code
+   * _} matches the titles that literally contain those characters.
+   *
+   * <p>Unescaped, the term below would read {@code %} as "anything" and {@code _} as "any single
+   * character", so the decoy title -- which shares no such text -- would come back as a match.
+   */
+  @Test
+  void theTitleSearchTreatsWildcardCharactersAsLiterals() throws Exception {
+    String editor = editorToken();
+    LocalDate day = nextDateBlock();
+    String marker = "esc" + UUID.randomUUID().toString().substring(0, 8);
+    String term = marker + " a%b_c";
+
+    UUID literal = createDraft(editor, day, term);
+    createDraft(editor, day.plusDays(1), marker + " axxbyc");
+
+    MvcResult result =
+        mockMvc
+            .perform(
+                get("/api/v1/admin/puzzles")
+                    .param("q", term)
+                    .param("size", "50")
+                    .header(HttpHeaders.AUTHORIZATION, bearer(editor)))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+
+    List<UUID> matched = new ArrayList<>();
+    for (JsonNode item : json(result).path("items")) {
+      matched.add(UUID.fromString(item.path("id").asString()));
+    }
+    assertThat(matched).containsExactly(literal);
+  }
+
   /** An answer line the listing does not contain is refused at authoring time. */
   @Test
   void anAnswerLineOutsideTheListingIsRefused() throws Exception {

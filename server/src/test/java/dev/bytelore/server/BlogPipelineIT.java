@@ -1320,6 +1320,149 @@ class BlogPipelineIT extends ContentApiTestSupport {
     assertThat(json(result).path("total_elements").asLong()).isZero();
   }
 
+  // ---- Editing against the lifecycle -----------------------------------------------------------
+
+  /**
+   * A post edited while it is waiting for a decision goes back to its author, and the trail says
+   * so.
+   *
+   * <p>The rule this protects is that a reviewer approves the text they read. Left in {@code
+   * PENDING_REVIEW}, an edit would let an administrator's approval be recorded against a body
+   * nobody reviewed, with nothing in the audit trail to show that the text had moved underneath
+   * them. So the edit is allowed and the review is withdrawn: the author resubmits, and the
+   * decision is made again on what is actually there.
+   */
+  @Test
+  void editingAPostAwaitingReviewWithdrawsItFromReviewAndSaysSo() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+    submitPost(token, created.id());
+
+    BlogPost pending = blogPosts.findById(created.id()).orElseThrow();
+    assertThat(pending.getStatus()).isEqualTo(BlogStatus.PENDING_REVIEW);
+
+    String body =
+        "{\"title\":\"Rewritten mid-review\",\"version\":%d}".formatted(pending.getVersion());
+    MvcResult result =
+        mockMvc
+            .perform(
+                patch("/api/v1/admin/blog/posts/{id}", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+            .andReturn();
+    assertThat(result.getResponse().getStatus()).isEqualTo(200);
+    assertThat(json(result).path("status").asString()).isEqualTo("DRAFT");
+    assertThat(json(result).path("published_at").isNull()).isTrue();
+
+    List<PipelineAuditLog> trail = auditLogs.findByBlogPostIdOrderByOccurredAtAsc(created.id());
+    assertThat(trail)
+        .extracting(PipelineAuditLog::getStep)
+        .containsExactlyInAnyOrder(PipelineStep.SUBMIT, PipelineStep.DRAFT);
+    PipelineAuditLog withdrawal =
+        trail.stream().filter(row -> row.getStep() == PipelineStep.DRAFT).findFirst().orElseThrow();
+    assertThat(withdrawal.getFromStatus()).isEqualTo(BlogStatus.PENDING_REVIEW);
+    assertThat(withdrawal.getToStatus()).isEqualTo(BlogStatus.DRAFT);
+    assertThat(withdrawal.getActorUserId()).isNotNull();
+
+    // Genuinely back in the author's hands rather than merely labelled so.
+    submitPost(token, created.id());
+  }
+
+  /**
+   * A published post is frozen, and the error names the way out: unpublish it -- itself an audited
+   * transition -- and the same edit then goes through.
+   */
+  @Test
+  void aPublishedPostRefusesEditsUntilItIsUnpublished() throws Exception {
+    String token = adminToken();
+    AdminBlogPostResponse created = createManualPost(token, null);
+
+    BlogTransitionRequest publish =
+        new BlogTransitionRequest(BlogStatus.DRAFT, "Ready for readers.");
+    MvcResult publishResult =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/publish", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(publish)))
+            .andReturn();
+    assertThat(publishResult.getResponse().getStatus()).isEqualTo(200);
+
+    BlogPost live = blogPosts.findById(created.id()).orElseThrow();
+    String edit =
+        "{\"title\":\"Edited after publication\",\"version\":%d}".formatted(live.getVersion());
+    MvcResult refused =
+        mockMvc
+            .perform(
+                patch("/api/v1/admin/blog/posts/{id}", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(edit))
+            .andReturn();
+    assertThat(refused.getResponse().getStatus()).isEqualTo(409);
+    assertThat(errorCode(refused)).isEqualTo("PUBLISHED_POST_NOT_EDITABLE");
+
+    BlogPost untouched = blogPosts.findById(created.id()).orElseThrow();
+    assertThat(untouched.getTitle()).isEqualTo(live.getTitle());
+    assertThat(untouched.getStatus()).isEqualTo(BlogStatus.PUBLISHED);
+
+    BlogTransitionRequest unpublish =
+        new BlogTransitionRequest(BlogStatus.PUBLISHED, "Correcting a factual error.");
+    MvcResult unpublished =
+        mockMvc
+            .perform(
+                post("/api/v1/admin/blog/posts/{id}/unpublish", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonMapper.writeValueAsString(unpublish)))
+            .andReturn();
+    assertThat(unpublished.getResponse().getStatus()).isEqualTo(200);
+
+    BlogPost reopened = blogPosts.findById(created.id()).orElseThrow();
+    String retry =
+        "{\"title\":\"Edited after publication\",\"version\":%d}".formatted(reopened.getVersion());
+    MvcResult accepted =
+        mockMvc
+            .perform(
+                patch("/api/v1/admin/blog/posts/{id}", created.id())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(retry))
+            .andReturn();
+    assertThat(accepted.getResponse().getStatus()).isEqualTo(200);
+    assertThat(json(accepted).path("title").asString()).isEqualTo("Edited after publication");
+  }
+
+  /**
+   * The search box is a search box, not a pattern language: a term containing {@code %}, {@code _}
+   * or a backslash matches the titles that literally contain those characters.
+   *
+   * <p>Both halves are needed. Unescaped, {@code %} would read as "anything" and {@code _} as "any
+   * single character", so the first decoy would come back as a match; and an unescaped backslash
+   * would be read as the escape character itself, so the second query would silently look for
+   * {@code "ab"} -- returning the wrong row rather than merely too many.
+   */
+  @Test
+  void adminListTreatsWildcardCharactersInTheSearchTermAsLiterals() throws Exception {
+    String token = adminToken();
+    String marker = "esc" + UUID.randomUUID().toString().substring(0, 8);
+
+    BlogPost wildcards = saveDirectPost(BlogStatus.DRAFT, BlogSource.MANUAL, marker + " a%b_c");
+    saveDirectPost(BlogStatus.DRAFT, BlogSource.MANUAL, marker + " axxbyc");
+    BlogPost backslash = saveDirectPost(BlogStatus.DRAFT, BlogSource.MANUAL, marker + " a\\b");
+    saveDirectPost(BlogStatus.DRAFT, BlogSource.MANUAL, marker + " ab");
+
+    MvcResult byWildcards = listPosts(token, marker + " a%b_c", null, null);
+    assertThat(byWildcards.getResponse().getStatus()).isEqualTo(200);
+    assertThat(titlesOf(byWildcards)).containsExactly(wildcards.getTitle());
+
+    MvcResult byBackslash = listPosts(token, marker + " a\\b", null, null);
+    assertThat(byBackslash.getResponse().getStatus()).isEqualTo(200);
+    assertThat(titlesOf(byBackslash)).containsExactly(backslash.getTitle());
+  }
+
   // ---- helpers -------------------------------------------------------------------------------
 
   /**
