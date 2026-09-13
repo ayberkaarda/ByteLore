@@ -7,6 +7,7 @@
     "label": "Navigation principale",
     "tracks": "Parcours",
     "blog": "Blog",
+    "puzzle": "Chasse au bug",
     "downloads": "Téléchargements",
     "admin": "Administration",
     "signIn": "Se connecter",
@@ -199,6 +200,49 @@
       "indicatorHint": "Le serveur est injoignable pour le moment, et les articles du blog sont chargés en direct."
     }
   },
+  "puzzle": {
+    "heading": "Chasse au bug du jour",
+    "intro": "Un extrait, un bug, une seule tentative. Choisissez la ligne qui vous paraît fautive.",
+    "noneToday": "Aucune énigme aujourd'hui.",
+    "noneTodayHint": "Revenez demain : une nouvelle énigme est publiée chaque jour.",
+    "languageLabel": "Langage : {{language}}",
+    "clock": "Temps écoulé {{elapsed}}",
+    "submit": "Valider la réponse",
+    "submitting": "Envoi…",
+    "picked": "Ligne {{line}} sélectionnée",
+    "pickPrompt": "Sélectionnez d'abord une ligne.",
+    "outcome": {
+      "heading": "Résultat",
+      "correct": "Correct — c'est bien la ligne fautive.",
+      "wrong": "Raté. La ligne fautive est signalée ci-dessous.",
+      "buggyLine": "Ligne fautive",
+      "elapsed": "Votre temps",
+      "currentStreak": "Série en cours",
+      "longestStreak": "Meilleure série",
+      "explanation": "Explication"
+    },
+    "code": {
+      "legend": "Choisissez la ligne fautive",
+      "lineLabel": "Ligne {{line}}",
+      "markBug": "ligne fautive",
+      "markMiss": "votre réponse"
+    },
+    "leaderboard": {
+      "heading": "Classement du jour",
+      "sort": "Ordre du classement",
+      "sortTime": "Les plus rapides",
+      "sortStreak": "Plus longue série",
+      "empty": "Personne ne l'a encore résolue aujourd'hui.",
+      "tableCaption": "Joueurs ayant résolu l'énigme du jour",
+      "you": "vous",
+      "column": {
+        "rank": "Rang",
+        "player": "Joueur",
+        "time": "Temps",
+        "streak": "Série"
+      }
+    }
+  },
   "sync": {
     "statusLabel": "État de la connexion et de la synchronisation",
     "offline": "Hors ligne",
@@ -280,7 +324,12 @@
     "INSECURE_SOURCE_URL": "Ce lien doit utiliser une adresse sécurisée (https).",
     "INVALID_VERIFY_URL_PATTERN": "Le modèle de lien de vérification n'est pas valide. Il doit contenir exactement un espace réservé de version.",
     "CURRENT_PASSWORD_INCORRECT": "Votre mot de passe actuel est incorrect.",
-    "CONTENT_PACKAGE_TOO_LARGE": "Ce contenu est trop volumineux pour être empaqueté en vue du téléchargement. Veuillez le diviser en parties plus petites."
+    "CONTENT_PACKAGE_TOO_LARGE": "Ce contenu est trop volumineux pour être empaqueté en vue du téléchargement. Veuillez le diviser en parties plus petites.",
+    "PUZZLE_NOT_FOUND": "Aucune énigme pour ce jour.",
+    "PUZZLE_ALREADY_ATTEMPTED": "Vous avez déjà répondu à l'énigme du jour.",
+    "PUZZLE_DATE_ALREADY_TAKEN": "Une autre énigme est déjà programmée pour ce jour.",
+    "PUZZLE_NOT_EDITABLE": "Une énigme publiée ne peut plus être modifiée.",
+    "PUZZLE_LINE_OUT_OF_RANGE": "Cette ligne est hors du code."
   },
   "auth": {
     "heading": "Connexion",
@@ -299,6 +348,7 @@
       "label": "Navigation d'administration",
       "posts": "Articles",
       "review": "Relecture",
+      "puzzles": "Énigmes",
       "sources": "Sources"
     },
     "common": {
@@ -552,6 +602,94 @@
           "verifyUrlPatternInsecure": "Le modèle d'URL de vérification doit être une adresse https:// absolue.",
           "verifyUrlPatternPlaceholder": "Le modèle d'URL de vérification doit contenir exactement un espace réservé {version}."
         }
+      }
+    },
+    "puzzles": {
+      "heading": "Énigmes",
+      "newPuzzle": "Nouvelle énigme",
+      "reviewQueueLink": "File de relecture",
+      "empty": "Aucune énigme ne correspond à ces filtres.",
+      "tableCaption": "Énigmes, jour de diffusion le plus récent en premier",
+      "filter": {
+        "status": "Statut",
+        "allStatuses": "Tous les statuts",
+        "sort": "Tri",
+        "search": "Recherche",
+        "searchPlaceholder": "Rechercher dans les titres"
+      },
+      "sort": {
+        "puzzle_date,desc": "Jour le plus récent",
+        "puzzle_date,asc": "Jour le plus ancien",
+        "updated_at,desc": "Récemment modifiées",
+        "created_at,desc": "Récemment créées",
+        "title,asc": "Titre (A–Z)"
+      },
+      "column": {
+        "puzzleDate": "Jour",
+        "title": "Titre",
+        "language": "Langage",
+        "status": "Statut",
+        "updatedAt": "Modifiée"
+      },
+      "action": {
+        "submit": "Envoyer en relecture",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "delete": "Supprimer"
+      },
+      "editor": {
+        "headingNew": "Nouvelle énigme",
+        "headingEdit": "Modifier l'énigme",
+        "puzzleDate": "Jour de diffusion",
+        "title": "Titre",
+        "prompt": "Consigne",
+        "promptPlaceholder": "Contexte facultatif affiché au-dessus du code",
+        "language": "Étiquette de langage",
+        "languagePlaceholder": "java, rust, typescript…",
+        "code": "Code",
+        "buggyLine": "Ligne fautive",
+        "lineCount": "{{count}} lignes dans le code",
+        "explanation": "Explication",
+        "explanationPlaceholder": "Ce qui ne va pas sur cette ligne, et pourquoi",
+        "preview": "Aperçu",
+        "previewHint": "Cliquez sur une ligne pour la désigner comme fautive.",
+        "frozenHint": "Une énigme publiée est figée : elle a déjà été jouée. Pour la corriger, publiez-en une autre.",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "saved": "Enregistré.",
+        "transitionApplied": "Statut mis à jour.",
+        "actionsHeading": "Actions",
+        "reasonLabel": "Motif",
+        "reasonPlaceholder": "Expliquez la décision",
+        "confirmAction": "Confirmer",
+        "error": {
+          "dateRequired": "Le jour de diffusion est obligatoire.",
+          "dateInvalid": "Saisissez le jour au format AAAA-MM-JJ.",
+          "titleRequired": "Un titre est obligatoire.",
+          "titleLength": "Le titre ne doit pas dépasser 200 caractères.",
+          "promptLength": "La consigne ne doit pas dépasser 4 000 caractères.",
+          "languageRequired": "Une étiquette de langage est obligatoire.",
+          "languageLength": "L'étiquette de langage ne doit pas dépasser 40 caractères.",
+          "languagePattern": "L'étiquette de langage ne peut contenir que des minuscules, des chiffres et + # . _ -",
+          "codeRequired": "Le code est obligatoire.",
+          "codeLength": "Le code ne doit pas dépasser 20 000 caractères.",
+          "buggyLineRequired": "Choisissez la ligne fautive.",
+          "buggyLineRange": "La ligne fautive doit exister dans le code.",
+          "explanationRequired": "Une explication est obligatoire.",
+          "explanationLength": "L'explication ne doit pas dépasser 4 000 caractères.",
+          "reasonTooShort": "Le motif doit comporter au moins 10 caractères."
+        }
+      },
+      "review": {
+        "heading": "Énigmes en attente de relecture",
+        "intro": "Chaque énigme est diffusée à toute la plateforme pendant une journée : chacune est donc approuvée à la main.",
+        "empty": "Aucune décision en attente.",
+        "runsOn": "Diffusée le {{date}}",
+        "answerOnLine": "réponse à la ligne {{line}} sur {{count}}",
+        "reasonLabel": "Motif du rejet",
+        "reasonPlaceholder": "Ce qui doit changer avant la diffusion",
+        "reasonTooShort": "Le motif doit comporter au moins 10 caractères.",
+        "confirmReject": "Rejeter l'énigme"
       }
     },
     "forbidden": {

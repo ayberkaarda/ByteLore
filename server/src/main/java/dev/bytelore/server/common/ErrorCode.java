@@ -59,6 +59,14 @@ public enum ErrorCode {
   SOURCE_UPDATE_NOT_FOUND(HttpStatus.NOT_FOUND),
   WHITELIST_SOURCE_NOT_FOUND(HttpStatus.NOT_FOUND),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND),
+  /**
+   * No puzzle exists with the requested identifier, or -- on the player endpoints -- today has no
+   * published puzzle.
+   *
+   * <p>Both cases share a code deliberately. "There is no puzzle today" is an ordinary state of the
+   * feature, not a failure, and the client renders the same empty view for it either way.
+   */
+  PUZZLE_NOT_FOUND(HttpStatus.NOT_FOUND),
 
   // Conflict.
   EMAIL_ALREADY_REGISTERED(HttpStatus.CONFLICT),
@@ -72,6 +80,19 @@ public enum ErrorCode {
   ORDER_SET_INCOMPLETE(HttpStatus.CONFLICT),
   PIPELINE_RUN_IN_PROGRESS(HttpStatus.CONFLICT),
   CONTENT_VERSION_SUPERSEDED(HttpStatus.CONFLICT),
+  /** The caller has already answered today's puzzle. One attempt per player per puzzle. */
+  PUZZLE_ALREADY_ATTEMPTED(HttpStatus.CONFLICT),
+  /** Another puzzle that has not been rejected already holds the requested date. */
+  PUZZLE_DATE_ALREADY_TAKEN(HttpStatus.CONFLICT),
+  /**
+   * An edit to a puzzle that is already published.
+   *
+   * <p>Everyone is looking at the same listing on the same day, and some of them have already
+   * answered it. Changing the code, the answer line or the explanation underneath them would
+   * invalidate attempts that are already recorded, so a published puzzle is frozen; a mistake found
+   * after publication is a new puzzle, not an edit to this one.
+   */
+  PUZZLE_NOT_EDITABLE(HttpStatus.CONFLICT),
 
   // Semantic. 422 throughout; the framework constant follows the current HTTP
   // specification's spelling of the status name.
@@ -100,6 +121,14 @@ public enum ErrorCode {
    */
   CURRENT_PASSWORD_INCORRECT(HttpStatus.UNPROCESSABLE_CONTENT),
   CONTENT_PACKAGE_TOO_LARGE(HttpStatus.UNPROCESSABLE_CONTENT),
+  /**
+   * A line number that the puzzle's own code does not have -- either the answer line an author
+   * supplied or the line a player clicked.
+   *
+   * <p>Semantic rather than a plain validation failure: the bound is the listing's line count, and
+   * no annotation on a request body can know it.
+   */
+  PUZZLE_LINE_OUT_OF_RANGE(HttpStatus.UNPROCESSABLE_CONTENT),
 
   // Precondition.
   CONTENT_CHANGED_DURING_RESUME(HttpStatus.PRECONDITION_FAILED),

@@ -42,7 +42,7 @@ class FlywayMigrationIT {
 
     assertThat(appliedVersions)
         .containsExactly(
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15");
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16");
   }
 
   @Test
@@ -77,11 +77,15 @@ class FlywayMigrationIT {
             "mind_maps",
             "modules",
             "pipeline_audit_log",
+            "puzzle_attempts",
+            "puzzle_audit_log",
+            "puzzles",
             "rate_limit_counters",
             "refresh_tokens",
             "source_updates",
             "tracks",
             "user_progress",
+            "user_streaks",
             "users",
             "whitelist_sources");
   }

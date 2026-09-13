@@ -7,6 +7,7 @@
     "label": "Hauptnavigation",
     "tracks": "Lernpfade",
     "blog": "Blog",
+    "puzzle": "Fehlerjagd",
     "downloads": "Downloads",
     "admin": "Verwaltung",
     "signIn": "Anmelden",
@@ -199,6 +200,49 @@
       "indicatorHint": "Der Server ist derzeit nicht erreichbar, und Blogbeiträge werden live geladen."
     }
   },
+  "puzzle": {
+    "heading": "Tägliche Fehlerjagd",
+    "intro": "Ein Listing, ein Fehler, ein Versuch. Wählen Sie die Zeile, die Sie für falsch halten.",
+    "noneToday": "Heute gibt es kein Rätsel.",
+    "noneTodayHint": "Schauen Sie morgen wieder vorbei – jeden Tag erscheint ein neues.",
+    "languageLabel": "Sprache: {{language}}",
+    "clock": "Verstrichen {{elapsed}}",
+    "submit": "Antwort abschicken",
+    "submitting": "Wird gesendet…",
+    "picked": "Zeile {{line}} ausgewählt",
+    "pickPrompt": "Wählen Sie zuerst eine Zeile.",
+    "outcome": {
+      "heading": "Ergebnis",
+      "correct": "Richtig – das ist die fehlerhafte Zeile.",
+      "wrong": "Diesmal nicht. Die fehlerhafte Zeile ist unten markiert.",
+      "buggyLine": "Fehlerhafte Zeile",
+      "elapsed": "Ihre Zeit",
+      "currentStreak": "Aktuelle Serie",
+      "longestStreak": "Längste Serie",
+      "explanation": "Begründung"
+    },
+    "code": {
+      "legend": "Wählen Sie die fehlerhafte Zeile",
+      "lineLabel": "Zeile {{line}}",
+      "markBug": "fehlerhafte Zeile",
+      "markMiss": "Ihre Antwort"
+    },
+    "leaderboard": {
+      "heading": "Tagesrangliste",
+      "sort": "Sortierung der Rangliste",
+      "sortTime": "Schnellste",
+      "sortStreak": "Längste Serie",
+      "empty": "Heute hat es noch niemand gelöst.",
+      "tableCaption": "Spieler, die das heutige Rätsel gelöst haben",
+      "you": "Sie",
+      "column": {
+        "rank": "Rang",
+        "player": "Spieler",
+        "time": "Zeit",
+        "streak": "Serie"
+      }
+    }
+  },
   "sync": {
     "statusLabel": "Verbindungs- und Synchronisierungsstatus",
     "offline": "Offline",
@@ -280,7 +324,12 @@
     "INSECURE_SOURCE_URL": "Dieser Link muss eine sichere (https) Adresse verwenden.",
     "INVALID_VERIFY_URL_PATTERN": "Das Muster des Prüflinks ist ungültig. Es muss genau einen Versions-Platzhalter enthalten.",
     "CURRENT_PASSWORD_INCORRECT": "Ihr aktuelles Passwort ist falsch.",
-    "CONTENT_PACKAGE_TOO_LARGE": "Dieser Inhalt ist zu groß, um für den Download verpackt zu werden. Bitte teilen Sie ihn in kleinere Teile auf."
+    "CONTENT_PACKAGE_TOO_LARGE": "Dieser Inhalt ist zu groß, um für den Download verpackt zu werden. Bitte teilen Sie ihn in kleinere Teile auf.",
+    "PUZZLE_NOT_FOUND": "Für diesen Tag gibt es kein Rätsel.",
+    "PUZZLE_ALREADY_ATTEMPTED": "Sie haben das heutige Rätsel bereits beantwortet.",
+    "PUZZLE_DATE_ALREADY_TAKEN": "Für diesen Tag ist bereits ein anderes Rätsel geplant.",
+    "PUZZLE_NOT_EDITABLE": "Ein veröffentlichtes Rätsel kann nicht mehr geändert werden.",
+    "PUZZLE_LINE_OUT_OF_RANGE": "Diese Zeile liegt außerhalb des Listings."
   },
   "auth": {
     "heading": "Anmelden",
@@ -299,6 +348,7 @@
       "label": "Verwaltungsnavigation",
       "posts": "Beiträge",
       "review": "Prüfung",
+      "puzzles": "Rätsel",
       "sources": "Quellen"
     },
     "common": {
@@ -552,6 +602,94 @@
           "verifyUrlPatternInsecure": "Das Prüf-URL-Muster muss eine absolute https://-Adresse sein.",
           "verifyUrlPatternPlaceholder": "Das Prüf-URL-Muster muss genau einen {version}-Platzhalter enthalten."
         }
+      }
+    },
+    "puzzles": {
+      "heading": "Rätsel",
+      "newPuzzle": "Neues Rätsel",
+      "reviewQueueLink": "Prüfliste",
+      "empty": "Keine Rätsel passen zu diesen Filtern.",
+      "tableCaption": "Rätsel, neuester Einsatztag zuerst",
+      "filter": {
+        "status": "Status",
+        "allStatuses": "Alle Status",
+        "sort": "Sortierung",
+        "search": "Suche",
+        "searchPlaceholder": "Titel durchsuchen"
+      },
+      "sort": {
+        "puzzle_date,desc": "Neuester Tag zuerst",
+        "puzzle_date,asc": "Ältester Tag zuerst",
+        "updated_at,desc": "Zuletzt geändert",
+        "created_at,desc": "Zuletzt erstellt",
+        "title,asc": "Titel (A–Z)"
+      },
+      "column": {
+        "puzzleDate": "Tag",
+        "title": "Titel",
+        "language": "Sprache",
+        "status": "Status",
+        "updatedAt": "Geändert"
+      },
+      "action": {
+        "submit": "Zur Prüfung geben",
+        "approve": "Freigeben",
+        "reject": "Ablehnen",
+        "delete": "Löschen"
+      },
+      "editor": {
+        "headingNew": "Neues Rätsel",
+        "headingEdit": "Rätsel bearbeiten",
+        "puzzleDate": "Einsatztag",
+        "title": "Titel",
+        "prompt": "Aufgabenstellung",
+        "promptPlaceholder": "Optionaler Kontext über dem Listing",
+        "language": "Sprach-Tag",
+        "languagePlaceholder": "java, rust, typescript…",
+        "code": "Listing",
+        "buggyLine": "Fehlerhafte Zeile",
+        "lineCount": "{{count}} Zeilen im Listing",
+        "explanation": "Erklärung",
+        "explanationPlaceholder": "Was an dieser Zeile falsch ist – und warum",
+        "preview": "Vorschau",
+        "previewHint": "Klicken Sie eine Zeile an, um sie als fehlerhaft zu markieren.",
+        "frozenHint": "Ein veröffentlichtes Rätsel ist eingefroren: Es wurde bereits gespielt. Korrigieren Sie es, indem Sie ein anderes veröffentlichen.",
+        "save": "Speichern",
+        "saving": "Wird gespeichert…",
+        "saved": "Gespeichert.",
+        "transitionApplied": "Status aktualisiert.",
+        "actionsHeading": "Aktionen",
+        "reasonLabel": "Begründung",
+        "reasonPlaceholder": "Begründen Sie die Entscheidung",
+        "confirmAction": "Bestätigen",
+        "error": {
+          "dateRequired": "Ein Einsatztag ist erforderlich.",
+          "dateInvalid": "Geben Sie den Tag als JJJJ-MM-TT an.",
+          "titleRequired": "Ein Titel ist erforderlich.",
+          "titleLength": "Der Titel darf höchstens 200 Zeichen lang sein.",
+          "promptLength": "Die Aufgabenstellung darf höchstens 4.000 Zeichen lang sein.",
+          "languageRequired": "Ein Sprach-Tag ist erforderlich.",
+          "languageLength": "Das Sprach-Tag darf höchstens 40 Zeichen lang sein.",
+          "languagePattern": "Das Sprach-Tag darf nur Kleinbuchstaben, Ziffern und + # . _ - enthalten.",
+          "codeRequired": "Ein Listing ist erforderlich.",
+          "codeLength": "Das Listing darf höchstens 20.000 Zeichen lang sein.",
+          "buggyLineRequired": "Wählen Sie die fehlerhafte Zeile.",
+          "buggyLineRange": "Die fehlerhafte Zeile muss im Listing tatsächlich vorhanden sein.",
+          "explanationRequired": "Eine Erklärung ist erforderlich.",
+          "explanationLength": "Die Erklärung darf höchstens 4.000 Zeichen lang sein.",
+          "reasonTooShort": "Die Begründung muss mindestens 10 Zeichen lang sein."
+        }
+      },
+      "review": {
+        "heading": "Rätsel zur Prüfung",
+        "intro": "Jedes Rätsel läuft einen Tag lang für die gesamte Plattform, deshalb wird jedes einzeln von Hand freigegeben.",
+        "empty": "Es wartet nichts auf eine Entscheidung.",
+        "runsOn": "Läuft am {{date}}",
+        "answerOnLine": "Antwort in Zeile {{line}} von {{count}}",
+        "reasonLabel": "Grund für die Ablehnung",
+        "reasonPlaceholder": "Was sich ändern muss, bevor es laufen kann",
+        "reasonTooShort": "Die Begründung muss mindestens 10 Zeichen lang sein.",
+        "confirmReject": "Rätsel ablehnen"
       }
     },
     "forbidden": {

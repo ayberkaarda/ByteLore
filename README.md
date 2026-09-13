@@ -73,9 +73,9 @@ All five below are the desktop application, running against the shipped corpus.
 <tr><td width="50%">
 
 **The library**
-Every track shows how many lessons it has and how many are already stored for offline reading.
+Completion and download stats at a glance, a "continue where you left off" card, and every track's own progress bar.
 
-<img src="docs/screenshots/library.png" alt="The library screen, showing eight learning paths as cards" width="100%">
+<img src="docs/screenshots/library.png" alt="The library dashboard, showing summary stat tiles beside a list of learning path cards" width="100%">
 
 </td><td width="50%">
 
@@ -90,7 +90,7 @@ Modules and lessons, each with its own download control, and a link to the track
 **A lesson, mid-read**
 Real code, really compiled on the machine that wrote the lesson, syntax-highlighted and tagged by language.
 
-<img src="docs/screenshots/lesson-reader.png" alt="A lesson body showing a highlighted Rust code example about lifetimes" width="100%">
+<img src="docs/screenshots/lesson-reader.png" alt="A lesson body showing a highlighted Rust code example about ownership and drop order" width="100%">
 
 </td><td width="50%">
 

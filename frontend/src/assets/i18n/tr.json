@@ -7,6 +7,7 @@
     "label": "Ana gezinme",
     "tracks": "Öğrenme yolları",
     "blog": "Blog",
+    "puzzle": "Hata avı",
     "downloads": "İndirilenler",
     "admin": "Yönetim",
     "signIn": "Giriş yap",
@@ -199,6 +200,49 @@
       "indicatorHint": "Sunucuya şu anda ulaşılamıyor; blog yazıları ise anlık olarak yükleniyor."
     }
   },
+  "puzzle": {
+    "heading": "Günlük hata avı",
+    "intro": "Bir kod, bir hata, tek tahmin. Hatalı olduğunu düşündüğünüz satırı seçin.",
+    "noneToday": "Bugün bulmaca yok.",
+    "noneTodayHint": "Yarın tekrar uğrayın; her gün yenisi yayımlanıyor.",
+    "languageLabel": "Dil: {{language}}",
+    "clock": "Geçen süre {{elapsed}}",
+    "submit": "Cevabı gönder",
+    "submitting": "Gönderiliyor…",
+    "picked": "{{line}}. satır seçildi",
+    "pickPrompt": "Önce bir satır seçin.",
+    "outcome": {
+      "heading": "Sonuç",
+      "correct": "Doğru — hatalı satır buydu.",
+      "wrong": "Bu sefer olmadı. Hatalı satır aşağıda işaretli.",
+      "buggyLine": "Hatalı satır",
+      "elapsed": "Süreniz",
+      "currentStreak": "Güncel seri",
+      "longestStreak": "En uzun seri",
+      "explanation": "Neden"
+    },
+    "code": {
+      "legend": "Hatalı satırı seçin",
+      "lineLabel": "{{line}}. satır",
+      "markBug": "hatalı satır",
+      "markMiss": "sizin cevabınız"
+    },
+    "leaderboard": {
+      "heading": "Bugünün skor tablosu",
+      "sort": "Skor tablosu sıralaması",
+      "sortTime": "En hızlı",
+      "sortStreak": "En uzun seri",
+      "empty": "Bugün henüz kimse çözemedi.",
+      "tableCaption": "Bugünün bulmacasını çözen oyuncular",
+      "you": "siz",
+      "column": {
+        "rank": "Sıra",
+        "player": "Oyuncu",
+        "time": "Süre",
+        "streak": "Seri"
+      }
+    }
+  },
   "sync": {
     "statusLabel": "Bağlantı ve eşitleme durumu",
     "offline": "Çevrimdışı",
@@ -280,7 +324,12 @@
     "INSECURE_SOURCE_URL": "Bu bağlantı güvenli (https) bir adres kullanmalı.",
     "INVALID_VERIFY_URL_PATTERN": "Doğrulama bağlantısı deseni geçerli değil. Tam olarak bir sürüm yer tutucusu içermelidir.",
     "CURRENT_PASSWORD_INCORRECT": "Mevcut parolanız hatalı.",
-    "CONTENT_PACKAGE_TOO_LARGE": "Bu içerik indirme için paketlenemeyecek kadar büyük. Lütfen daha küçük parçalara bölün."
+    "CONTENT_PACKAGE_TOO_LARGE": "Bu içerik indirme için paketlenemeyecek kadar büyük. Lütfen daha küçük parçalara bölün.",
+    "PUZZLE_NOT_FOUND": "O güne ait bir bulmaca yok.",
+    "PUZZLE_ALREADY_ATTEMPTED": "Bugünün bulmacasını zaten cevapladınız.",
+    "PUZZLE_DATE_ALREADY_TAKEN": "O gün için başka bir bulmaca zaten planlanmış.",
+    "PUZZLE_NOT_EDITABLE": "Yayımlanmış bir bulmaca artık değiştirilemez.",
+    "PUZZLE_LINE_OUT_OF_RANGE": "Bu satır kodun dışında."
   },
   "auth": {
     "heading": "Giriş yap",
@@ -299,6 +348,7 @@
       "label": "Yönetim gezinmesi",
       "posts": "Yazılar",
       "review": "İnceleme",
+      "puzzles": "Bulmacalar",
       "sources": "Kaynaklar"
     },
     "common": {
@@ -552,6 +602,94 @@
           "verifyUrlPatternInsecure": "Doğrulama URL deseni mutlak bir https:// adresi olmalıdır.",
           "verifyUrlPatternPlaceholder": "Doğrulama URL deseni tam olarak bir {version} yer tutucusu içermelidir."
         }
+      }
+    },
+    "puzzles": {
+      "heading": "Bulmacalar",
+      "newPuzzle": "Yeni bulmaca",
+      "reviewQueueLink": "İnceleme kuyruğu",
+      "empty": "Bu filtrelere uyan bulmaca yok.",
+      "tableCaption": "Bulmacalar, en yakın yayın günü önce",
+      "filter": {
+        "status": "Durum",
+        "allStatuses": "Tüm durumlar",
+        "sort": "Sıralama",
+        "search": "Ara",
+        "searchPlaceholder": "Başlıklarda ara"
+      },
+      "sort": {
+        "puzzle_date,desc": "En yeni gün önce",
+        "puzzle_date,asc": "En eski gün önce",
+        "updated_at,desc": "Son güncellenen",
+        "created_at,desc": "Son oluşturulan",
+        "title,asc": "Başlık (A–Z)"
+      },
+      "column": {
+        "puzzleDate": "Gün",
+        "title": "Başlık",
+        "language": "Dil",
+        "status": "Durum",
+        "updatedAt": "Güncellendi"
+      },
+      "action": {
+        "submit": "İncelemeye gönder",
+        "approve": "Onayla",
+        "reject": "Reddet",
+        "delete": "Sil"
+      },
+      "editor": {
+        "headingNew": "Yeni bulmaca",
+        "headingEdit": "Bulmacayı düzenle",
+        "puzzleDate": "Yayın günü",
+        "title": "Başlık",
+        "prompt": "Yönerge",
+        "promptPlaceholder": "Kodun üstünde görünecek isteğe bağlı açıklama",
+        "language": "Dil etiketi",
+        "languagePlaceholder": "java, rust, typescript…",
+        "code": "Kod",
+        "buggyLine": "Hatalı satır",
+        "lineCount": "Kod {{count}} satır",
+        "explanation": "Açıklama",
+        "explanationPlaceholder": "O satırda ne yanlış ve neden",
+        "preview": "Önizleme",
+        "previewHint": "Hatalı satırı belirlemek için bir satıra tıklayın.",
+        "frozenHint": "Yayımlanmış bulmaca dondurulur: insanlar onu çoktan oynadı. Düzeltmek için farklı bir bulmaca yayımlayın.",
+        "save": "Kaydet",
+        "saving": "Kaydediliyor…",
+        "saved": "Kaydedildi.",
+        "transitionApplied": "Durum güncellendi.",
+        "actionsHeading": "Eylemler",
+        "reasonLabel": "Gerekçe",
+        "reasonPlaceholder": "Kararı açıklayın",
+        "confirmAction": "Onayla",
+        "error": {
+          "dateRequired": "Yayın günü zorunludur.",
+          "dateInvalid": "Günü YYYY-AA-GG biçiminde girin.",
+          "titleRequired": "Başlık zorunludur.",
+          "titleLength": "Başlık en fazla 200 karakter olabilir.",
+          "promptLength": "Yönerge en fazla 4.000 karakter olabilir.",
+          "languageRequired": "Dil etiketi zorunludur.",
+          "languageLength": "Dil etiketi en fazla 40 karakter olabilir.",
+          "languagePattern": "Dil etiketi yalnızca küçük harf, rakam ve + # . _ - karakterlerini içerebilir.",
+          "codeRequired": "Kod zorunludur.",
+          "codeLength": "Kod en fazla 20.000 karakter olabilir.",
+          "buggyLineRequired": "Hatalı satırı seçin.",
+          "buggyLineRange": "Hatalı satır, kodda gerçekten var olan bir satır olmalıdır.",
+          "explanationRequired": "Açıklama zorunludur.",
+          "explanationLength": "Açıklama en fazla 4.000 karakter olabilir.",
+          "reasonTooShort": "Gerekçe en az 10 karakter olmalıdır."
+        }
+      },
+      "review": {
+        "heading": "İnceleme bekleyen bulmacalar",
+        "intro": "Her bulmaca bir gün boyunca tüm platformda yayımlanır; bu yüzden her biri elle onaylanır.",
+        "empty": "Karar bekleyen bir şey yok.",
+        "runsOn": "{{date}} tarihinde yayımlanır",
+        "answerOnLine": "cevap {{count}} satırdan {{line}}. satırda",
+        "reasonLabel": "Ret gerekçesi",
+        "reasonPlaceholder": "Yayımlanmadan önce neyin değişmesi gerekiyor",
+        "reasonTooShort": "Gerekçe en az 10 karakter olmalıdır.",
+        "confirmReject": "Bulmacayı reddet"
       }
     },
     "forbidden": {

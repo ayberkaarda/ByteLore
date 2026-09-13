@@ -1,0 +1,358 @@
+<!--
+  The heading sits outside the load branches: which of the two titles applies
+  is known before anything is fetched, and a screen whose only heading belongs
+  to an error card hands a reader an <h2> with no <h1> above it.
+-->
+<div class="flex items-center justify-between gap-4">
+  <h1 class="text-2xl font-semibold tracking-tight">
+    {{
+      (isCreateMode() ? 'admin.puzzles.editor.headingNew' : 'admin.puzzles.editor.headingEdit')
+        | translate
+    }}
+  </h1>
+  @if (puzzle(); as current) {
+    <app-status-badge [status]="current.status" />
+  }
+</div>
+
+@if (loading()) {
+  <p class="mt-6 text-text-muted" role="status">{{ 'common.loading' | translate }}</p>
+} @else if (loadFailureKey(); as failureKey) {
+  <div class="mt-6 rounded-md border-l-4 border-danger bg-danger-soft p-4" role="alert">
+    <h2 class="font-medium text-danger-strong">{{ 'error.heading' | translate }}</h2>
+    <p class="mt-1 text-text">{{ failureKey | translate }}</p>
+    <button
+      type="button"
+      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+      (click)="retryLoad()"
+    >
+      {{ 'common.retry' | translate }}
+    </button>
+  </div>
+} @else {
+  @if (!editable()) {
+    <p class="mt-4 rounded-md bg-accent-soft p-4 text-sm text-text">
+      {{ 'admin.puzzles.editor.frozenHint' | translate }}
+    </p>
+  }
+
+  <!--
+    novalidate: the date and number fields would otherwise let the browser's
+    own constraint check swallow the submit, so the handler would never run,
+    the attempted flag would never be set, and the accessible error tied to
+    the field would never appear. One error path, owned by this component.
+  -->
+  <form class="mt-6 flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); onSave()">
+    <div class="flex flex-wrap gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium" for="puzzle-date">
+          {{ 'admin.puzzles.editor.puzzleDate' | translate }}
+        </label>
+        <input
+          id="puzzle-date"
+          class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text disabled:opacity-60"
+          type="date"
+          [value]="puzzleDate()"
+          [disabled]="!editable()"
+          aria-required="true"
+          [attr.aria-invalid]="attempted() && puzzleDateErrorKey() !== null"
+          [attr.aria-describedby]="attempted() && puzzleDateErrorKey() ? 'puzzle-date-error' : null"
+          (input)="onDateInput($event)"
+        />
+        @if (attempted() && puzzleDateErrorKey(); as key) {
+          <p id="puzzle-date-error" class="text-sm text-danger" role="alert">
+            {{ key | translate }}
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium" for="puzzle-language">
+          {{ 'admin.puzzles.editor.language' | translate }}
+        </label>
+        <input
+          id="puzzle-language"
+          class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+          type="text"
+          [value]="language()"
+          [disabled]="!editable()"
+          aria-required="true"
+          [attr.placeholder]="'admin.puzzles.editor.languagePlaceholder' | translate"
+          [attr.aria-invalid]="attempted() && languageErrorKey() !== null"
+          [attr.aria-describedby]="
+            attempted() && languageErrorKey() ? 'puzzle-language-error' : null
+          "
+          (input)="onLanguageInput($event)"
+        />
+        @if (attempted() && languageErrorKey(); as key) {
+          <p id="puzzle-language-error" class="text-sm text-danger" role="alert">
+            {{ key | translate }}
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium" for="puzzle-buggy-line">
+          {{ 'admin.puzzles.editor.buggyLine' | translate }}
+        </label>
+        <input
+          id="puzzle-buggy-line"
+          class="h-9 w-28 rounded-md border border-border-strong bg-surface-raised px-3 text-sm tabular-nums text-text disabled:opacity-60"
+          type="number"
+          min="1"
+          step="1"
+          [value]="buggyLine()"
+          [disabled]="!editable()"
+          aria-required="true"
+          [attr.aria-invalid]="attempted() && buggyLineErrorKey() !== null"
+          [attr.aria-describedby]="
+            attempted() && buggyLineErrorKey()
+              ? 'puzzle-buggy-line-error'
+              : 'puzzle-buggy-line-hint'
+          "
+          (input)="onBuggyLineInput($event)"
+        />
+        @if (attempted() && buggyLineErrorKey(); as key) {
+          <p id="puzzle-buggy-line-error" class="text-sm text-danger" role="alert">
+            {{ key | translate }}
+          </p>
+        } @else {
+          <p id="puzzle-buggy-line-hint" class="text-sm text-text-muted tabular-nums">
+            {{ 'admin.puzzles.editor.lineCount' | translate: { count: lineCount() } }}
+          </p>
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium" for="puzzle-title">
+        {{ 'admin.puzzles.editor.title' | translate }}
+      </label>
+      <input
+        id="puzzle-title"
+        class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        type="text"
+        [value]="title()"
+        [disabled]="!editable()"
+        aria-required="true"
+        [attr.aria-invalid]="attempted() && titleErrorKey() !== null"
+        [attr.aria-describedby]="attempted() && titleErrorKey() ? 'puzzle-title-error' : null"
+        (input)="onTitleInput($event)"
+      />
+      @if (attempted() && titleErrorKey(); as key) {
+        <p id="puzzle-title-error" class="text-sm text-danger" role="alert">
+          {{ key | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium" for="puzzle-prompt">
+        {{ 'admin.puzzles.editor.prompt' | translate }}
+      </label>
+      <textarea
+        id="puzzle-prompt"
+        class="min-h-20 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        [value]="promptMarkdown()"
+        [disabled]="!editable()"
+        [attr.placeholder]="'admin.puzzles.editor.promptPlaceholder' | translate"
+        [attr.aria-invalid]="attempted() && promptErrorKey() !== null"
+        [attr.aria-describedby]="attempted() && promptErrorKey() ? 'puzzle-prompt-error' : null"
+        (input)="onPromptInput($event)"
+      ></textarea>
+      @if (attempted() && promptErrorKey(); as key) {
+        <p id="puzzle-prompt-error" class="text-sm text-danger" role="alert">
+          {{ key | translate }}
+        </p>
+      }
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium" for="puzzle-code">
+          {{ 'admin.puzzles.editor.code' | translate }}
+        </label>
+        <textarea
+          id="puzzle-code"
+          class="min-h-80 rounded-md border border-border-strong bg-surface-raised px-3 py-2 font-mono text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+          spellcheck="false"
+          [value]="code()"
+          [disabled]="!editable()"
+          aria-required="true"
+          [attr.aria-invalid]="attempted() && codeErrorKey() !== null"
+          [attr.aria-describedby]="attempted() && codeErrorKey() ? 'puzzle-code-error' : null"
+          (input)="onCodeInput($event)"
+        ></textarea>
+        @if (attempted() && codeErrorKey(); as key) {
+          <p id="puzzle-code-error" class="text-sm text-danger" role="alert">
+            {{ key | translate }}
+          </p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <span id="puzzle-preview-label" class="text-sm font-medium">
+          {{ 'admin.puzzles.editor.preview' | translate }}
+        </span>
+        <p class="text-sm text-text-muted">{{ 'admin.puzzles.editor.previewHint' | translate }}</p>
+        <!--
+          The player's own listing, live rather than read-only. An answer line
+          is a number about a listing, and a number typed into a box beside one
+          is the easiest thing on this form to get off by one; picking it here
+          is the same edit, made where it can be seen.
+        -->
+        <div role="region" aria-labelledby="puzzle-preview-label">
+          <app-puzzle-code
+            [code]="code()"
+            [language]="language()"
+            [buggyLine]="buggyLineNumber()"
+            [locked]="!editable()"
+            (lineSelect)="onPreviewLineSelect($event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium" for="puzzle-explanation">
+        {{ 'admin.puzzles.editor.explanation' | translate }}
+      </label>
+      <textarea
+        id="puzzle-explanation"
+        class="min-h-32 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        [value]="explanationMarkdown()"
+        [disabled]="!editable()"
+        aria-required="true"
+        [attr.placeholder]="'admin.puzzles.editor.explanationPlaceholder' | translate"
+        [attr.aria-invalid]="attempted() && explanationErrorKey() !== null"
+        [attr.aria-describedby]="
+          attempted() && explanationErrorKey() ? 'puzzle-explanation-error' : null
+        "
+        (input)="onExplanationInput($event)"
+      ></textarea>
+      @if (attempted() && explanationErrorKey(); as key) {
+        <p id="puzzle-explanation-error" class="text-sm text-danger" role="alert">
+          {{ key | translate }}
+        </p>
+      }
+    </div>
+
+    @if (saveFailureKey(); as key) {
+      <div class="rounded-md border-l-4 border-danger bg-danger-soft p-3" role="alert">
+        <p class="text-sm text-text">{{ key | translate }}</p>
+      </div>
+    }
+
+    <!--
+      Always in the DOM, empty until there is something to say: a live region
+      inserted together with its text is announced by almost nothing. Success
+      only — the failures above are alerts, and an alert for a success would
+      interrupt a reader to tell them nothing went wrong.
+    -->
+    <p
+      class="text-sm text-success-strong"
+      role="status"
+      data-testid="puzzle-editor-outcome"
+      [class.mt-2]="outcomeKey() !== null"
+    >
+      @if (outcomeKey(); as key) {
+        {{ key | translate }}
+      }
+    </p>
+
+    @if (editable()) {
+      <!--
+        Unavailable while the save is in flight, not disabled: a `disabled`
+        button drops the focus it is holding onto the document body, and this
+        is the button someone has just pressed. `onSave` refuses a second
+        attempt itself, which it has to, because unlike `disabled` this does
+        not stop Enter from submitting the form.
+      -->
+      <button
+        type="submit"
+        class="w-fit rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast hover:opacity-90 aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+        data-testid="puzzle-editor-save"
+        [attr.aria-disabled]="saving() ? true : null"
+      >
+        {{ (saving() ? 'admin.puzzles.editor.saving' : 'admin.puzzles.editor.save') | translate }}
+      </button>
+    }
+  </form>
+
+  @if (!isCreateMode()) {
+    <section class="mt-10">
+      <h2 class="text-lg font-semibold tracking-tight">
+        {{ 'admin.puzzles.editor.actionsHeading' | translate }}
+      </h2>
+
+      @if (transitionFailureKey(); as key) {
+        <p class="mt-2 text-sm text-danger" role="alert">{{ key | translate }}</p>
+      }
+
+      @if (pendingAction(); as action) {
+        <div class="mt-3 rounded-md border border-border bg-surface p-4">
+          <label class="text-sm font-medium" for="puzzle-reason">
+            {{ 'admin.puzzles.editor.reasonLabel' | translate }}
+          </label>
+          <textarea
+            #reasonField
+            id="puzzle-reason"
+            class="mt-1 w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted"
+            aria-required="true"
+            aria-describedby="puzzle-reason-hint"
+            [attr.placeholder]="'admin.puzzles.editor.reasonPlaceholder' | translate"
+            [attr.aria-invalid]="reasonTooShort()"
+            [value]="reasonDraft()"
+            (input)="onReasonInput($event)"
+          ></textarea>
+          <p
+            id="puzzle-reason-hint"
+            class="mt-1 text-sm text-text-muted"
+            [hidden]="!reasonTooShort()"
+          >
+            {{ 'admin.puzzles.editor.error.reasonTooShort' | translate }}
+          </p>
+          <div class="mt-3 flex gap-2">
+            <button
+              type="button"
+              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              data-testid="puzzle-confirm-action"
+              [attr.aria-disabled]="transitioning() || reasonTooShort() ? true : null"
+              (click)="confirmPendingAction()"
+            >
+              {{ 'admin.puzzles.editor.confirmAction' | translate }}
+            </button>
+            <button
+              type="button"
+              class="rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover hover:text-text"
+              (click)="cancelPendingAction()"
+            >
+              {{ 'common.cancel' | translate }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div #actionGroup class="mt-3 flex flex-wrap gap-2">
+          @for (action of actions(); track action) {
+            <!--
+              Unavailable rather than disabled while a transition runs: the
+              button that was just pressed is the one that would go inert, and
+              it would take the keyboard focus to the document body with it.
+              `onAction` refuses to start a second transition itself.
+            -->
+            <button
+              type="button"
+              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              [class.text-danger]="action === 'delete'"
+              [attr.data-action]="action"
+              [attr.aria-disabled]="transitioning() ? true : null"
+              (click)="onAction(action)"
+            >
+              {{ 'admin.puzzles.action.' + action | translate }}
+            </button>
+          }
+        </div>
+      }
+    </section>
+  }
+}

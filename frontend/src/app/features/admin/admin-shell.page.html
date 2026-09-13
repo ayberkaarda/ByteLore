@@ -18,6 +18,14 @@
   >
     {{ 'admin.nav.review' | translate }}
   </a>
+  <a
+    class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"
+    routerLink="/admin/puzzles"
+    routerLinkActive="bg-surface-raised text-text"
+    ariaCurrentWhenActive="page"
+  >
+    {{ 'admin.nav.puzzles' | translate }}
+  </a>
   @if (session.isAdmin()) {
     <a
       class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"

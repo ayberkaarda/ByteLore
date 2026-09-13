@@ -72,9 +72,9 @@ Aşağıdaki beşi de masaüstü uygulaması, gönderilen korpusa karşı çalı
 <tr><td width="50%">
 
 **Kütüphane**
-Her izlek kaç ders taşıdığını ve kaçının çevrimdışı okuma için zaten kayıtlı olduğunu gösteriyor.
+Tamamlanma ve indirme istatistikleri bir bakışta, bir "kaldığın yerden devam et" kartı, ve her izleğin kendi ilerleme çubuğu.
 
-<img src="docs/screenshots/library.png" alt="Sekiz öğrenme yolunu kart olarak gösteren kütüphane ekranı" width="100%">
+<img src="docs/screenshots/library.png" alt="Özet istatistik karolarının yanında öğrenme yolu kartlarının listelendiği kütüphane dashboard'ı" width="100%">
 
 </td><td width="50%">
 
@@ -89,7 +89,7 @@ Modüller ve dersler, her birinin kendi indirme kontrolü ve izleğin akıl hari
 **Bir ders, okuma sırasında**
 Gerçek kod, dersi yazan makinede gerçekten derlenmiş, sözdizimi vurgulanmış ve diline göre etiketlenmiş.
 
-<img src="docs/screenshots/lesson-reader.png" alt="Ömürler (lifetimes) hakkında vurgulanmış bir Rust kod örneği gösteren ders gövdesi" width="100%">
+<img src="docs/screenshots/lesson-reader.png" alt="Sahiplik ve serbest bırakma sırası hakkında vurgulanmış bir Rust kod örneği gösteren ders gövdesi" width="100%">
 
 </td><td width="50%">
 

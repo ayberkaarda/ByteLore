@@ -1,0 +1,41 @@
+<!--
+  A radio group that happens to look like a code listing. The <code> element
+  in each row is left empty here on purpose: the component moves the
+  highlighter's own per-line markup into it, and anything written here would
+  be thrown away on the first render.
+
+  Every mark that colour makes also has a word behind it, read only by a
+  screen reader: a listing where the answer is a shade of green and the miss a
+  shade of red says nothing at all to a reader who cannot tell them apart.
+-->
+<fieldset class="puzzle-code" [class.puzzle-code-locked]="locked()">
+  <legend class="sr-only">{{ 'puzzle.code.legend' | translate }}</legend>
+
+  @for (line of lines(); track line.number) {
+    <label
+      class="puzzle-code-line"
+      [class.is-selected]="line.mark === 'selected'"
+      [class.is-correct]="line.mark === 'correct'"
+      [class.is-wrong]="line.mark === 'wrong'"
+    >
+      <input
+        class="sr-only"
+        type="radio"
+        [attr.name]="groupName"
+        [attr.data-line]="line.number"
+        [value]="line.number"
+        [checked]="line.number === selectedLine()"
+        [disabled]="locked()"
+        (change)="onSelect(line.number)"
+      />
+      <span class="puzzle-code-number" aria-hidden="true">{{ line.number }}</span>
+      <span class="sr-only">{{ 'puzzle.code.lineLabel' | translate: { line: line.number } }}</span>
+      <code #row class="puzzle-code-text"></code>
+      @if (line.mark === 'correct') {
+        <span class="sr-only">{{ 'puzzle.code.markBug' | translate }}</span>
+      } @else if (line.mark === 'wrong') {
+        <span class="sr-only">{{ 'puzzle.code.markMiss' | translate }}</span>
+      }
+    </label>
+  }
+</fieldset>

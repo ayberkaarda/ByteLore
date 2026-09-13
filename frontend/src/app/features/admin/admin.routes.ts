@@ -41,6 +41,27 @@ export const ADMIN_ROUTES: Routes = [
         path: 'review',
         loadComponent: () => import('./review/review-queue.page').then((m) => m.ReviewQueuePage),
       },
+      /*
+       * `new` and `review` come before `:id/edit` because the router matches
+       * in order and both would otherwise be read as an identifier.
+       */
+      {
+        path: 'puzzles',
+        loadComponent: () => import('./puzzles/puzzle-list.page').then((m) => m.PuzzleListPage),
+      },
+      {
+        path: 'puzzles/new',
+        loadComponent: () => import('./puzzles/puzzle-editor.page').then((m) => m.PuzzleEditorPage),
+      },
+      {
+        path: 'puzzles/review',
+        loadComponent: () =>
+          import('./puzzles/puzzle-review-queue.page').then((m) => m.PuzzleReviewQueuePage),
+      },
+      {
+        path: 'puzzles/:id/edit',
+        loadComponent: () => import('./puzzles/puzzle-editor.page').then((m) => m.PuzzleEditorPage),
+      },
       {
         path: 'review/:postId',
         loadComponent: () => import('./review/review-detail.page').then((m) => m.ReviewDetailPage),

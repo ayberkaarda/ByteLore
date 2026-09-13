@@ -144,6 +144,25 @@
             </span>
           }
         </a>
+        <!--
+          The daily puzzle appears only for a signed-in reader, unlike the
+          blog entry above it. The difference is what the screen behind each
+          one can do without a session: the blog can still explain itself,
+          while the puzzle is a single shared attempt tied to an account and
+          would have nothing to show an anonymous visitor but a sign-in
+          prompt. A menu item whose only content is a demand to sign in is a
+          worse answer than no menu item.
+        -->
+        @if (session.user() !== null) {
+          <a
+            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+            routerLink="/puzzle"
+            routerLinkActive="!border-accent text-text"
+            ariaCurrentWhenActive="page"
+          >
+            {{ 'nav.puzzle' | translate }}
+          </a>
+        }
         @if (canDownload) {
           <a
             class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"

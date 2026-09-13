@@ -121,6 +121,14 @@ public class SecurityConfig {
                         "/api/v1/admin/blog/posts/*/reject",
                         "/api/v1/admin/blog/posts/*/unpublish")
                     .hasRole("ADMIN")
+                    // The daily puzzle runs for everybody at once, so the decision to show one
+                    // sits at the same level as the decision to publish a post. An editor writes
+                    // and submits; somebody else approves.
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/v1/admin/puzzles/*/approve",
+                        "/api/v1/admin/puzzles/*/reject")
+                    .hasRole("ADMIN")
                     .requestMatchers("/api/v1/admin/**")
                     .hasAnyRole("EDITOR", "ADMIN")
                     .anyRequest()

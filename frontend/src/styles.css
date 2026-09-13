@@ -522,3 +522,88 @@ a:active {
     linear-gradient(135deg, transparent 50%, var(--color-text-muted) 50%),
     linear-gradient(45deg, var(--color-text-muted) 50%, transparent 50%);
 }
+
+/*
+ * The daily puzzle's listing.
+ *
+ * A radio group drawn as a code block: one row per line, a gutter that
+ * numbers them the way the server validates a click against, and a fill that
+ * says which line is picked. The rules live in the global sheet for the same
+ * reason the markdown rules do -- the line elements inside each row come from
+ * the syntax highlighter, are moved into place rather than written by a
+ * template, and therefore carry none of a component's scoping attributes.
+ */
+.puzzle-code {
+  min-width: 0;
+  margin: 0;
+  padding: var(--spacing-2) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-code-bg);
+  color: var(--color-text);
+  overflow-x: auto;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/*
+ * Rows are as wide as their longest line and never narrower than the box, so
+ * a long line scrolls sideways instead of wrapping -- a wrapped line would put
+ * two rows under one number and make the gutter a lie -- while a short line
+ * still takes a full-width fill when it is marked.
+ */
+.puzzle-code-line {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: var(--spacing-3);
+  width: max-content;
+  min-width: 100%;
+  padding-right: var(--spacing-3);
+  border-left: 3px solid transparent;
+  white-space: pre;
+  cursor: pointer;
+}
+
+.puzzle-code:not(.puzzle-code-locked) .puzzle-code-line:hover {
+  background: var(--color-surface-hover);
+}
+
+.puzzle-code-locked .puzzle-code-line {
+  cursor: default;
+}
+
+/*
+ * The focus ring is drawn on the row because the control it belongs to is
+ * visually hidden: a ring around a one-pixel input is a ring nobody can see.
+ * Inset, so it is not clipped away by the box's own horizontal scrolling.
+ */
+.puzzle-code-line:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.puzzle-code-number {
+  padding-left: var(--spacing-3);
+  text-align: right;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+/* The three marks. Each one also has a word behind it in the markup, because
+   a reader who cannot separate these fills is told nothing by them. */
+.puzzle-code-line.is-selected {
+  background: var(--color-accent-soft);
+  border-left-color: var(--color-accent);
+}
+
+.puzzle-code-line.is-correct {
+  background: var(--color-success-soft);
+  border-left-color: var(--color-success);
+}
+
+.puzzle-code-line.is-wrong {
+  background: var(--color-danger-soft);
+  border-left-color: var(--color-danger);
+}

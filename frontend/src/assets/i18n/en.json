@@ -7,6 +7,7 @@
     "label": "Main navigation",
     "tracks": "Learning paths",
     "blog": "Blog",
+    "puzzle": "Bug hunt",
     "downloads": "Downloads",
     "admin": "Admin",
     "signIn": "Sign in",
@@ -199,6 +200,49 @@
       "indicatorHint": "The server cannot be reached right now, and blog posts are loaded live."
     }
   },
+  "puzzle": {
+    "heading": "Daily bug hunt",
+    "intro": "One listing, one bug, one guess. Pick the line you think is wrong.",
+    "noneToday": "No puzzle today.",
+    "noneTodayHint": "Come back tomorrow — a new one is published every day.",
+    "languageLabel": "Language: {{language}}",
+    "clock": "Elapsed {{elapsed}}",
+    "submit": "Submit answer",
+    "submitting": "Submitting…",
+    "picked": "Line {{line}} selected",
+    "pickPrompt": "Select a line first.",
+    "outcome": {
+      "heading": "Result",
+      "correct": "Correct — that is the faulty line.",
+      "wrong": "Not this time. The faulty line is marked below.",
+      "buggyLine": "Faulty line",
+      "elapsed": "Your time",
+      "currentStreak": "Current streak",
+      "longestStreak": "Longest streak",
+      "explanation": "Why"
+    },
+    "code": {
+      "legend": "Choose the faulty line",
+      "lineLabel": "Line {{line}}",
+      "markBug": "faulty line",
+      "markMiss": "your answer"
+    },
+    "leaderboard": {
+      "heading": "Today's scoreboard",
+      "sort": "Scoreboard order",
+      "sortTime": "Fastest",
+      "sortStreak": "Longest streak",
+      "empty": "Nobody has solved it yet today.",
+      "tableCaption": "Players who solved today's puzzle",
+      "you": "you",
+      "column": {
+        "rank": "Rank",
+        "player": "Player",
+        "time": "Time",
+        "streak": "Streak"
+      }
+    }
+  },
   "sync": {
     "statusLabel": "Connection and synchronisation status",
     "offline": "Offline",
@@ -280,7 +324,12 @@
     "INSECURE_SOURCE_URL": "This link must use a secure (https) address.",
     "INVALID_VERIFY_URL_PATTERN": "The verification link pattern isn't valid. It must contain exactly one version placeholder.",
     "CURRENT_PASSWORD_INCORRECT": "Your current password is incorrect.",
-    "CONTENT_PACKAGE_TOO_LARGE": "This content is too large to package for download. Please split it into smaller pieces."
+    "CONTENT_PACKAGE_TOO_LARGE": "This content is too large to package for download. Please split it into smaller pieces.",
+    "PUZZLE_NOT_FOUND": "There is no puzzle for that day.",
+    "PUZZLE_ALREADY_ATTEMPTED": "You have already answered today's puzzle.",
+    "PUZZLE_DATE_ALREADY_TAKEN": "Another puzzle is already scheduled for that day.",
+    "PUZZLE_NOT_EDITABLE": "A published puzzle can no longer be changed.",
+    "PUZZLE_LINE_OUT_OF_RANGE": "That line is outside the listing."
   },
   "auth": {
     "heading": "Sign in",
@@ -299,6 +348,7 @@
       "label": "Admin navigation",
       "posts": "Posts",
       "review": "Review",
+      "puzzles": "Puzzles",
       "sources": "Sources"
     },
     "common": {
@@ -552,6 +602,94 @@
           "verifyUrlPatternInsecure": "The verify URL pattern must be an absolute https:// address.",
           "verifyUrlPatternPlaceholder": "The verify URL pattern must contain exactly one {version} placeholder."
         }
+      }
+    },
+    "puzzles": {
+      "heading": "Puzzles",
+      "newPuzzle": "New puzzle",
+      "reviewQueueLink": "Review queue",
+      "empty": "No puzzles match these filters.",
+      "tableCaption": "Puzzles, newest running day first",
+      "filter": {
+        "status": "Status",
+        "allStatuses": "Every status",
+        "sort": "Sort",
+        "search": "Search",
+        "searchPlaceholder": "Search titles"
+      },
+      "sort": {
+        "puzzle_date,desc": "Newest day first",
+        "puzzle_date,asc": "Oldest day first",
+        "updated_at,desc": "Recently updated",
+        "created_at,desc": "Recently created",
+        "title,asc": "Title (A–Z)"
+      },
+      "column": {
+        "puzzleDate": "Day",
+        "title": "Title",
+        "language": "Language",
+        "status": "Status",
+        "updatedAt": "Updated"
+      },
+      "action": {
+        "submit": "Send for review",
+        "approve": "Approve",
+        "reject": "Reject",
+        "delete": "Delete"
+      },
+      "editor": {
+        "headingNew": "New puzzle",
+        "headingEdit": "Edit puzzle",
+        "puzzleDate": "Running day",
+        "title": "Title",
+        "prompt": "Prompt",
+        "promptPlaceholder": "Optional context above the listing",
+        "language": "Language tag",
+        "languagePlaceholder": "java, rust, typescript…",
+        "code": "Listing",
+        "buggyLine": "Faulty line",
+        "lineCount": "{{count}} lines in the listing",
+        "explanation": "Explanation",
+        "explanationPlaceholder": "What is wrong on that line, and why",
+        "preview": "Preview",
+        "previewHint": "Click a line to set it as the faulty one.",
+        "frozenHint": "A published puzzle is frozen: people have already played it. Correct it by publishing a different one.",
+        "save": "Save",
+        "saving": "Saving…",
+        "saved": "Saved.",
+        "transitionApplied": "Status updated.",
+        "actionsHeading": "Actions",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Explain the decision",
+        "confirmAction": "Confirm",
+        "error": {
+          "dateRequired": "A running day is required.",
+          "dateInvalid": "Enter the day as YYYY-MM-DD.",
+          "titleRequired": "A title is required.",
+          "titleLength": "The title must be 200 characters or fewer.",
+          "promptLength": "The prompt must be 4,000 characters or fewer.",
+          "languageRequired": "A language tag is required.",
+          "languageLength": "The language tag must be 40 characters or fewer.",
+          "languagePattern": "The language tag may only contain lowercase letters, digits and + # . _ -",
+          "codeRequired": "A listing is required.",
+          "codeLength": "The listing must be 20,000 characters or fewer.",
+          "buggyLineRequired": "Pick the faulty line.",
+          "buggyLineRange": "The faulty line must be a line the listing actually has.",
+          "explanationRequired": "An explanation is required.",
+          "explanationLength": "The explanation must be 4,000 characters or fewer.",
+          "reasonTooShort": "The reason must be at least 10 characters."
+        }
+      },
+      "review": {
+        "heading": "Puzzles awaiting review",
+        "intro": "Every puzzle runs for the whole platform on one day, so each one is approved by hand before it does.",
+        "empty": "Nothing is waiting for a decision.",
+        "runsOn": "Runs on {{date}}",
+        "answerOnLine": "answer on line {{line}} of {{count}}",
+        "reasonLabel": "Reason for rejecting",
+        "reasonPlaceholder": "What has to change before this can run",
+        "reasonTooShort": "The reason must be at least 10 characters.",
+        "confirmReject": "Reject puzzle"
       }
     },
     "forbidden": {

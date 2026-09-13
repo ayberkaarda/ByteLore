@@ -38,6 +38,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/blog/blog-post.page').then((m) => m.BlogPostPage),
   },
   {
+    /*
+     * The one screen here that needs a session and a connection, and the one
+     * gate that is about being signed in rather than about a role: a shared
+     * daily puzzle with a scoreboard and a streak is a claim about when
+     * something happened relative to other people, which nothing local can
+     * settle. Listing all three roles rather than leaving the route open is
+     * what sends an anonymous visitor to sign in, carrying where they were
+     * going, instead of to a screen that can only report a refusal.
+     */
+    path: 'puzzle',
+    canActivate: [requireRole(['USER', 'EDITOR', 'ADMIN'])],
+    loadComponent: () => import('./features/puzzle/puzzle.page').then((m) => m.PuzzlePage),
+  },
+  {
     path: 'downloads',
     loadComponent: () => import('./features/downloads/downloads.page').then((m) => m.DownloadsPage),
   },
