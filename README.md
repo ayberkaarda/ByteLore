@@ -88,9 +88,9 @@ Modules and lessons, each with its own download control, and a link to the track
 <tr><td width="50%">
 
 **A lesson, mid-read**
-Real code, really compiled on the machine that wrote the lesson, followed by the diagnostic a reader is likely to hit.
+Real code, really compiled on the machine that wrote the lesson, syntax-highlighted and tagged by language.
 
-<img src="docs/screenshots/lesson-reader.png" alt="A lesson body showing highlighted Rust code and a compiler diagnostic" width="100%">
+<img src="docs/screenshots/lesson-reader.png" alt="A lesson body showing a highlighted Rust code example about lifetimes" width="100%">
 
 </td><td width="50%">
 

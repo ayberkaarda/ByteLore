@@ -87,9 +87,9 @@ Modüller ve dersler, her birinin kendi indirme kontrolü ve izleğin akıl hari
 <tr><td width="50%">
 
 **Bir ders, okuma sırasında**
-Gerçek kod, dersi yazan makinede gerçekten derlenmiş, ardından bir okuyucunun büyük olasılıkla karşılaşacağı tanı.
+Gerçek kod, dersi yazan makinede gerçekten derlenmiş, sözdizimi vurgulanmış ve diline göre etiketlenmiş.
 
-<img src="docs/screenshots/lesson-reader.png" alt="Vurgulanmış Rust kodu ve bir derleyici tanısı gösteren ders gövdesi" width="100%">
+<img src="docs/screenshots/lesson-reader.png" alt="Ömürler (lifetimes) hakkında vurgulanmış bir Rust kod örneği gösteren ders gövdesi" width="100%">
 
 </td><td width="50%">
 
