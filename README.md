@@ -60,6 +60,8 @@ source with a compile-time file replacement.
   while you are offline or your session has expired.
 - **Read the blog**, which is assembled by a scheduled pipeline but published only by
   a person.
+- **Play the daily bug hunt** once signed in — one syntax-highlighted listing, one bug,
+  one guess, against a shared leaderboard and your own streak.
 - **Switch language and theme** at runtime, in English, Turkish, French or German,
   with no page reload and no flash of the wrong theme at startup.
 
@@ -106,6 +108,11 @@ One leaf per lesson, derived from the track's own structure rather than authored
 Everything stored on this device, and what changed since the last check — the local half of the sync protocol described below.
 
 <img src="docs/screenshots/downloads.png" alt="The downloads screen, listing stored lessons per track" width="70%">
+
+**The daily bug hunt**
+One listing, one bug, one guess — with the answer, the reasoning and a live scoreboard once you have played.
+
+<img src="docs/screenshots/puzzle.png" alt="The daily bug hunt screen, showing a solved Python listing, its explanation and the day's scoreboard" width="70%">
 
 ---
 

@@ -59,6 +59,8 @@ dosya değişimiyle üretilir.
   çevrimdışıyken ya da oturumun süresi dolmuşken de çalışmaya devam eder.
 - Zamanlanmış bir hat tarafından derlenen ama **yalnızca bir insan tarafından
   yayınlanan** blogu oku.
+- Oturum açtıktan sonra **günlük bug hunt'ı oyna** — tek bir sözdizimi vurgulu listing,
+  tek bir hata, tek bir tahmin; paylaşımlı bir skor tablosuna ve kendi serine karşı.
 - **Dili ve temayı çalışma zamanında değiştir** — İngilizce, Türkçe, Fransızca ve
   Almanca; sayfa yenilenmeden ve açılışta yanlış tema parlaması olmadan.
 
@@ -105,6 +107,11 @@ Gerçek kod, dersi yazan makinede gerçekten derlenmiş, sözdizimi vurgulanmı�
 Bu cihazda saklanan her şey, ve son kontrolden bu yana ne değişti — aşağıda anlatılan senkron protokolünün yerel yarısı.
 
 <img src="docs/screenshots/downloads.png" alt="İzlek başına saklanan dersleri listeleyen indirmeler ekranı" width="70%">
+
+**Günlük bug hunt**
+Tek bir listing, tek bir hata, tek bir tahmin — cevap, gerekçesi ve oynadıktan sonra canlı bir skor tablosuyla.
+
+<img src="docs/screenshots/puzzle.png" alt="Çözülmüş bir Python listing'i, açıklamasını ve günün skor tablosunu gösteren günlük bug hunt ekranı" width="70%">
 
 ---
 
