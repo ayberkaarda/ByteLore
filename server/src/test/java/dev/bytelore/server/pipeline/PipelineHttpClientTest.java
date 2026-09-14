@@ -52,7 +52,9 @@ class PipelineHttpClientTest {
         // github.com (the web host, source of most feed_urls) is not api.github.com.
         Arguments.of("https://github.com/repos/x/y/releases.atom", false),
         // An unrelated whitelisted host entirely.
-        Arguments.of("https://go.dev/doc/go1.27", false));
+        Arguments.of("https://go.dev/doc/go1.27", false),
+        // A relative URI has no host at all -- must not throw, must not match.
+        Arguments.of("relative/path", false));
   }
 
   @ParameterizedTest(name = "{0} -> github host = {1}")
@@ -90,6 +92,16 @@ class PipelineHttpClientTest {
   @Test
   void buildRequestNeverAttachesAnAuthorizationHeaderWhenTheTokenIsBlank() {
     PipelineHttpClient client = clientWithToken("   ");
+
+    HttpRequest request =
+        client.buildRequest(URI.create("https://api.github.com/repos/x/y/releases/tags/v1.0.0"));
+
+    assertThat(request.headers().firstValue("Authorization")).isEmpty();
+  }
+
+  @Test
+  void buildRequestNeverAttachesAnAuthorizationHeaderWhenTheTokenIsNull() {
+    PipelineHttpClient client = clientWithToken(null);
 
     HttpRequest request =
         client.buildRequest(URI.create("https://api.github.com/repos/x/y/releases/tags/v1.0.0"));

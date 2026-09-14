@@ -39,6 +39,7 @@
 		<commonmark.version>0.30.0</commonmark.version>
 		<spotless-maven-plugin.version>3.10.1</spotless-maven-plugin.version>
 		<google-java-format.version>1.36.1</google-java-format.version>
+		<jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -190,12 +191,86 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<!-- Picks up the JaCoCo agent property set by the plugin's
+					     prepare-agent-integration execution below, so *IT.java
+					     runs (Testcontainers included) are instrumented too. -->
+					<argLine>${failsafeArgLine}</argLine>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Coverage measurement for CLAUDE.md I3 / bytelore-prompt.md's "pipeline
+			     module: 90%+ coverage" requirement. Unit tests (surefire, `test` phase)
+			     and integration tests (failsafe, `integration-test` phase, real
+			     Testcontainers Postgres) each write their own .exec file; both are
+			     merged and reported at `verify` time so the number reflects both
+			     kinds of tests, not just one. The report is scoped to the pipeline
+			     package only (see the `report` execution's <includes>) so the rest
+			     of the codebase's coverage does not dilute or inflate this specific
+			     spec requirement. -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-agent-unit</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-unit.exec</destFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>prepare-agent-integration</id>
+						<goals>
+							<goal>prepare-agent-integration</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-it.exec</destFile>
+							<propertyName>failsafeArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>merge-results</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>merge</goal>
+						</goals>
+						<configuration>
+							<fileSets>
+								<fileSet>
+									<directory>${project.build.directory}</directory>
+									<includes>
+										<include>jacoco-unit.exec</include>
+										<include>jacoco-it.exec</include>
+									</includes>
+								</fileSet>
+							</fileSets>
+							<destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+							<includes>
+								<include>dev/bytelore/server/pipeline/**</include>
+							</includes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

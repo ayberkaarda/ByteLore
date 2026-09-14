@@ -83,4 +83,42 @@ class VersionExtractorTest {
   void nullIsNotAPreRelease() {
     assertThat(VersionExtractor.isPreRelease(null)).isFalse();
   }
+
+  @Test
+  void aStringWithNoNumericCoreAtAllIsNotAPreRelease() {
+    // NUMERIC_CORE.find() itself returns false here, short-circuiting before the length
+    // comparison -- distinct from the "core found, nothing trails it" case above.
+    assertThat(VersionExtractor.isPreRelease("no-digits-here")).isFalse();
+  }
+
+  // ---- extract() with a null title and/or id ------------------------------------------------
+
+  @Test
+  void aNullTitleFallsThroughToTheFeedIdWithoutThrowing() {
+    Optional<String> result =
+        VersionExtractor.extract(
+            new FeedItem("tag:v3.3.3", null, "https://example.test/x", "b", null));
+    assertThat(result).contains("v3.3.3");
+  }
+
+  @Test
+  void aNullTitleAndNullIdYieldsNothing() {
+    Optional<String> result =
+        VersionExtractor.extract(new FeedItem(null, null, "https://example.test/x", "b", null));
+    assertThat(result).isEmpty();
+  }
+
+  /**
+   * {@code VERSION_SHAPE} allows a suffix of arbitrary length after the numeric core, but {@code
+   * ALLOWED_CHARS} caps the whole candidate at 64 characters -- the same bound {@link
+   * VersionConfirmationService} re-checks independently before ever placing a version string in a
+   * URL. A candidate that satisfies the shape but exceeds that bound is refused here, not passed
+   * through.
+   */
+  @Test
+  void aCandidateLongerThanTheAllowedLengthIsRejectedEvenThoughItMatchesTheShape() {
+    String overlongSuffix = "a".repeat(80);
+    String title = "1.0.0-" + overlongSuffix;
+    assertThat(extractFromTitle(title)).isEmpty();
+  }
 }
