@@ -13,6 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminApiClient } from '../../../core/admin/admin-api.client';
 import type { ReviewDetail, TransitionAction } from '../../../core/admin/admin-models';
 import { AuthSession } from '../../../core/auth/auth-session';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { DateTimePipe } from '../../../shared/date-time.pipe';
 import { MarkdownView } from '../../../shared/markdown-view';
@@ -55,6 +56,9 @@ const MIN_REASON_LENGTH = 10;
   templateUrl: './review-detail.page.html',
 })
 export class ReviewDetailPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
   protected readonly session = inject(AuthSession);
 

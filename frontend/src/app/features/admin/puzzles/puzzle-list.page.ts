@@ -11,6 +11,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { AdminPuzzleApiClient } from '../../../core/puzzle/admin-puzzle-api.client';
 import type { AdminPuzzle, PuzzleStatus } from '../../../core/puzzle/puzzle-models';
 import { errorKey } from '../../../core/platform/error-key';
@@ -56,6 +57,9 @@ const SORT_OPTIONS: readonly string[] = [
   templateUrl: './puzzle-list.page.html',
 })
 export class PuzzleListPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminPuzzleApiClient);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);

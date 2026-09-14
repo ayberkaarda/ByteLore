@@ -23,16 +23,18 @@
         links be small does not cover them and a 20px target is under the
         minimum.
       -->
-        <a class="inline-block py-1 no-underline hover:underline" routerLink="/tracks">{{
-          'track.backToTracks' | translate
-        }}</a>
+        <a
+          class="inline-block py-1 no-underline hover:underline"
+          [routerLink]="nav.commands(['/tracks'])"
+          >{{ 'track.backToTracks' | translate }}</a
+        >
       </li>
       @if (breadcrumbTrackTitle(); as title) {
         <li class="flex items-center gap-x-2">
           <span aria-hidden="true">›</span>
           <a
             class="inline-block py-1 no-underline hover:underline"
-            [routerLink]="['/tracks', trackSlug()]"
+            [routerLink]="nav.commands(['/tracks', trackSlug()])"
             >{{ title }}</a
           >
         </li>
@@ -159,7 +161,7 @@
           <a
             class="inline-block py-1 text-xs text-accent underline-offset-2 hover:underline"
             data-testid="lesson-mind-map-link"
-            [routerLink]="['/tracks', trackSlug(), 'mindmap']"
+            [routerLink]="nav.commands(['/tracks', trackSlug(), 'mindmap'])"
             >{{ 'track.mindMap' | translate }}</a
           >
         </div>
@@ -336,7 +338,7 @@
               <a
                 class="group block min-w-0 max-w-full py-1 no-underline"
                 data-testid="lesson-previous"
-                [routerLink]="['/tracks', trackSlug(), 'lessons', previous.slug]"
+                [routerLink]="nav.commands(['/tracks', trackSlug(), 'lessons', previous.slug])"
               >
                 <span class="block text-xs text-text-muted">{{
                   'lesson.previous' | translate
@@ -354,7 +356,7 @@
               <a
                 class="group block min-w-0 max-w-full py-1 no-underline sm:ml-auto sm:text-right"
                 data-testid="lesson-next"
-                [routerLink]="['/tracks', trackSlug(), 'lessons', next.slug]"
+                [routerLink]="nav.commands(['/tracks', trackSlug(), 'lessons', next.slug])"
               >
                 <span class="block text-xs text-text-muted">{{ 'lesson.next' | translate }}</span>
                 <span
@@ -369,7 +371,7 @@
               <a
                 class="group block min-w-0 max-w-full py-1 no-underline sm:ml-auto sm:text-right"
                 data-testid="lesson-path-end"
-                [routerLink]="['/tracks', trackSlug()]"
+                [routerLink]="nav.commands(['/tracks', trackSlug()])"
               >
                 <span
                   class="block break-words text-sm font-medium text-text group-hover:underline"

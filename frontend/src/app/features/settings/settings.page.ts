@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../../core/auth/auth-session';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { LanguageSwitcher } from '../../shared/language-switcher';
 import { SessionMenu } from '../../shared/session-menu';
 import { ThemeSelect } from '../../shared/theme-select';
@@ -77,7 +78,7 @@ import { ThemeSelect } from '../../shared/theme-select';
           @if (session.user() === null) {
             <a
               class="inline-block rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
-              routerLink="/login"
+              [routerLink]="nav.commands(['/login'])"
               data-testid="settings-sign-in"
             >
               {{ 'nav.signIn' | translate }}
@@ -91,5 +92,8 @@ import { ThemeSelect } from '../../shared/theme-select';
   `,
 })
 export class SettingsPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   protected readonly session = inject(AuthSession);
 }

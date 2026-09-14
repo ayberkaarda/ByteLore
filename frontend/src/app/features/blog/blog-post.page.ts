@@ -10,6 +10,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
 import type { BlogPost } from '../../core/platform/models';
@@ -48,6 +49,9 @@ function isTransportFailure(error: unknown): boolean {
   templateUrl: './blog-post.page.html',
 })
 export class BlogPostPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
 
   readonly slug = input.required<string>();

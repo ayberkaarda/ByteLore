@@ -130,7 +130,7 @@
           <a
             class="block rounded-lg bg-accent-soft p-4 text-text no-underline hover:opacity-90"
             data-testid="continue-tile"
-            [routerLink]="['/tracks', next.slug]"
+            [routerLink]="nav.commands(['/tracks', next.slug])"
             [attr.aria-label]="'tracks.open' | translate: { title: next.title }"
           >
             <p class="text-xs font-medium">{{ 'tracks.continue' | translate }}</p>
@@ -185,7 +185,7 @@
                 <div class="flex items-start justify-between gap-2">
                   <a
                     class="text-lg font-semibold tracking-tight text-text no-underline hover:underline"
-                    [routerLink]="['/tracks', track.slug]"
+                    [routerLink]="nav.commands(['/tracks', track.slug])"
                     [attr.aria-label]="'tracks.open' | translate: { title: track.title }"
                   >
                     {{ track.title }}
@@ -323,7 +323,7 @@
           <a
             class="mt-1 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-center text-sm font-medium text-text no-underline hover:bg-surface-hover"
             data-testid="library-status-link"
-            routerLink="/downloads"
+            [routerLink]="nav.commands(['/downloads'])"
           >
             {{ 'nav.downloads' | translate }}
           </a>

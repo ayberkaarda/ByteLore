@@ -1,73 +1,49 @@
 import { Routes } from '@angular/router';
 
-import { requireRole } from './core/auth/role.guard';
+import { SHARED_ROUTES } from './app.routes.shared';
+import {
+  LOCALE_ROUTE_PATH,
+  followUrlLocale,
+  preferredLocaleRedirect,
+  supportedLocaleSegment,
+} from './core/i18n/locale-route';
 
 /**
- * Every feature route is loaded on demand. The shell is what the first paint
- * needs; a track the user has not asked for is not.
+ * The web build's routes: every screen, under a language segment.
  *
- * Content is addressed by slug throughout, because a slug is what a deep link
- * carries and what survives a lesson being moved between modules. Identifiers
- * stay inside the platform layer.
+ * A canonical address per language is what makes the content indexable in
+ * more than one of them — `/tr/tracks/java` and `/fr/tracks/java` are two
+ * pages a search engine can hold, where one address whose language depends on
+ * a stored preference is one page that answers differently to different
+ * visitors.
+ *
+ * This file is replaced by app.routes.tauri.ts in the desktop build, where
+ * nothing is crawled and an address carries no language. The routes both
+ * builds share are in app.routes.shared.ts; what is here is only the wrapping.
  */
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'tracks' },
+  /*
+   * A bare visit has not said which language it wants, so it is sent to the
+   * one the interface resolved at startup. This is the only redirect in the
+   * file: a language segment that is present and supported is honoured as
+   * written even when it disagrees with the stored preference, because
+   * following a link to a French page is itself a statement about which
+   * language is wanted.
+   */
+  { path: '', pathMatch: 'full', redirectTo: preferredLocaleRedirect },
   {
-    path: 'tracks',
-    loadComponent: () => import('./features/tracks/track-list.page').then((m) => m.TrackListPage),
+    path: LOCALE_ROUTE_PATH,
+    canMatch: [supportedLocaleSegment],
+    resolve: { locale: followUrlLocale },
+    children: SHARED_ROUTES,
   },
-  {
-    path: 'tracks/:trackSlug',
-    loadComponent: () =>
-      import('./features/tracks/track-detail.page').then((m) => m.TrackDetailPage),
-  },
-  {
-    path: 'tracks/:trackSlug/mindmap',
-    loadComponent: () => import('./features/mind-map/mind-map.page').then((m) => m.MindMapPage),
-  },
-  {
-    path: 'tracks/:trackSlug/lessons/:lessonSlug',
-    loadComponent: () => import('./features/lessons/lesson.page').then((m) => m.LessonPage),
-  },
-  {
-    path: 'blog',
-    loadComponent: () => import('./features/blog/blog-list.page').then((m) => m.BlogListPage),
-  },
-  {
-    path: 'blog/:slug',
-    loadComponent: () => import('./features/blog/blog-post.page').then((m) => m.BlogPostPage),
-  },
-  {
-    /*
-     * The one screen here that needs a session and a connection, and the one
-     * gate that is about being signed in rather than about a role: a shared
-     * daily puzzle with a scoreboard and a streak is a claim about when
-     * something happened relative to other people, which nothing local can
-     * settle. Listing all three roles rather than leaving the route open is
-     * what sends an anonymous visitor to sign in, carrying where they were
-     * going, instead of to a screen that can only report a refusal.
-     */
-    path: 'puzzle',
-    canActivate: [requireRole(['USER', 'EDITOR', 'ADMIN'])],
-    loadComponent: () => import('./features/puzzle/puzzle.page').then((m) => m.PuzzlePage),
-  },
-  {
-    path: 'downloads',
-    loadComponent: () => import('./features/downloads/downloads.page').then((m) => m.DownloadsPage),
-  },
-  {
-    path: 'settings',
-    loadComponent: () => import('./features/settings/settings.page').then((m) => m.SettingsPage),
-  },
-  {
-    path: 'login',
-    loadComponent: () => import('./features/auth/login.page').then((m) => m.LoginPage),
-  },
-  {
-    path: 'admin',
-    canActivate: [requireRole(['EDITOR', 'ADMIN'])],
-    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
-  },
+  /*
+   * Reached when the first segment is not a language this application speaks —
+   * `/xx/tracks`, or `/tracks` as written by a link from before the segment
+   * existed. Both are bad addresses rather than preferences to interpret, and
+   * the shared routes end in this same screen, so a reader gets one answer
+   * whichever way they arrived at it.
+   */
   {
     path: '**',
     loadComponent: () => import('./features/not-found/not-found.page').then((m) => m.NotFoundPage),

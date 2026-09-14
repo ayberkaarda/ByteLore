@@ -16,6 +16,7 @@ import { requestTimeoutInterceptor } from './core/net/request-timeout.intercepto
 import { localeHeaderInterceptor } from './core/platform/api';
 import { providePlatform } from './core/platform/platform.providers';
 import { BundledTranslateLoader } from './core/i18n/translations';
+import { LocaleRouteSync } from './core/i18n/locale-route-sync';
 import { provideStartup } from './core/startup';
 import { PreferenceSyncService } from './core/sync/preference-sync.service';
 import { ProgressSyncService } from './core/sync/progress-sync.service';
@@ -59,6 +60,12 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(ProgressSyncService);
       inject(PreferenceSyncService);
+      // Same reasoning, for the language: constructing it is what arms the
+      // watch that keeps the address in step with the interface language.
+      // Nothing injects it otherwise — the direction it covers has no caller,
+      // only a cause — so without this line the two would drift apart the
+      // first time someone used the language switcher.
+      inject(LocaleRouteSync);
     }),
     provideTranslateService({
       loader: BundledTranslateLoader,

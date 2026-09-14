@@ -45,7 +45,7 @@
         <div class="flex items-center justify-between gap-2">
           <a
             class="text-base font-medium text-text no-underline hover:underline"
-            [routerLink]="['/admin/review', post.id]"
+            [routerLink]="nav.commands(['/admin/review', post.id])"
           >
             {{ post.title }}
           </a>

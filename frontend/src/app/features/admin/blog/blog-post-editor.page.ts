@@ -15,6 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminApiClient } from '../../../core/admin/admin-api.client';
 import type { AdminBlogPost, UpdateBlogPostInput } from '../../../core/admin/admin-models';
 import { AuthSession } from '../../../core/auth/auth-session';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { PlatformError } from '../../../core/platform/errors';
 import { MarkdownView } from '../../../shared/markdown-view';
@@ -52,6 +53,9 @@ const MIN_REASON_LENGTH = 10;
   templateUrl: './blog-post-editor.page.html',
 })
 export class BlogPostEditorPage {
+  /** Prefixes the language segment onto navigation targets where the build has one. */
+  private readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
   private readonly session = inject(AuthSession);
   private readonly router = inject(Router);
@@ -322,7 +326,7 @@ export class BlogPostEditorPage {
           sourceUrl: this.sourceUrl().trim() === '' ? null : this.sourceUrl().trim(),
         });
         this.applyPost(created);
-        await this.router.navigate(['/admin/blog', created.id]);
+        await this.router.navigate(this.nav.commands(['/admin/blog', created.id]));
       } else {
         const current = this.post();
         if (current === null) {
@@ -388,7 +392,7 @@ export class BlogPostEditorPage {
     try {
       if (action === 'delete') {
         await this.api.deleteBlogPost(current.id);
-        await this.router.navigateByUrl('/admin/blog');
+        await this.router.navigate(this.nav.commands(['/admin/blog']));
         return;
       }
       const updated = await this.api.transitionBlogPost(current.id, action, {

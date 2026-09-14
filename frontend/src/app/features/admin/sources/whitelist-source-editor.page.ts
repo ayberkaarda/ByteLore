@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AdminApiClient } from '../../../core/admin/admin-api.client';
 import type { WhitelistSource } from '../../../core/admin/admin-models';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { PlatformError } from '../../../core/platform/errors';
 
@@ -37,6 +38,9 @@ const VERSION_PLACEHOLDER = '{version}';
   templateUrl: './whitelist-source-editor.page.html',
 })
 export class WhitelistSourceEditorPage {
+  /** Prefixes the language segment onto navigation targets where the build has one. */
+  private readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
   private readonly router = inject(Router);
 
@@ -180,7 +184,7 @@ export class WhitelistSourceEditorPage {
           enabled: this.enabled(),
         });
         this.applySource(created);
-        await this.router.navigate(['/admin/sources', created.id]);
+        await this.router.navigate(this.nav.commands(['/admin/sources', created.id]));
       } else {
         const current = this.source();
         if (current === null) {

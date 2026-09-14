@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AdminApiClient } from '../../../core/admin/admin-api.client';
 import type { AdminBlogPostSummary, BlogSource } from '../../../core/admin/admin-models';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { DateTimePipe } from '../../../shared/date-time.pipe';
 import { Pagination } from '../../../shared/pagination';
@@ -26,6 +27,9 @@ const PAGE_SIZE = 20;
   templateUrl: './review-queue.page.html',
 })
 export class ReviewQueuePage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
 
   protected readonly source = signal<BlogSource | undefined>(undefined);

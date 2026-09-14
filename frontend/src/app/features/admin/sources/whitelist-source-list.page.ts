@@ -13,6 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AdminApiClient } from '../../../core/admin/admin-api.client';
 import type { SourceFetchResult, WhitelistSource } from '../../../core/admin/admin-models';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { PlatformError } from '../../../core/platform/errors';
 import { DateTimePipe } from '../../../shared/date-time.pipe';
@@ -58,6 +59,9 @@ interface LastFetch {
   templateUrl: './whitelist-source-list.page.html',
 })
 export class WhitelistSourceListPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
 
   private readonly deleteButtons = viewChildren<ElementRef<HTMLButtonElement>>('deleteButton');

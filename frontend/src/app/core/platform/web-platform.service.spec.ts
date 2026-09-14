@@ -325,6 +325,33 @@ describe('WebPlatformService', () => {
     expect(await service.getPreferences()).toEqual({ locale: 'en', theme: 'SYSTEM' });
   });
 
+  it('starts a browser with nothing stored in the language it asks for', async () => {
+    const languages = jest
+      .spyOn(navigator, 'languages', 'get')
+      .mockReturnValue(['fr-CA', 'en-GB'] as unknown as readonly string[]);
+    try {
+      // The regional variant is answered with the language this application
+      // has a catalogue for. Nothing is stored, so this is the only statement
+      // of preference there is — and on the web it is also what decides which
+      // language a bare visit is redirected into.
+      expect(await service.getPreferences()).toEqual({ locale: 'fr', theme: 'SYSTEM' });
+    } finally {
+      languages.mockRestore();
+    }
+  });
+
+  it('never lets the browser override a language the reader chose', async () => {
+    await service.setPreferences({ locale: 'tr' });
+    const languages = jest
+      .spyOn(navigator, 'languages', 'get')
+      .mockReturnValue(['de'] as unknown as readonly string[]);
+    try {
+      expect((await service.getPreferences()).locale).toBe('tr');
+    } finally {
+      languages.mockRestore();
+    }
+  });
+
   it('treats revealing the application as already satisfied', async () => {
     await expect(service.revealApplication()).resolves.toBeUndefined();
   });

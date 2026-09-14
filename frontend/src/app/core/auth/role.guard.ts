@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
+import { LocalizedNav } from '../nav/localized-nav';
 import { type Role } from './auth-models';
 import { AuthSession } from './auth-session';
 
@@ -23,13 +24,19 @@ export function requireRole(roles: readonly Role[]): CanActivateFn {
   return async (route, state) => {
     const session = inject(AuthSession);
     const router = inject(Router);
+    const nav = inject(LocalizedNav);
 
     await session.whenReady();
 
     const role = session.role();
     if (role === null) {
-      return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+      // The address being carried is taken from the router rather than
+      // rebuilt, so it already names the language the reader was in; where
+      // the sign-in screen itself lives is the part that has to be built.
+      return router.createUrlTree(nav.commands(['/login']), {
+        queryParams: { returnUrl: state.url },
+      });
     }
-    return roles.includes(role) ? true : router.createUrlTree(['/admin/forbidden']);
+    return roles.includes(role) ? true : router.createUrlTree(nav.commands(['/admin/forbidden']));
   };
 }

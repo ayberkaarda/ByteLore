@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 
 /**
  * Where `requireRole` sends a signed-in reader whose role is too narrow for
@@ -21,10 +22,13 @@ import { TranslatePipe } from '@ngx-translate/core';
     <p class="mt-2 text-text-muted">{{ 'admin.forbidden.description' | translate }}</p>
     <a
       class="mt-6 inline-block rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast no-underline"
-      routerLink="/tracks"
+      [routerLink]="nav.commands(['/tracks'])"
     >
       {{ 'admin.forbidden.backToTracks' | translate }}
     </a>
   `,
 })
-export class AdminForbiddenPage {}
+export class AdminForbiddenPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+}

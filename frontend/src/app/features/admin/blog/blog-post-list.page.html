@@ -2,7 +2,7 @@
   <h1 class="text-2xl font-semibold tracking-tight">{{ 'admin.posts.heading' | translate }}</h1>
   <a
     class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast"
-    routerLink="/admin/blog/new"
+    [routerLink]="nav.commands(['/admin/blog/new'])"
   >
     {{ 'admin.posts.newPost' | translate }}
   </a>
@@ -129,7 +129,7 @@
             <td class="py-2 pl-1 pr-4">
               <a
                 class="text-text no-underline hover:underline"
-                [routerLink]="['/admin/blog', post.id]"
+                [routerLink]="nav.commands(['/admin/blog', post.id])"
               >
                 {{ post.title }}
               </a>
@@ -140,7 +140,7 @@
             <td class="py-2">
               <a
                 class="text-text-muted no-underline hover:underline"
-                [routerLink]="['/admin/blog', post.id, 'audit']"
+                [routerLink]="nav.commands(['/admin/blog', post.id, 'audit'])"
               >
                 {{ 'admin.posts.viewAudit' | translate }}
               </a>

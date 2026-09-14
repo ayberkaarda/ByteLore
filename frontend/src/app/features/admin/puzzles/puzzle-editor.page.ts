@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../../../core/auth/auth-session';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { PlatformError } from '../../../core/platform/errors';
 import { AdminPuzzleApiClient } from '../../../core/puzzle/admin-puzzle-api.client';
@@ -67,6 +68,9 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
   templateUrl: './puzzle-editor.page.html',
 })
 export class PuzzleEditorPage {
+  /** Prefixes the language segment onto navigation targets where the build has one. */
+  private readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminPuzzleApiClient);
   private readonly session = inject(AuthSession);
   private readonly router = inject(Router);
@@ -323,7 +327,7 @@ export class PuzzleEditorPage {
           explanationMarkdown: this.explanationMarkdown(),
         });
         this.applyPuzzle(created);
-        await this.router.navigate(['/admin/puzzles', created.id, 'edit']);
+        await this.router.navigate(this.nav.commands(['/admin/puzzles', created.id, 'edit']));
       } else {
         const current = this.puzzle();
         if (current === null) {
@@ -436,7 +440,7 @@ export class PuzzleEditorPage {
     try {
       if (action === 'delete') {
         await this.api.deletePuzzle(current.id);
-        await this.router.navigateByUrl('/admin/puzzles');
+        await this.router.navigate(this.nav.commands(['/admin/puzzles']));
         return;
       }
       const updated = await this.api.transitionPuzzle(current.id, action, {

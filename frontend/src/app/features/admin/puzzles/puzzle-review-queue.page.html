@@ -28,7 +28,7 @@
         <div class="flex flex-wrap items-baseline justify-between gap-3">
           <a
             class="text-base font-medium text-text no-underline hover:underline"
-            [routerLink]="['/admin/puzzles', puzzle.id, 'edit']"
+            [routerLink]="nav.commands(['/admin/puzzles', puzzle.id, 'edit'])"
           >
             {{ puzzle.title }}
           </a>

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EMPTY, Observable, firstValueFrom } from 'rxjs';
 
+import { negotiateLocale } from '../i18n/negotiate-locale';
 import { API_BASE_URL, toPlatformError } from './api';
 import { BlogApiClient } from './blog-api.client';
 import { PlatformError, UnsupportedOnWebError } from './errors';
@@ -59,7 +60,21 @@ export const SESSION_STORAGE_KEY = 'bytelore.session';
 /** Where the web build keeps the two sync bookkeeping fields. */
 export const SYNC_STATE_STORAGE_KEY = 'bytelore.sync-state';
 
-const DEFAULT_PREFERENCES: Preferences = { locale: 'en', theme: 'SYSTEM' };
+const FALLBACK_LOCALE: Locale = 'en';
+
+/**
+ * What a browser with nothing stored gets.
+ *
+ * The locale is the one the browser itself asks for, which is the same header
+ * a server would negotiate against, and English only when none of the
+ * languages it lists is one this application speaks. A device that has
+ * recorded a choice never reaches here — the stored value is read first — so
+ * this never overrides a decision someone made.
+ */
+function defaultPreferences(): Preferences {
+  const languages = typeof navigator === 'undefined' ? [] : (navigator.languages ?? []);
+  return { locale: negotiateLocale(languages) ?? FALLBACK_LOCALE, theme: 'SYSTEM' };
+}
 
 const DEFAULT_SYNC_STATE: SyncBookkeeping = { preferencesDirtyAt: null, lastSyncAt: null };
 
@@ -391,18 +406,19 @@ export class WebPlatformService extends PlatformService {
    * remember a theme is not a reason to refuse to start.
    */
   async getPreferences(): Promise<Preferences> {
+    const fallback = defaultPreferences();
     try {
       const raw = localStorage.getItem(PREFERENCES_STORAGE_KEY);
       if (!raw) {
-        return DEFAULT_PREFERENCES;
+        return fallback;
       }
       const parsed = JSON.parse(raw) as Partial<Preferences>;
       return {
-        locale: narrowLocale(parsed.locale) ?? DEFAULT_PREFERENCES.locale,
-        theme: narrowTheme(parsed.theme) ?? DEFAULT_PREFERENCES.theme,
+        locale: narrowLocale(parsed.locale) ?? fallback.locale,
+        theme: narrowTheme(parsed.theme) ?? fallback.theme,
       };
     } catch {
-      return DEFAULT_PREFERENCES;
+      return fallback;
     }
   }
 

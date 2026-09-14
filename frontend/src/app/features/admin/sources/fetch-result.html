@@ -34,7 +34,7 @@
           <li>
             <a
               class="text-sm text-text no-underline hover:underline"
-              [routerLink]="['/admin/source-updates', id]"
+              [routerLink]="nav.commands(['/admin/source-updates', id])"
             >
               {{ 'admin.sources.fetch.viewSourceUpdate' | translate }}
             </a>

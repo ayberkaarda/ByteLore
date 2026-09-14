@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../core/auth/auth-session';
+import { LocalizedNav } from '../core/nav/localized-nav';
 import { ConnectivityService } from '../core/net/connectivity.service';
 import { ProgressSyncService } from '../core/sync/progress-sync.service';
 import { DateTimePipe } from './date-time.pipe';
@@ -60,7 +61,7 @@ import { DateTimePipe } from './date-time.pipe';
           @if (localOnly()) {
             <a
               class="text-xs font-medium text-accent underline-offset-2 hover:underline"
-              routerLink="/login"
+              [routerLink]="nav.commands(['/login'])"
               data-testid="sync-sign-in"
               [title]="'sync.signInToSyncHint' | translate"
             >
@@ -82,6 +83,9 @@ import { DateTimePipe } from './date-time.pipe';
   `,
 })
 export class SyncStatus {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly connectivity = inject(ConnectivityService);
   private readonly progressSync = inject(ProgressSyncService);
   private readonly session = inject(AuthSession);

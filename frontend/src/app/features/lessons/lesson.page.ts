@@ -12,6 +12,7 @@ import type { SafeHtml } from '@angular/platform-browser';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { MarkdownService } from '../../core/markdown/markdown.service';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
 import type {
@@ -115,6 +116,9 @@ function conceptsOf(map: MindMap | null, lessonId: string): readonly string[] {
   templateUrl: './lesson.page.html',
 })
 export class LessonPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly markdown = inject(MarkdownService);
   private readonly theme = inject(ThemeService);

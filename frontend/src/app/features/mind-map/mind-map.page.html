@@ -6,7 +6,7 @@
   -->
   <a
     class="inline-block py-1 text-sm text-text-muted no-underline hover:underline"
-    [routerLink]="['/tracks', trackSlug()]"
+    [routerLink]="nav.commands(['/tracks', trackSlug()])"
     >{{ 'mindMap.backToTrack' | translate }}</a
   >
 

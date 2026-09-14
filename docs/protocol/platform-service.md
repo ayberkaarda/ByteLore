@@ -548,3 +548,100 @@ one HTTP call each, identical in both builds, issued by the Angular layer that
 owns the session — the same reasoning section 9 applies to the administration
 endpoints. The platform supplies the rows and absorbs the answer; it does not
 carry them over the wire.
+
+## 11. Web locale URL prefix
+
+The spec requires a locale segment in the web build's URLs (`/tr/...`) for SEO —
+a canonical, crawlable address per language — and requires the desktop build to
+carry none. This is decided at build time, the same way `environment.ts` is: not
+a `PlatformService` method (URL shape is not a capability a component asks the
+platform for; nothing above the router needs to know it exists), but a second
+file swapped in by the same `fileReplacements` mechanism ADR-0006 already uses.
+
+**Files.** The actual `Routes` array `app.routes.ts` defines today is written
+once, in a third file, `app.routes.shared.ts`, as a function of nothing
+platform-specific. Two thin wrappers select it, and neither imports the other —
+a `fileReplacements` pair that swaps a file for one importing back from it
+builds against whichever copy the bundler resolves first, silently: the same
+trap the `environment.ts`/`environment.tauri.ts` split avoided by moving the
+type both sides shared into an untouched third module, applied here to routes
+instead of types.
+
+- `app.routes.ts` (web, the default file `angular.json` builds against) wraps the
+  shared routes under one parent: `{ path: ':locale', children: SHARED_ROUTES }`,
+  plus a `{ path: '', pathMatch: 'full', redirectTo: ... }` that sends a bare
+  visit to the preferred locale (below) and a `{ path: '**' }` fallback for a
+  `:locale` segment that never matches (below).
+- `app.routes.tauri.ts` (desktop, selected by the existing `fileReplacements`
+  entry for the `tauri`/`tauri-development` configurations) re-exports
+  `SHARED_ROUTES` as `routes` unchanged — today's behaviour, verbatim.
+
+**The `:locale` segment.** Constrained to the four supported codes (`en`, `tr`,
+`fr`, `de` — `LOCALES` in `core/platform/models.ts`, the same list `LocaleService`
+already validates against) by a `CanMatch` guard on the wrapping route, not by a
+regex in the path string: a route matcher can reject and let the `**` fallback
+below take over, where a path regex can only 404 the whole segment shape. A
+segment outside the four codes falls through to the top-level `**` route (the
+existing `NotFoundPage`), not to a redirect — an unknown locale in the address
+bar is a bad link, not a preference to honour.
+
+**Resolving the preferred locale for a bare visit.** `/` (and any path that
+reaches the wrapping route with no `:locale` segment at all) redirects to
+`/{preferred}/tracks`, where `preferred` is resolved in the same order
+`LocaleService.initialize` already uses to seed the interface locale on launch
+(stored preference, then `Accept-Language`, then `en`) — this route-level
+redirect calls the same resolution the service exposes rather than duplicating
+it, so the two can never disagree about what "preferred" means. This is the only
+place a redirect happens; a `:locale` segment that is present and valid is
+always honoured as written, even when it disagrees with the stored preference —
+switching languages is discussed next.
+
+**Keeping the URL and the interface locale in sync, in both directions.** Two
+things can change independently — the router (a link, a back button, a typed
+URL) and `LocaleService.use()` (the language switcher in Settings) — and each
+has to update the other without looping:
+
+- Navigating to a URL with a `:locale` segment different from the current
+  interface language calls `LocaleService.use(segmentLocale, persist: true)` —
+  a link to a French URL is treated the same as if the reader had opened the
+  language switcher, because for a bare URL visit it is the only signal of
+  intent available. This is a route resolver's job, run before the child route
+  activates, not a component's.
+- Calling `LocaleService.use()` while a `:locale` segment is present in the
+  current URL replaces that segment (`router.navigate` with the same commands
+  but the new locale swapped in, preserving the rest of the path and query
+  params) instead of leaving the URL to describe a language the interface no
+  longer shows. Calling it with no active route under `:locale` (there is none,
+  once this ships — every web route lives under the segment) does not arise.
+
+**Absolute navigation.** `router.navigate(['/tracks'])` and
+`routerLink="/tracks"` written elsewhere in the codebase stop resolving once
+`/tracks` moves under `/:locale/tracks` on the web build — an absolute path a
+component writes today has no locale segment to supply. Making every such call
+site relative instead is not the fix it looks like: a relative command resolves
+against the *calling* route's own depth, so the same `['tracks']` written from
+the lesson reader (four segments deep) and from the blog list (one segment
+deep) would climb different numbers of levels and land in different places —
+correct only by accident, and only until a route gains or loses a segment.
+
+Every such call site is rewritten instead to build the path through one small
+root-level helper (`LocalizedNav`, or equivalent — implementer's choice of
+name) that reads the current `:locale` from the router state and prefixes it
+onto an always-absolute, always-locale-free array of commands the call site
+still writes exactly as today: `nav.commands(['/tracks'])` returns
+`['/tr', 'tracks']` on the web build, `['/tracks']` unchanged on desktop, so
+one call site works on both targets without an `if (platform === ...)`
+anywhere in application code. This is the one piece of this section that *is*
+a shared, environment-aware helper rather than a route-file swap, because
+unlike the route shape itself, call sites all across the codebase need to
+consume it identically on both builds.
+
+**What this does not touch.** `?locale=` on content endpoints (section 2.7 of
+`rest-api.md`) negotiates which *translation* of a lesson or post comes back
+over the wire; the URL segment here only ever selects the *interface* language,
+the same thing `LocaleService` already governed before this section existed.
+The two stay conceptually separate even though a reader's expectation — "the
+French URL should probably show French lesson text too" — links them in
+practice: `LocaleService.use()` already drives the `Accept-Language`-equivalent
+content negotiation, so following the URL's locale through `use()` (above)
+carries this for free without a second mechanism.

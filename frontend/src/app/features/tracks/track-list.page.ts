@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { DownloadStore } from '../../core/library/download-store';
 import { LibraryDiscovery } from '../../core/library/library-discovery';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { ConnectivityService } from '../../core/net/connectivity.service';
 import { errorKey } from '../../core/platform/error-key';
 import type { ProgressEntry, TrackSummary } from '../../core/platform/models';
@@ -20,6 +21,9 @@ import { StateGlyph } from '../../shared/state-glyph';
   templateUrl: './track-list.page.html',
 })
 export class TrackListPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly discovery = inject(LibraryDiscovery);
   private readonly store = inject(DownloadStore);

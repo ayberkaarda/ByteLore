@@ -4,7 +4,7 @@
 >
   <a
     class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"
-    routerLink="/admin/blog"
+    [routerLink]="nav.commands(['/admin/blog'])"
     routerLinkActive="bg-surface-raised text-text"
     ariaCurrentWhenActive="page"
   >
@@ -12,7 +12,7 @@
   </a>
   <a
     class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"
-    routerLink="/admin/review"
+    [routerLink]="nav.commands(['/admin/review'])"
     routerLinkActive="bg-surface-raised text-text"
     ariaCurrentWhenActive="page"
   >
@@ -20,7 +20,7 @@
   </a>
   <a
     class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"
-    routerLink="/admin/puzzles"
+    [routerLink]="nav.commands(['/admin/puzzles'])"
     routerLinkActive="bg-surface-raised text-text"
     ariaCurrentWhenActive="page"
   >
@@ -29,7 +29,7 @@
   @if (session.isAdmin()) {
     <a
       class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover"
-      routerLink="/admin/sources"
+      [routerLink]="nav.commands(['/admin/sources'])"
       routerLinkActive="bg-surface-raised text-text"
       ariaCurrentWhenActive="page"
     >

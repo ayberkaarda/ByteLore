@@ -45,6 +45,23 @@ export class LocaleService {
   }
 
   /**
+   * The locale to send a visit that names none — what a bare `/` redirects to
+   * on the web build, where every address carries a language segment.
+   *
+   * It is the locale the interface is already showing, which is the end of the
+   * one resolution this application performs: the choice recorded on the
+   * device, then the languages the browser asks for, then English. Startup
+   * runs that resolution and applies the answer before the router makes its
+   * first move, so reading the applied value here is what keeps the address
+   * and the interface from ever disagreeing about which language was
+   * preferred — a second resolution written next to the router would be free
+   * to reach a different conclusion.
+   */
+  preferred(): Locale {
+    return this.current();
+  }
+
+  /**
    * Applies the stored locale at startup without writing it back.
    *
    * Re-persisting a value that was just read would mark the preference dirty

@@ -12,6 +12,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../../../core/auth/auth-session';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 import { errorKey } from '../../../core/platform/error-key';
 import { AdminPuzzleApiClient } from '../../../core/puzzle/admin-puzzle-api.client';
 import type { AdminPuzzle } from '../../../core/puzzle/puzzle-models';
@@ -46,6 +47,9 @@ const MIN_REASON_LENGTH = 10;
   templateUrl: './puzzle-review-queue.page.html',
 })
 export class PuzzleReviewQueuePage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminPuzzleApiClient);
   private readonly session = inject(AuthSession);
 

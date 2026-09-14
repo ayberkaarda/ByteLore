@@ -64,7 +64,10 @@
         <app-verify-checks [checks]="sourceUpdate.verifyChecks" />
       </div>
       <p class="mt-3 text-xs text-text-muted">
-        <a class="text-text underline" [routerLink]="['/admin/source-updates', sourceUpdate.id]">
+        <a
+          class="text-text underline"
+          [routerLink]="nav.commands(['/admin/source-updates', sourceUpdate.id])"
+        >
           {{ 'admin.review.viewSourceUpdate' | translate }}
         </a>
       </p>

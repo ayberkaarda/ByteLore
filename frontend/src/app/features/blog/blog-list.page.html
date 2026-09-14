@@ -70,7 +70,7 @@
             -->
                 <a
                   class="text-text no-underline hover:underline"
-                  [routerLink]="['/blog', row.post.slug]"
+                  [routerLink]="nav.commands(['/blog', row.post.slug])"
                 >
                   {{ row.post.title }}
                 </a>

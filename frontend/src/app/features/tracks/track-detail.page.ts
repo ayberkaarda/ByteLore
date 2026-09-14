@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import type { DownloadUnit } from '../../core/library/aggregate';
 import { LibraryDiscovery } from '../../core/library/library-discovery';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { errorKey } from '../../core/platform/error-key';
 import type { LessonSummary, TrackDetail } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
@@ -36,6 +37,9 @@ import { StateGlyph } from '../../shared/state-glyph';
   templateUrl: './track-detail.page.html',
 })
 export class TrackDetailPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly discovery = inject(LibraryDiscovery);
 

@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { DownloadStore } from '../../core/library/download-store';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import type { LessonSummary, MindMapNode } from '../../core/platform/models';
 import { PlatformService } from '../../core/platform/platform.service';
 import { shapeFor } from '../../shared/state-glyph';
@@ -123,6 +124,9 @@ const COMPLETED_GLYPH_PATHS = shapeFor('completed').paths;
   templateUrl: './mind-map-tree.html',
 })
 export class MindMapTree {
+  /** Prefixes the language segment onto navigation targets where the build has one. */
+  private readonly nav = inject(LocalizedNav);
+
   private readonly router = inject(Router);
   private readonly store = inject(DownloadStore);
   private readonly platform = inject(PlatformService);
@@ -356,7 +360,9 @@ export class MindMapTree {
     }
     const lesson = this.lessonFor(node);
     if (lesson?.availability.readable) {
-      await this.router.navigate(['/tracks', this.trackSlug(), 'lessons', lesson.slug]);
+      await this.router.navigate(
+        this.nav.commands(['/tracks', this.trackSlug(), 'lessons', lesson.slug]),
+      );
       return;
     }
     if (!this.canDownload || this.isDownloading(node)) {

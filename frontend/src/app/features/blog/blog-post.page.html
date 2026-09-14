@@ -6,7 +6,7 @@
   -->
   <a
     class="inline-block py-1 text-sm text-text-muted no-underline hover:underline"
-    routerLink="/blog"
+    [routerLink]="nav.commands(['/blog'])"
   >
     {{ 'blog.backToList' | translate }}
   </a>

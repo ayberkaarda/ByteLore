@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import type { SourceFetchResult } from '../../../core/admin/admin-models';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 
 /**
  * The outcome of one manual fetch (`POST
@@ -22,6 +23,9 @@ import type { SourceFetchResult } from '../../../core/admin/admin-models';
   templateUrl: './fetch-result.html',
 })
 export class FetchResult {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   readonly result = input.required<SourceFetchResult>();
 
   protected readonly durationSeconds = computed(() => (this.result().durationMs / 1000).toFixed(1));

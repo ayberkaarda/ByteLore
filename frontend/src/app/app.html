@@ -32,7 +32,10 @@
         lines instead of anchoring it to the first one.
       -->
       <div class="flex items-start justify-between gap-4 sm:contents">
-        <a class="text-lg font-semibold tracking-tight text-text no-underline" routerLink="/tracks">
+        <a
+          class="text-lg font-semibold tracking-tight text-text no-underline"
+          [routerLink]="nav.commands(['/tracks'])"
+        >
           {{ 'app.title' | translate }}
         </a>
 
@@ -61,7 +64,7 @@
           <app-theme-toggle />
           <a
             class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
-            routerLink="/settings"
+            [routerLink]="nav.commands(['/settings'])"
             routerLinkActive="bg-surface-raised text-text"
             ariaCurrentWhenActive="page"
             data-testid="nav-settings"
@@ -82,7 +85,7 @@
           @if (session.user() === null) {
             <a
               class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
-              routerLink="/login"
+              [routerLink]="nav.commands(['/login'])"
             >
               {{ 'nav.signIn' | translate }}
             </a>
@@ -114,7 +117,7 @@
       >
         <a
           class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
-          routerLink="/tracks"
+          [routerLink]="nav.commands(['/tracks'])"
           routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
         >
@@ -128,7 +131,7 @@
         -->
         <a
           class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
-          routerLink="/blog"
+          [routerLink]="nav.commands(['/blog'])"
           routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
         >
@@ -156,7 +159,7 @@
         @if (session.user() !== null) {
           <a
             class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
-            routerLink="/puzzle"
+            [routerLink]="nav.commands(['/puzzle'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
           >
@@ -166,7 +169,7 @@
         @if (canDownload) {
           <a
             class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
-            routerLink="/downloads"
+            [routerLink]="nav.commands(['/downloads'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
           >
@@ -195,7 +198,7 @@
         @if (session.canAdminister()) {
           <a
             class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
-            routerLink="/admin"
+            [routerLink]="nav.commands(['/admin'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
           >

@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../../core/auth/auth-session';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 
 /**
  * The tab chrome every `/admin` screen sits inside: Posts, Review, and —
@@ -23,5 +24,8 @@ import { AuthSession } from '../../core/auth/auth-session';
   templateUrl: './admin-shell.page.html',
 })
 export class AdminShellPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   protected readonly session = inject(AuthSession);
 }

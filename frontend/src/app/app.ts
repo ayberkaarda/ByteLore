@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from './core/auth/auth-session';
 import { DownloadStore } from './core/library/download-store';
+import { LocalizedNav } from './core/nav/localized-nav';
 import { ConnectivityService } from './core/net/connectivity.service';
 import { PlatformService } from './core/platform/platform.service';
 import { SyncStatus } from './shared/sync-status';
@@ -35,6 +36,9 @@ import { ThemeToggle } from './shared/theme-toggle';
   templateUrl: './app.html',
 })
 export class App {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly store = inject(DownloadStore);
 

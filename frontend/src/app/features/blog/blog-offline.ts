@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from '@angu
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { PlatformService } from '../../core/platform/platform.service';
 
 /**
@@ -79,7 +80,10 @@ import { PlatformService } from '../../core/platform/platform.service';
         >
           {{ 'common.retry' | translate }}
         </button>
-        <a class="text-sm text-accent underline-offset-2 hover:underline" routerLink="/tracks">
+        <a
+          class="text-sm text-accent underline-offset-2 hover:underline"
+          [routerLink]="nav.commands(['/tracks'])"
+        >
           {{ 'blog.offline.library' | translate }}
         </a>
       </div>
@@ -87,6 +91,9 @@ import { PlatformService } from '../../core/platform/platform.service';
   `,
 })
 export class BlogOffline {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
 
   /**

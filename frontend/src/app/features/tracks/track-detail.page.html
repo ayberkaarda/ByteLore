@@ -11,7 +11,7 @@
   -->
   <a
     class="inline-block py-1 text-sm text-text-muted no-underline hover:underline"
-    routerLink="/tracks"
+    [routerLink]="nav.commands(['/tracks'])"
     >{{ 'track.backToTracks' | translate }}</a
   >
 
@@ -181,7 +181,9 @@
                       }
                       <a
                         class="text-sm leading-snug text-text no-underline hover:underline"
-                        [routerLink]="['/tracks', detail.slug, 'lessons', lesson.slug]"
+                        [routerLink]="
+                          nav.commands(['/tracks', detail.slug, 'lessons', lesson.slug])
+                        "
                         [attr.aria-label]="'track.openLesson' | translate: { title: lesson.title }"
                       >
                         {{ lesson.title }}
@@ -303,7 +305,7 @@
           @if (detail.mindMap) {
             <a
               class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-center text-sm font-medium text-text no-underline hover:bg-surface-hover"
-              [routerLink]="['/tracks', detail.slug, 'mindmap']"
+              [routerLink]="nav.commands(['/tracks', detail.slug, 'mindmap'])"
               [title]="'track.mindMapHint' | translate: { title: detail.title }"
               data-testid="track-mind-map-link"
             >
@@ -325,7 +327,7 @@
               }}</span>
               <a
                 class="mt-1 block text-sm text-text no-underline hover:underline"
-                [routerLink]="['/tracks', detail.slug, 'lessons', next.slug]"
+                [routerLink]="nav.commands(['/tracks', detail.slug, 'lessons', next.slug])"
                 [attr.aria-label]="'track.openLesson' | translate: { title: next.title }"
                 data-testid="track-summary-up-next"
               >

@@ -3,13 +3,13 @@
   <div class="flex items-center gap-3">
     <a
       class="rounded-md px-2 py-1 text-xs font-medium text-text-muted no-underline hover:bg-surface-hover hover:text-text"
-      routerLink="/admin/puzzles/review"
+      [routerLink]="nav.commands(['/admin/puzzles/review'])"
     >
       {{ 'admin.puzzles.reviewQueueLink' | translate }}
     </a>
     <a
       class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast no-underline hover:opacity-90"
-      routerLink="/admin/puzzles/new"
+      [routerLink]="nav.commands(['/admin/puzzles/new'])"
     >
       {{ 'admin.puzzles.newPuzzle' | translate }}
     </a>
@@ -118,7 +118,7 @@
             <td class="py-2.5 pr-4 font-medium">
               <a
                 class="text-text no-underline hover:underline"
-                [routerLink]="['/admin/puzzles', puzzle.id, 'edit']"
+                [routerLink]="nav.commands(['/admin/puzzles', puzzle.id, 'edit'])"
               >
                 {{ puzzle.title }}
               </a>

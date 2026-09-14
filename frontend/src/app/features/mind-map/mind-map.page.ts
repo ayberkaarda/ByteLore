@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import type { DownloadUnit } from '../../core/library/aggregate';
 import { LibraryDiscovery } from '../../core/library/library-discovery';
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
 import type { LessonSummary, MindMap, MindMapNode, TrackDetail } from '../../core/platform/models';
@@ -42,6 +43,9 @@ import {
   templateUrl: './mind-map.page.html',
 })
 export class MindMapPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly discovery = inject(LibraryDiscovery);
 

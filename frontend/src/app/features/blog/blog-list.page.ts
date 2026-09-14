@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LocalizedNav } from '../../core/nav/localized-nav';
 import { ConnectivityService } from '../../core/net/connectivity.service';
 import { errorKey } from '../../core/platform/error-key';
 import { PlatformError } from '../../core/platform/errors';
@@ -80,6 +81,9 @@ interface BlogRow {
   templateUrl: './blog-list.page.html',
 })
 export class BlogListPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly platform = inject(PlatformService);
   private readonly cache = inject(BlogListCache);
   private readonly connectivity = inject(ConnectivityService);

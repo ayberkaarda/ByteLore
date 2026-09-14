@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LocalizedNav } from '../../../core/nav/localized-nav';
 
 import type {
   AdminBlogPostSummary,
@@ -57,6 +58,9 @@ const SORT_OPTIONS: readonly string[] = [
   templateUrl: './blog-post-list.page.html',
 })
 export class BlogPostListPage {
+  /** Prefixes the language segment onto link targets where the build has one. */
+  protected readonly nav = inject(LocalizedNav);
+
   private readonly api = inject(AdminApiClient);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
