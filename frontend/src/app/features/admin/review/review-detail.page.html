@@ -19,7 +19,7 @@
     </button>
   </div>
 } @else if (detail(); as detail) {
-  <h1 class="text-2xl font-semibold tracking-tight">{{ detail.post.title }}</h1>
+  <h1 class="text-2xl leading-tight">{{ detail.post.title }}</h1>
   <p class="mt-1 text-sm text-text-muted">
     {{ 'admin.post.source.' + detail.post.source | translate }} ·
     {{ detail.post.createdAt | dateTime }}

@@ -6,8 +6,8 @@
   unit against the page.
 -->
 <div class="mx-auto w-full max-w-md sm:mt-6">
-  <app-brand-mark class="h-10 w-10" />
-  <h1 class="mt-6 text-3xl font-semibold leading-tight tracking-tight">
+  <app-brand-mark class="h-12 w-12" />
+  <h1 class="mt-6 text-3xl leading-tight">
     {{ 'auth.heading' | translate }}
   </h1>
   <p class="mt-1 text-text-muted">{{ 'auth.intro' | translate }}</p>
@@ -20,7 +20,7 @@
       <label class="text-sm font-medium" for="login-email">{{ 'auth.email' | translate }}</label>
       <input
         id="login-email"
-        class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text"
+        class="h-10 rounded-md border border-border-strong bg-surface px-3 text-base text-text"
         type="email"
         name="email"
         autocomplete="username"
@@ -42,7 +42,7 @@
       </label>
       <input
         id="login-password"
-        class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text"
+        class="h-10 rounded-md border border-border-strong bg-surface px-3 text-base text-text"
         type="password"
         name="password"
         autocomplete="current-password"
@@ -76,7 +76,7 @@
       submitting the form.
     -->
     <button
-      class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+      class="mt-1 h-10 rounded-md bg-accent px-3 text-sm font-semibold text-accent-contrast hover:opacity-90 aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
       type="submit"
       data-testid="login-submit"
       [attr.aria-disabled]="submitting() ? true : null"

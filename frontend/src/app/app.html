@@ -8,7 +8,7 @@
     screen instead, because a control that is used once a month still costs
     attention on every screen it sits on.
   -->
-  <header class="sticky top-0 z-10 border-b border-border bg-surface/90 backdrop-blur-md">
+  <header class="sticky top-0 z-10 border-b border-border bg-bg/90 backdrop-blur-md">
     <!--
       Below `sm` the row is two lines: the wordmark and the right-hand
       controls share the first, primary navigation gets a full-width second
@@ -37,11 +37,11 @@
           accessible text; the mark beside it is decorative.
         -->
         <a
-          class="inline-flex items-center gap-2.5 text-lg font-semibold tracking-tight text-text no-underline"
+          class="brand-lockup inline-flex items-center gap-2 text-text no-underline"
           data-testid="brand"
           [routerLink]="nav.commands(['/tracks'])"
         >
-          <app-brand-mark class="h-7 w-7" />
+          <app-brand-mark class="h-6 w-6" />
           <span>{{ 'app.title' | translate }}</span>
         </a>
 
@@ -69,9 +69,9 @@
         <div class="ml-auto flex flex-wrap items-center gap-2 sm:order-3">
           <app-theme-toggle />
           <a
-            class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
+            class="nav-link nav-link-tall rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
             [routerLink]="nav.commands(['/settings'])"
-            routerLinkActive="bg-surface-raised !text-text"
+            routerLinkActive="nav-link-current !text-text"
             ariaCurrentWhenActive="page"
             data-testid="nav-settings"
             [title]="'nav.settings' | translate"
@@ -102,29 +102,26 @@
       <!--
         Hover and "you are here" are two different answers and are painted two
         different ways: hover changes only the text tone, the current entry
-        additionally carries an underline in the accent colour. Full-strength
-        text against the muted text of the rest is the second, independent
-        mark, so the reading does not rest on the underline alone.
+        additionally carries the proof caret under its label (drawn by
+        `nav-link-current` in app.css). Full-strength text against the muted
+        text of the rest is the second, independent mark, so the reading does
+        not rest on the caret alone.
 
         `routerLinkActive` only adds classes, it never removes the ones
-        already on the element -- so an inactive link's own `border-transparent`
-        stays in the DOM right alongside the active state's `border-accent`.
-        Tailwind resolves two same-specificity classes by which one the
-        generated stylesheet declares last, not by DOM/class-attribute order,
-        and `.border-transparent` happens to be declared after `.border-accent`
-        -- measured in the compiled CSS, not assumed. Without `!` the inactive
-        colour silently won on every link, every time, and the underline never
-        rendered. `!border-accent` forces it with `!important` regardless of
-        declaration order.
+        already on the element -- so an inactive link's own `text-text-muted`
+        stays in the DOM right alongside the active state's text colour, and
+        Tailwind resolves two same-specificity classes by declaration order in
+        the generated stylesheet, not by class-attribute order. `!text-text`
+        forces the current entry's colour regardless of that order.
       -->
       <nav
         class="flex flex-nowrap items-center gap-1 overflow-x-auto whitespace-nowrap sm:order-2 sm:flex-wrap sm:overflow-visible sm:whitespace-normal"
         [attr.aria-label]="'nav.label' | translate"
       >
         <a
-          class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
+          class="nav-link px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
           [routerLink]="nav.commands(['/tracks'])"
-          routerLinkActive="!border-accent text-text"
+          routerLinkActive="nav-link-current !text-text"
           ariaCurrentWhenActive="page"
         >
           {{ 'nav.tracks' | translate }}
@@ -136,9 +133,9 @@
           entry gains offline is a mark, not an absence.
         -->
         <a
-          class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
+          class="nav-link px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
           [routerLink]="nav.commands(['/blog'])"
-          routerLinkActive="!border-accent text-text"
+          routerLinkActive="nav-link-current !text-text"
           ariaCurrentWhenActive="page"
         >
           {{ 'nav.blog' | translate }}
@@ -164,9 +161,9 @@
         -->
         @if (session.user() !== null) {
           <a
-            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
+            class="nav-link px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/puzzle'])"
-            routerLinkActive="!border-accent text-text"
+            routerLinkActive="nav-link-current !text-text"
             ariaCurrentWhenActive="page"
           >
             {{ 'nav.puzzle' | translate }}
@@ -174,9 +171,9 @@
         }
         @if (canDownload) {
           <a
-            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
+            class="nav-link px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/downloads'])"
-            routerLinkActive="!border-accent text-text"
+            routerLinkActive="nav-link-current !text-text"
             ariaCurrentWhenActive="page"
           >
             {{ 'nav.downloads' | translate }}
@@ -203,9 +200,9 @@
         }
         @if (session.canAdminister()) {
           <a
-            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
+            class="nav-link px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/admin'])"
-            routerLinkActive="!border-accent text-text"
+            routerLinkActive="nav-link-current !text-text"
             ariaCurrentWhenActive="page"
           >
             {{ 'nav.admin' | translate }}

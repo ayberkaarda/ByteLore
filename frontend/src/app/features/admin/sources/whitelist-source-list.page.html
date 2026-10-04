@@ -1,5 +1,5 @@
 <div class="flex items-center justify-between gap-4">
-  <h1 class="text-2xl font-semibold tracking-tight">{{ 'admin.sources.heading' | translate }}</h1>
+  <h1 class="text-2xl leading-tight">{{ 'admin.sources.heading' | translate }}</h1>
   <a
     class="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-contrast no-underline"
     [routerLink]="nav.commands(['/admin/sources/new'])"
@@ -236,7 +236,7 @@
   -->
   @if (lastFetch(); as fetch) {
     <div class="mt-6" role="status">
-      <h2 #fetchResultHeading class="text-lg font-semibold" tabindex="-1">
+      <h2 #fetchResultHeading class="font-display text-xl font-semibold tracking-tight" tabindex="-1">
         {{ 'admin.sources.fetch.resultFor' | translate: { name: fetch.sourceName } }}
       </h2>
       <app-fetch-result class="mt-2 block" [result]="fetch.result" />

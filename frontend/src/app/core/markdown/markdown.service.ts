@@ -6,22 +6,22 @@ import { Marked, type Tokens } from 'marked';
 import type { ResolvedTheme } from '../platform/models';
 
 /**
- * The syntax themes, one per palette. They are named here rather than passed
- * in so that a code block can never end up light inside a dark page.
+ * The syntax theme, one per palette, both built on CSS custom properties.
  *
- * The high-contrast variants, because a syntax theme decides the contrast of
- * everything printed inside a code block and the ordinary ones cannot be made
- * to pass. Both of those paint a comment in the same mid grey, which measures
- * 4.41:1 on the light code background and 3.80:1 on the dark one, and no
- * background value fixes it -- on the dark side that grey tops out at 4.36:1
- * even against pure black, short of the 4.5:1 a comment needs to be read at
- * normal size. The high-contrast pair measures 4.54:1 and 9.51:1 on the same
- * backgrounds. Changing these names means re-measuring the comment colour
- * against the code background token.
+ * The highlighter is given a theme whose colours are variable references
+ * (var(--syntax-token-keyword) and so on) rather than literal values, and the
+ * token layer defines those variables for each palette. That keeps every
+ * syntax colour in the same file, measured against the same code background
+ * token as everything else, and lets a theme switch recolour a block that is
+ * already on screen without highlighting it again.
+ *
+ * The two entries differ only in name, which shiki writes into the block's
+ * class; the palette a block shows is decided by the document's data-theme,
+ * so a code block can never end up light inside a dark page.
  */
-const SYNTAX_THEME: Record<ResolvedTheme, string> = {
-  light: 'github-light-high-contrast',
-  dark: 'github-dark-high-contrast',
+const SYNTAX_THEME: Record<ResolvedTheme, { name: string; variablePrefix: string }> = {
+  light: { name: 'proof-light', variablePrefix: '--syntax-' },
+  dark: { name: 'proof-dark', variablePrefix: '--syntax-' },
 };
 
 /**
@@ -112,7 +112,7 @@ export class MarkdownService {
       const shiki = await import('shiki');
       return await shiki.codeToHtml(code, {
         lang: language || 'text',
-        theme: SYNTAX_THEME[theme],
+        theme: shiki.createCssVariablesTheme(SYNTAX_THEME[theme]),
       });
     } catch {
       // An unknown language, or a highlighter that could not be loaded at all.

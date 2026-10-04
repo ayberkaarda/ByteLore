@@ -1,5 +1,5 @@
 <div class="mx-auto w-full max-w-3xl">
-  <h1 class="text-3xl font-semibold leading-tight tracking-tight">
+  <h1 class="text-3xl leading-tight">
     {{ 'blog.heading' | translate }}
   </h1>
   <p class="mt-2 max-w-prose text-text-muted">{{ 'blog.intro' | translate }}</p>
@@ -62,7 +62,7 @@
         @for (row of rows(); track row.post.id) {
           <li class="py-5">
             <div class="flex items-start justify-between gap-3">
-              <h2 class="text-lg font-semibold tracking-tight">
+              <h2 class="font-display text-xl font-semibold tracking-tight">
                 <!--
               No aria-label: the link text is already the post's title and it
               already sits in a heading, so the extra verb only made every

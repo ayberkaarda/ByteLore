@@ -54,11 +54,11 @@ import { PlatformService } from '../../core/platform/platform.service';
         level is not something a template can compute.
       -->
       @if (headingLevel() === 1) {
-        <h1 class="mt-4 text-lg font-semibold tracking-tight">
+        <h1 class="mt-4 font-display text-xl font-semibold tracking-tight">
           {{ 'blog.offline.heading' | translate }}
         </h1>
       } @else {
-        <h2 class="mt-4 text-lg font-semibold tracking-tight">
+        <h2 class="mt-4 font-display text-xl font-semibold tracking-tight">
           {{ 'blog.offline.heading' | translate }}
         </h2>
       }

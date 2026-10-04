@@ -16,7 +16,7 @@ import { LocalizedNav } from '../../core/nav/localized-nav';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, TranslatePipe],
   template: `
-    <h1 class="text-2xl font-semibold tracking-tight">
+    <h1 class="text-2xl leading-tight">
       {{ 'admin.forbidden.heading' | translate }}
     </h1>
     <p class="mt-2 text-text-muted">{{ 'admin.forbidden.description' | translate }}</p>

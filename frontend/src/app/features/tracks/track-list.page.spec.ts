@@ -433,7 +433,7 @@ describe('TrackListPage', () => {
       expect(monogram.getAttribute('aria-hidden')).toBe('true');
       expect(monogram.className).toContain('h-10');
       expect(monogram.className).toContain('w-10');
-      expect(monogram.className).toContain('bg-accent-soft');
+      expect(monogram.className).toContain('bracket-mark');
     }
   });
 

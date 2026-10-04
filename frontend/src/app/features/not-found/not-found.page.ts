@@ -9,7 +9,7 @@ import { LocalizedNav } from '../../core/nav/localized-nav';
   imports: [RouterLink, TranslatePipe],
   template: `
     <div class="mx-auto w-full max-w-3xl">
-      <h1 class="text-3xl font-semibold leading-tight tracking-tight">
+      <h1 class="text-3xl leading-tight">
         {{ 'notFound.heading' | translate }}
       </h1>
       <p class="mt-2 text-text-muted">{{ 'notFound.description' | translate }}</p>

@@ -144,7 +144,7 @@ describe('App', () => {
     // navigation its user currently is.
     expect(current.length).toBe(1);
     expect(current[0].getAttribute('href')).toBe('/blog');
-    expect(current[0].className).toContain('border-accent');
+    expect(current[0].className).toContain('nav-link-current');
   });
 
   it('keeps the header pinned to the top of the viewport while the page scrolls', async () => {

@@ -2,12 +2,12 @@
  * The skip link is visible only while focused. It is not decoration: keyboard
  * users would otherwise tab through the whole header on every navigation.
  *
- * The header is now sticky at z-10 so it stays on screen while the page
- * scrolls underneath it. Both elements sit in the same stacking context (the
- * wrapping div creates none of its own), so an equal z-index would resolve by
- * document order and the header — which comes after the link in the markup —
- * would paint over it. The link needs a higher value, not merely an equal
- * one, so it stays reachable once it receives focus.
+ * The header is sticky at z-10 so it stays on screen while the page scrolls
+ * underneath it. Both elements sit in the same stacking context (the wrapping
+ * div creates none of its own), so an equal z-index would resolve by document
+ * order and the header -- which comes after the link in the markup -- would
+ * paint over it. The link needs a higher value, not merely an equal one, so it
+ * stays reachable once it receives focus.
  */
 .skip-link {
   position: absolute;
@@ -29,4 +29,73 @@
 .skip-link:focus {
   opacity: 1;
   transform: translateY(0);
+}
+
+/*
+ * The wordmark: the product name in the display face, bold and slightly
+ * narrowed, so the lock-up reads as a set piece of type rather than as one
+ * more navigation label in the text face beside it.
+ */
+.brand-lockup span {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 720;
+  font-stretch: 92%;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/*
+ * The current navigation entry carries the proof caret centred under its
+ * label, sitting on the header's bottom rule. It arrives with a short scale
+ * from its point rather than appearing outright, so a route change is seen
+ * landing on the new entry -- the one piece of motion in the shell, and it
+ * answers the reader's own click.
+ */
+.nav-link {
+  position: relative;
+}
+
+.nav-link-current::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--spacing-3) * -1 - 2px);
+  width: 0.75rem;
+  height: 0.5rem;
+  margin-left: -0.375rem;
+  background: var(--color-accent);
+  clip-path: polygon(50% 0, 100% 100%, 74% 100%, 50% 46%, 26% 100%, 0 100%);
+  transform-origin: 50% 100%;
+  animation: caret-in var(--motion-base) var(--ease-standard);
+}
+
+/* The settings entry is taller than a text link (it holds the reader's
+   monogram), so its caret is pulled up by the difference to land on the same
+   rule as the others. */
+.nav-link-tall.nav-link-current::after {
+  bottom: calc(var(--spacing-2) * -1 - 2px);
+}
+
+/*
+ * Below `sm` the navigation is its own sideways-scrolling row, and a scroll
+ * container clips whatever hangs out of it -- a caret below the link box would
+ * be cut off and would give the row a vertical scrollbar of its own. There the
+ * caret sits inside the bottom padding of the link instead.
+ */
+@media (width < 40rem) {
+  .nav-link-current::after {
+    bottom: 0;
+  }
+}
+
+@keyframes caret-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

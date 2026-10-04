@@ -46,7 +46,7 @@
   -->
     <div class="mt-4 flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 class="text-3xl font-semibold leading-tight tracking-tight">{{ detail.title }}</h1>
+        <h1 class="text-3xl leading-tight">{{ detail.title }}</h1>
         @if (detail.description) {
           <p class="mt-2 max-w-prose text-text-muted">{{ detail.description }}</p>
         }
@@ -74,7 +74,7 @@
           <!-- A section heading, not a label. Set small, muted and tracked out it
              weighed less than the module titles underneath it, which inverted the
              hierarchy it was supposed to introduce. -->
-          <h2 class="text-lg font-semibold tracking-tight">
+          <h2 class="font-display text-xl font-semibold tracking-tight">
             {{ 'track.modules' | translate }}
           </h2>
           <div class="mt-4 space-y-6">
@@ -84,7 +84,7 @@
                   <div class="flex items-center gap-2">
                     <!-- The module is the container and its lessons are the contents;
                        one step of size and one of weight is what separates them. -->
-                    <h3 class="text-base font-semibold tracking-tight">{{ module.title }}</h3>
+                    <h3 class="font-display text-lg font-semibold tracking-tight">{{ module.title }}</h3>
                     <app-fallback-badge [state]="module.translation" />
                     <!-- The same count as the heading's, narrowed to this module, so
                        a reader part-way through a long path can see which section
@@ -136,7 +136,7 @@
                 </div>
 
                 <ul class="mt-4 divide-y divide-border">
-                  @for (lesson of module.lessons; track lesson.id) {
+                  @for (lesson of module.lessons; track lesson.id; let index = $index) {
                     <!--
                     The row to resume at is tinted rather than moved or repeated at
                     the top of the page, so the path keeps its one reading order
@@ -157,6 +157,14 @@
                       mark carries its own word; nothing here depends on the green
                       being distinguishable from the surface.
                     -->
+                      <!-- The lessons of a module are a sequence, so each row is
+                           numbered the way a listing numbers its lines: a fixed,
+                           muted gutter that gives the eye a left edge to scan. -->
+                      <span
+                        class="w-6 shrink-0 text-right text-xs tabular-nums text-text-muted"
+                        aria-hidden="true"
+                        >{{ index + 1 }}</span
+                      >
                       @if (isCompleted(lesson.id)) {
                         <app-state-glyph [kind]="'completed'" data-testid="lesson-completed" />
                       }
@@ -175,12 +183,16 @@
                       muted meta around it.
                     -->
                       @if (isUpNext(lesson.id)) {
-                        <span class="text-xs font-medium text-text" data-testid="lesson-up-next">
+                        <span
+                          class="inline-flex items-center gap-1.5 text-xs font-medium text-text"
+                          data-testid="lesson-up-next"
+                        >
+                          <span class="proof-caret" aria-hidden="true"></span>
                           {{ 'track.upNext' | translate }}
                         </span>
                       }
                       <a
-                        class="text-sm leading-snug text-text no-underline hover:underline"
+                        class="text-base leading-snug text-text no-underline hover:underline"
                         [routerLink]="
                           nav.commands(['/tracks', detail.slug, 'lessons', lesson.slug])
                         "
@@ -247,7 +259,7 @@
         stays the first actionable thing on the screen rather than the last.
       -->
         <aside
-          class="order-1 flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 lg:sticky lg:top-20 lg:order-2 lg:self-start shadow-card"
+          class="order-1 flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 lg:sticky lg:top-20 lg:order-2 lg:self-start shadow-card"
           [attr.aria-label]="'track.summaryLabel' | translate"
           data-testid="track-summary-panel"
         >
@@ -266,7 +278,7 @@
                   [labelKey]="'track.summaryLabel'"
                 />
                 <p
-                  class="mt-2 text-sm tabular-nums text-text-muted"
+                  class="mt-2.5 text-sm tabular-nums text-text-muted"
                   data-testid="track-completed-count"
                 >
                   {{
@@ -322,11 +334,12 @@
             to find the tinted row.
           -->
             <div class="border-t border-border pt-3">
-              <span class="text-xs font-medium text-text-muted">{{
-                'track.upNext' | translate
-              }}</span>
+              <span class="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted"
+                ><span class="proof-caret" aria-hidden="true"></span
+                >{{ 'track.upNext' | translate }}</span
+              >
               <a
-                class="mt-1 block text-sm text-text no-underline hover:underline"
+                class="mt-1.5 block font-display text-lg font-semibold leading-snug tracking-tight text-text no-underline hover:underline"
                 [routerLink]="nav.commands(['/tracks', detail.slug, 'lessons', next.slug])"
                 [attr.aria-label]="'track.openLesson' | translate: { title: next.title }"
                 data-testid="track-summary-up-next"

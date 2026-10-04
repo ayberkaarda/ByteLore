@@ -5,7 +5,7 @@
  * Tailwind 4 is CSS-first: values declared inside @theme become both a
  * plain CSS custom property (usable as var(--color-accent)) and a
  * matching Tailwind utility class (bg-accent, text-accent, border-accent,
- * rounded-md, shadow-card, font-mono, ...). There is no tailwind.config.js;
+ * rounded-md, shadow-card, font-display, ...). There is no tailwind.config.js;
  * this file is the theme source.
  *
  * Colours are indirected through a --bl-* variable so the same @theme keys
@@ -14,39 +14,56 @@
  * [data-theme="dark"]. Components must consume tokens (Tailwind utility
  * or var(--token)); no raw hex/rgb outside this file.
  *
- * The identity in one paragraph. The palette is "petrol and paper": a cool,
- * slightly green-tinted paper ground with white working surfaces in light, a
- * deep spruce ink ground in dark, and a single petrol accent in both. Petrol
- * was picked because it sits clear of the three state families (moss green,
- * ochre, brick red), so an accent-coloured element is never mistaken for a
- * status, and clear of the generic blue most developer tools default to. Every
- * neutral carries the same blue-green tint, so greys never drift warm against
- * cool. Ratios quoted in the comments below were measured with the WCAG 2.x
+ * The identity in one paragraph. The product is read the way a printer's
+ * proof is read: a lesson is a page the reader works through and marks up,
+ * and the proofreader's caret -- "insert something here" -- is what learning
+ * does to what somebody already knows. So the palette is three inks: an ink
+ * near-black, a paper near-white, and a single proof magenta, the process ink
+ * a press proof is printed in. Light is ink on paper; dark is the same plate
+ * printed the other way round. Magenta was picked because it stays clear of
+ * all three state families (green, ochre, vermilion), so an accent-coloured
+ * element is never read as a status, and danger is pulled deliberately toward
+ * orange so the two reds never meet. Every neutral sits in one faintly cool
+ * graphite family. Ratios quoted below were measured with the WCAG 2.x
  * relative luminance formula against the values in this file.
  */
 
 @theme {
   /*
-   * Type. One sans family for interface and prose, one monospace family for
-   * source code only; the monospace face is never used for labels or numbers,
-   * which use tabular figures of the sans instead. Both are variable fonts
-   * shipped with the application (see styles.css), so the desktop client renders
-   * identically offline and no request leaves for a font host. The system
-   * stacks after them are what a reader sees for the instant before the
-   * font file is decoded.
+   * Type. Three faces with three separate jobs.
+   *
+   * display: page titles, the wordmark and large figures only. A grotesque
+   * with optical sizes and ink traps -- the one place the interface is allowed
+   * a voice of its own, which is why it never sets running text.
+   *
+   * sans: interface and prose. Chosen for character disambiguation (l / I / 1,
+   * 0 / O, rn / m are drawn to be told apart), which a reader learning to
+   * read code depends on.
+   *
+   * mono: source code only, from the same family as the sans so inline code
+   * sits on the rhythm of the sentence around it. Never used for labels or
+   * numbers; those use the tabular figures of the sans.
+   *
+   * All three are variable fonts shipped with the application (see
+   * styles.css), so the desktop client renders identically offline and no
+   * request leaves for a font host. The system stacks are what a reader sees
+   * for the instant before the font file is decoded.
    */
+  --font-display:
+    'Bricolage Grotesque Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-sans:
-    'Instrument Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
   --font-mono:
-    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
-    monospace;
+    'Atkinson Hyperlegible Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas,
+    'Liberation Mono', monospace;
 
   /*
    * Surfaces, in elevation order: bg (the page) < surface (a resting
    * container) < surface-hover (a row or link under the pointer) <
-   * surface-raised (something that stays lifted: an active nav item, a
-   * secondary button). Each step is a real luminance step in both palettes,
-   * so elevation stays legible even where no shadow is drawn.
+   * surface-raised (something that stays lifted: an active item). Each step
+   * is a real luminance step in both palettes, so elevation stays legible
+   * even where no shadow is drawn.
    */
   --color-bg: var(--bl-bg);
   --color-surface: var(--bl-surface);
@@ -66,7 +83,7 @@
   --color-text: var(--bl-text);
   --color-text-muted: var(--bl-text-muted);
 
-  /* Accent */
+  /* Accent: proof magenta */
   --color-accent: var(--bl-accent);
   --color-accent-contrast: var(--bl-accent-contrast);
   /* A soft accent fill for a selected/active surface or an in-progress
@@ -94,8 +111,14 @@
      so retuning one of them can never silently break the other. */
   --color-danger-contrast: var(--bl-danger-contrast);
 
-  /* Code blocks */
+  /*
+   * Code. The well a listing sits in, and the gutter strip down its left
+   * edge. The syntax colours inside are the --bl-syntax-* values below,
+   * handed to the highlighter as CSS variables (see styles.css) and each
+   * measured against code-bg.
+   */
   --color-code-bg: var(--bl-code-bg);
+  --color-code-gutter: var(--bl-code-gutter);
 
   /*
    * Focus ring: a single token so every interactive element agrees. It is
@@ -115,26 +138,28 @@
   --color-diff-remove-bg: var(--bl-diff-remove-bg);
 
   /*
-   * Radii. A tight, precise scale: controls at 6px, containers at 10px, small
-   * inline marks at 3px. Inner corners are always the smaller step so nested
+   * Radii. Close to the crispness of a printed sheet without going square:
+   * small marks at 2px, controls at 4px, containers at 6px, the largest
+   * surfaces at 10px. Inner corners are always the smaller step so nested
    * shapes stay concentric rather than all sharing one radius.
    */
-  --radius-sm: 0.1875rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.625rem;
-  --radius-xl: 0.875rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.625rem;
 
   /*
-   * Elevation. Shadows are tinted with the palette's own ink rather than drawn
-   * in neutral black, so a card on the paper ground reads as lifted paper
-   * rather than as a grey smudge. There are only two: card, for a resting
-   * container that also has its 1px edge, and overlay, for something that
-   * floats above the page (a menu, a popover). In the dark palette the ink is
-   * near-black and the same values read only as a faint darkening, which is
-   * intended: there, elevation is carried by the surface steps instead.
+   * Elevation. A card is not lifted off the page by a blur; it sits on it
+   * like a sheet on a press bed, so its main shadow is a hard 1px plate line
+   * under the bottom edge with only a faint spread around it. The overlay is
+   * the one soft, deep shadow, for something that genuinely floats (a menu, a
+   * popover). Both are tinted with the palette's own ink rather than neutral
+   * black. In the dark palette the same values read only as a faint
+   * darkening, which is intended: there, elevation is carried by the surface
+   * steps instead.
    */
-  --shadow-card: 0 1px 2px var(--bl-shadow-near), 0 2px 6px -2px var(--bl-shadow-far);
-  --shadow-overlay: 0 2px 4px var(--bl-shadow-near), 0 12px 32px -8px var(--bl-shadow-far);
+  --shadow-card: 0 1px 0 var(--bl-shadow-plate), 0 1px 3px var(--bl-shadow-near);
+  --shadow-overlay: 0 2px 4px var(--bl-shadow-near), 0 16px 40px -12px var(--bl-shadow-far);
 
   /* Spacing scale: component styles use these rather than ad hoc lengths */
   --spacing-1: 0.25rem;
@@ -148,84 +173,104 @@
   --spacing-12: 3rem;
 
   /*
-   * Type scale. Roughly a major third from the base up, with the page title
-   * opened up to 2.5rem: the title is the one place the interface is allowed
-   * to be loud, so it is drawn large and tight rather than merely bold.
+   * Type scale. Small steps up to the section sizes, then a wide jump to the
+   * page title, which opens up to 2.75rem on a wide window (2.125rem on a
+   * phone, where a 44px title would break every few words). The title is set
+   * in the display face and is the one place the interface is loud, so it is
+   * drawn large and tight rather than merely bold.
    */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.5rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: clamp(2.125rem, 1.6rem + 2.2vw, 2.75rem);
 
-  /* Tracking. Large type is set tighter than body text, which a sans at
-     display size needs in order not to look loosely spaced. */
-  --tracking-tight: -0.021em;
-  --tracking-display: -0.032em;
+  /* Tracking. Large type is set tighter than body text; the display face at
+     title size needs noticeably more than a text face would. */
+  --tracking-tight: -0.015em;
+  --tracking-display: -0.035em;
 }
 
 :root {
   /*
-   * Light: a tinted paper page under white working surfaces. surface is 1.08
-   * above bg; hover (1.14) and raised (1.12 above hover) are measured against
-   * surface, since they are states of the layer that sits on it. The page tint
-   * is what lets a white card read as a card with only a hairline and a soft
-   * shadow, rather than needing a heavy frame.
+   * Light: ink on paper. A cool paper page under near-white working sheets;
+   * surface is 1.08 above bg, hover 1.16 and raised 1.10 above hover, each
+   * measured against the layer it is a state of. The page tone is what lets a
+   * sheet read as a sheet with only its plate line and a hairline edge.
    */
-  --bl-bg: #f5f7f7;
-  --bl-surface: #ffffff;
-  --bl-surface-hover: #ebf1f1;
-  --bl-surface-raised: #dce5e5;
+  --bl-bg: #eef0f3;
+  --bl-surface: #fcfcfd;
+  --bl-surface-hover: #e9ebef;
+  --bl-surface-raised: #dadee5;
 
-  /* Divider at 1.39 against a white surface; the control edge at 4.20 on the
-     page and 3.52 on the raised layer, past the 3:1 non-text floor. */
-  --bl-border: #d3dddd;
-  --bl-border-strong: #677a7c;
+  /* Divider at 1.33 against a sheet; the control edge at 4.62 on the page and
+     3.66 on the raised layer, past the 3:1 non-text floor. */
+  --bl-border: #d8dce3;
+  --bl-border-strong: #646c7d;
 
-  /* Ink: 15.1 on the page. Muted text: 6.4 on the page, 5.8 on accent-soft. */
-  --bl-text: #122326;
-  --bl-text-muted: #4b5d60;
+  /* Ink: 15.8 on the page. Muted text: 6.1 on the page, 5.5 on accent-soft. */
+  --bl-text: #14161c;
+  --bl-text-muted: #525968;
 
-  /* Petrol. 5.33 as text on the page and 5.73 on a card; white on it is 5.73.
-     Bounded from the other side by the focus ring, which keeps 3.20 against
-     an accent-filled button. */
-  --bl-accent: #0b717b;
-  --bl-accent-contrast: #ffffff;
-  --bl-accent-soft: #ddeff0;
+  /* Proof magenta. 5.15 as text on the page and 5.73 on a sheet; the paper
+     colour on it is 5.73. Bounded from the other side by the ink focus ring,
+     which keeps 3.08 against an accent-filled button. */
+  --bl-accent: #c0176a;
+  --bl-accent-contrast: #fcfcfd;
+  --bl-accent-soft: #f3dde7;
 
-  /* Moss, ochre and brick. Each bare tone clears 5.2 on the page; each
-     strong-on-soft badge pair clears 7.0 (measured 7.06 to 7.58). */
-  --bl-success: #3a7413;
-  --bl-success-soft: #e7f3dc;
-  --bl-success-strong: #2b590c;
-  --bl-warning: #965700;
-  --bl-warning-soft: #fbefd8;
-  --bl-warning-strong: #6f4100;
-  --bl-danger: #be3329;
-  --bl-danger-contrast: #ffffff;
-  --bl-danger-soft: #fbe5e2;
-  --bl-danger-strong: #922219;
+  /* Green, ochre and vermilion. Each bare tone clears 4.6 on the page; each
+     strong-on-soft badge pair clears 6.9. */
+  --bl-success: #2a7a3d;
+  --bl-success-soft: #e1f1e5;
+  --bl-success-strong: #1d5a2b;
+  --bl-warning: #8c5a00;
+  --bl-warning-soft: #f7ecd4;
+  --bl-warning-strong: #684200;
+  --bl-danger: #c03c10;
+  --bl-danger-contrast: #fcfcfd;
+  --bl-danger-soft: #fbe5dc;
+  --bl-danger-strong: #8e2a08;
 
   /*
-   * The code well: 1.11 below a white card, with the 1px edge carrying the box
-   * on the paper page. Bounded from the other side by the syntax theme's
-   * comment colour, the faintest thing a code block contains, which clears
-   * 4.5:1 here at 4.55. Retuning this value means re-measuring that colour.
+   * The code well: a step below both the page and a sheet, so a listing reads
+   * as a slot cut into either, with a slightly deeper gutter strip.
+   * Bounded from the other side by the syntax theme's comment colour, the
+   * faintest thing a listing contains, which has to clear 4.5:1 here;
+   * retuning this value means re-measuring the --bl-syntax-* values below.
    */
-  --bl-code-bg: #f1f4f4;
+  --bl-code-bg: #e7eaf0;
+  --bl-code-gutter: #dde1e8;
 
-  --bl-focus: #06171a;
-  --bl-badge-bg: #fbefd8;
-  --bl-badge-text: #6f4100;
+  /*
+   * Syntax colours, drawn from the same inks as the interface: keywords in
+   * proof magenta, functions and types in indigo, parameters in violet,
+   * strings in an earth tone, numbers and properties in vermilion, comments
+   * in grey. Each clears 4.5:1 on the code well above; the faintest, the
+   * comment, reads at 5.65.
+   */
+  --bl-syntax-fg: #1b1e26;
+  --bl-syntax-comment: #545b6a;
+  --bl-syntax-keyword: #ad1460;
+  --bl-syntax-string: #8a4600;
+  --bl-syntax-function: #2b44b0;
+  --bl-syntax-parameter: #6a3aa6;
+  --bl-syntax-constant: #a8360c;
+  --bl-syntax-punctuation: #454b59;
 
-  --bl-diff-add-bg: #e7f3dc;
-  --bl-diff-remove-bg: #fbe5e2;
+  --bl-focus: #14161c;
+  --bl-badge-bg: #f7ecd4;
+  --bl-badge-text: #684200;
+
+  --bl-diff-add-bg: #e1f1e5;
+  --bl-diff-remove-bg: #fbe5dc;
 
   /* Shadow ink: the text ink at low alpha, so shadows share the palette hue. */
-  --bl-shadow-near: color-mix(in oklab, var(--bl-text) 7%, transparent);
-  --bl-shadow-far: color-mix(in oklab, var(--bl-text) 9%, transparent);
+  --bl-shadow-plate: color-mix(in oklab, var(--bl-text) 10%, transparent);
+  --bl-shadow-near: color-mix(in oklab, var(--bl-text) 6%, transparent);
+  --bl-shadow-far: color-mix(in oklab, var(--bl-text) 16%, transparent);
 
   /*
    * Tells the user agent which palette its own widgets (scrollbars, form
@@ -256,55 +301,66 @@
    * comfort does not change with theme.
    */
   --text-reading: 1.0625rem;
-  --leading-reading: 1.7;
+  --leading-reading: 1.72;
 }
 
 [data-theme='dark'] {
-  /* Dark: a deep spruce ink rather than a neutral near-black, so the dark
-     palette is recognisably the same brand as the light one. Elevation adds
-     light: surface is 1.10 above bg; hover (1.14) and raised (1.18 above
-     hover) are measured against surface. */
-  --bl-bg: #0e191b;
-  --bl-surface: #142225;
-  --bl-surface-hover: #1b2d31;
-  --bl-surface-raised: #24393e;
+  /* Dark: the same plate printed in reverse, paper-coloured type on an ink
+     graphite. Elevation adds light: surface is 1.10 above bg, hover 1.11 and
+     raised 1.14 above hover. */
+  --bl-bg: #111216;
+  --bl-surface: #18191f;
+  --bl-surface-hover: #20222a;
+  --bl-surface-raised: #2a2c36;
 
-  --bl-border: #29393d;
-  --bl-border-strong: #6d8588;
+  --bl-border: #2b2e38;
+  --bl-border-strong: #777e8e;
 
-  --bl-text: #e3ecec;
-  --bl-text-muted: #9db1b3;
+  --bl-text: #e9eaee;
+  --bl-text-muted: #a3a8b4;
 
-  /* 5.89 as text on the page and on it as a fill; the white focus ring keeps
-     3.04 against it. */
-  --bl-accent: #2fa3a6;
-  --bl-accent-contrast: #0e191b;
-  --bl-accent-soft: #123a3d;
+  /* 5.29 as text on the page and 4.96 on a sheet; the ink on it is 5.29, and
+     the near-white focus ring keeps 3.21 against it as a fill. */
+  --bl-accent: #e0559a;
+  --bl-accent-contrast: #111216;
+  --bl-accent-soft: #3b1729;
 
-  --bl-success: #93cf62;
-  --bl-success-soft: #1c3012;
-  --bl-success-strong: #b9e48f;
-  --bl-warning: #e3a94a;
-  --bl-warning-soft: #36290f;
-  --bl-warning-strong: #f4d293;
-  --bl-danger: #f07d70;
-  --bl-danger-contrast: #0e191b;
-  --bl-danger-soft: #3e1c19;
-  --bl-danger-strong: #f7a89d;
+  --bl-success: #6fcf8a;
+  --bl-success-soft: #14301d;
+  --bl-success-strong: #a6e8b8;
+  --bl-warning: #e7b157;
+  --bl-warning-soft: #352710;
+  --bl-warning-strong: #f7d79c;
+  --bl-danger: #ff8c61;
+  --bl-danger-contrast: #111216;
+  --bl-danger-soft: #3d1c12;
+  --bl-danger-strong: #ffb79b;
 
-  /* The code well, 1.11 above a card and 1.21 above the page; the syntax
-     theme's comment colour reads at 8.37 on it. */
-  --bl-code-bg: #182b2f;
+  /* The code well sinks below the page rather than rising above it: a
+     listing is a slot cut into the sheet, not another sheet on top. */
+  --bl-code-bg: #0c0d10;
+  --bl-code-gutter: #15161b;
 
-  --bl-focus: #ffffff;
-  --bl-badge-bg: #36290f;
-  --bl-badge-text: #f4d293;
+  /* The faintest, the comment, reads at 6.46 on the dark well. */
+  --bl-syntax-fg: #e4e6eb;
+  --bl-syntax-comment: #8e95a4;
+  --bl-syntax-keyword: #f07ab4;
+  --bl-syntax-string: #f2c27a;
+  --bl-syntax-function: #94aaff;
+  --bl-syntax-parameter: #c9a6ff;
+  --bl-syntax-constant: #ff9f74;
+  --bl-syntax-punctuation: #b4b9c4;
 
-  --bl-diff-add-bg: #1c3012;
-  --bl-diff-remove-bg: #3e1c19;
+  --bl-focus: #f2f3f6;
+  --bl-badge-bg: #352710;
+  --bl-badge-text: #f7d79c;
 
+  --bl-diff-add-bg: #14301d;
+  --bl-diff-remove-bg: #3d1c12;
+
+  --bl-shadow-plate: color-mix(in oklab, #000000 45%, transparent);
   --bl-shadow-near: color-mix(in oklab, #000000 30%, transparent);
-  --bl-shadow-far: color-mix(in oklab, #000000 40%, transparent);
+  --bl-shadow-far: color-mix(in oklab, #000000 55%, transparent);
 
   color-scheme: dark;
 }
@@ -320,43 +376,54 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bl-bg: #0e191b;
-    --bl-surface: #142225;
-    --bl-surface-hover: #1b2d31;
-    --bl-surface-raised: #24393e;
+    --bl-bg: #111216;
+    --bl-surface: #18191f;
+    --bl-surface-hover: #20222a;
+    --bl-surface-raised: #2a2c36;
 
-    --bl-border: #29393d;
-    --bl-border-strong: #6d8588;
+    --bl-border: #2b2e38;
+    --bl-border-strong: #777e8e;
 
-    --bl-text: #e3ecec;
-    --bl-text-muted: #9db1b3;
+    --bl-text: #e9eaee;
+    --bl-text-muted: #a3a8b4;
 
-    --bl-accent: #2fa3a6;
-    --bl-accent-contrast: #0e191b;
-    --bl-accent-soft: #123a3d;
+    --bl-accent: #e0559a;
+    --bl-accent-contrast: #111216;
+    --bl-accent-soft: #3b1729;
 
-    --bl-success: #93cf62;
-    --bl-success-soft: #1c3012;
-    --bl-success-strong: #b9e48f;
-    --bl-warning: #e3a94a;
-    --bl-warning-soft: #36290f;
-    --bl-warning-strong: #f4d293;
-    --bl-danger: #f07d70;
-    --bl-danger-contrast: #0e191b;
-    --bl-danger-soft: #3e1c19;
-    --bl-danger-strong: #f7a89d;
+    --bl-success: #6fcf8a;
+    --bl-success-soft: #14301d;
+    --bl-success-strong: #a6e8b8;
+    --bl-warning: #e7b157;
+    --bl-warning-soft: #352710;
+    --bl-warning-strong: #f7d79c;
+    --bl-danger: #ff8c61;
+    --bl-danger-contrast: #111216;
+    --bl-danger-soft: #3d1c12;
+    --bl-danger-strong: #ffb79b;
 
-    --bl-code-bg: #182b2f;
+    --bl-code-bg: #0c0d10;
+    --bl-code-gutter: #15161b;
 
-    --bl-focus: #ffffff;
-    --bl-badge-bg: #36290f;
-    --bl-badge-text: #f4d293;
+    --bl-syntax-fg: #e4e6eb;
+    --bl-syntax-comment: #8e95a4;
+    --bl-syntax-keyword: #f07ab4;
+    --bl-syntax-string: #f2c27a;
+    --bl-syntax-function: #94aaff;
+    --bl-syntax-parameter: #c9a6ff;
+    --bl-syntax-constant: #ff9f74;
+    --bl-syntax-punctuation: #b4b9c4;
 
-    --bl-diff-add-bg: #1c3012;
-    --bl-diff-remove-bg: #3e1c19;
+    --bl-focus: #f2f3f6;
+    --bl-badge-bg: #352710;
+    --bl-badge-text: #f7d79c;
 
+    --bl-diff-add-bg: #14301d;
+    --bl-diff-remove-bg: #3d1c12;
+
+    --bl-shadow-plate: color-mix(in oklab, #000000 45%, transparent);
     --bl-shadow-near: color-mix(in oklab, #000000 30%, transparent);
-    --bl-shadow-far: color-mix(in oklab, #000000 40%, transparent);
+    --bl-shadow-far: color-mix(in oklab, #000000 55%, transparent);
 
     color-scheme: dark;
   }

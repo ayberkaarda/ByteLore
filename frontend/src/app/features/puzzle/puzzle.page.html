@@ -5,7 +5,7 @@
   distraction from starting.
 -->
 <div class="mx-auto w-full max-w-3xl">
-  <h1 class="text-3xl font-semibold tracking-tight leading-tight">
+  <h1 class="text-3xl leading-tight">
     {{ 'puzzle.heading' | translate }}
   </h1>
   <p class="mt-2 max-w-prose text-base text-text-muted">{{ 'puzzle.intro' | translate }}</p>
@@ -32,7 +32,7 @@
   } @else if (puzzle(); as today) {
     <section class="mt-8" aria-labelledby="puzzle-title">
       <div class="flex flex-wrap items-baseline justify-between gap-3">
-        <h2 id="puzzle-title" class="text-lg font-semibold tracking-tight">{{ today.title }}</h2>
+        <h2 id="puzzle-title" class="font-display text-xl font-semibold tracking-tight">{{ today.title }}</h2>
         <div class="flex items-center gap-3 text-xs text-text-muted tabular-nums">
           <span>{{ today.puzzleDate }}</span>
           <span

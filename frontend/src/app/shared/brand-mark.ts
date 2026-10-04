@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
- * The ByteLore mark: a petrol tile carrying three bars that step inward like
- * nested lines of code, the shortest one followed by a cursor block. Layered
- * knowledge, still being written.
+ * The ByteLore mark: a pair of square brackets with a proofreader's caret
+ * rising between them. The brackets are a unit of code, a byte, one thing to
+ * know; the caret is the mark a proofreader makes where something is to be
+ * inserted. Together they read as the product's promise: room for one more
+ * thing in what you already know.
  *
  * Drawn inline rather than loaded as an image so it takes its colours from the
- * theme tokens and follows a palette switch without a second asset. The tile is
- * the accent colour and the bars are the text colour that sits on the accent,
- * the same pairing a primary button uses, so the mark keeps its contrast in
- * both palettes.
+ * theme tokens and follows a palette switch without a second asset. The
+ * brackets are the text ink and the caret is the accent, so the mark keeps its
+ * contrast on the page in both palettes. Built from filled shapes on a 32-unit
+ * grid with whole-unit stems, so it stays crisp at the 16px a browser tab
+ * draws it at.
  *
  * It is always decorative: wherever it appears the product name is written
  * beside it, or the surrounding element already carries an accessible name, so
@@ -19,21 +22,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'app-brand-mark',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'inline-block shrink-0 text-accent', 'aria-hidden': 'true' },
+  host: { class: 'inline-block shrink-0 text-text', 'aria-hidden': 'true' },
   template: `
     <svg class="block h-full w-full" viewBox="0 0 32 32" focusable="false">
-      <rect width="32" height="32" rx="8" fill="currentColor" />
-      <rect class="fill-accent-contrast" x="7" y="8.5" width="18" height="3.5" rx="1.75" />
-      <rect class="fill-accent-contrast" x="11" y="14.25" width="14" height="3.5" rx="1.75" />
-      <rect class="fill-accent-contrast" x="15" y="20" width="5" height="3.5" rx="1.75" />
-      <rect
-        class="fill-accent-contrast opacity-60"
-        x="22"
-        y="20"
-        width="3"
-        height="3.5"
-        rx="0.75"
-      />
+      <path fill="currentColor" d="M4 4h8v3.5H7.5v17H12V28H4Z" />
+      <path fill="currentColor" d="M28 4h-8v3.5h4.5v17H20V28h8Z" />
+      <path class="fill-accent" d="M16 9.5 22.5 21.5h-4.1L16 16.9l-2.4 4.6H9.5Z" />
     </svg>
   `,
 })
