@@ -12,6 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthSession } from '../../core/auth/auth-session';
 import { errorKey } from '../../core/platform/error-key';
+import { BrandMark } from '../../shared/brand-mark';
 
 /**
  * The sign-in screen.
@@ -25,7 +26,7 @@ import { errorKey } from '../../core/platform/error-key';
 @Component({
   selector: 'app-login-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, BrandMark],
   templateUrl: './login.page.html',
 })
 export class LoginPage {

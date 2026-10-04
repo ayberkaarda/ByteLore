@@ -41,9 +41,9 @@ const ACQUIRE_BUTTON_CLASS: Readonly<Record<ContainerActionTier, string>> = {
     'rounded-md bg-accent px-2 py-1 text-xs font-medium text-accent-contrast hover:opacity-90 ' +
     'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:opacity-50',
   secondary:
-    'rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium ' +
+    'rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium ' +
     'text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 ' +
-    'aria-disabled:hover:bg-surface-raised',
+    'aria-disabled:hover:bg-surface',
   ghost:
     'rounded-md px-2 py-1 text-xs font-medium text-text-muted hover:bg-surface-hover ' +
     'hover:text-text aria-disabled:cursor-not-allowed aria-disabled:opacity-50 ' +

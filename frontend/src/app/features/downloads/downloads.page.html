@@ -30,7 +30,7 @@
     -->
     <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <aside
-        class="order-first self-start rounded-lg bg-surface p-4 lg:order-2 lg:sticky lg:top-20"
+        class="order-first self-start rounded-lg border border-border bg-surface p-4 shadow-card lg:order-2 lg:sticky lg:top-20"
       >
         <!--
           A polite live region: the summary underneath the storage line is
@@ -116,7 +116,7 @@
         @if (batches().length > 0) {
           <div class="space-y-4" [class.mt-4]="actionErrorKey() !== null">
             @for (batch of batches(); track batch.batchId) {
-              <div class="rounded-lg border border-border bg-surface p-4">
+              <div class="rounded-lg border border-border bg-surface p-4 shadow-card">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                   @let batchReceived = batch.receivedBytes | bytesFormat;
                   @let batchTotal = batch.totalBytes | bytesFormat;
@@ -216,7 +216,7 @@
                           -->
                           <button
                             type="button"
-                            class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
+                            class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                             (click)="retryEntity(entry.entityId)"
                           >
                             {{ 'download.action.retry' | translate }}
@@ -261,7 +261,7 @@
                 @let groupTitle = group.trackTitle ?? ('downloads.unknownTrack' | translate);
                 @let groupId = 'track-group-' + (group.trackId ?? 'untracked');
                 <section
-                  class="rounded-lg border border-border bg-surface p-4"
+                  class="rounded-lg border border-border bg-surface p-4 shadow-card"
                   data-testid="track-group"
                   [attr.aria-labelledby]="groupId"
                 >
@@ -304,7 +304,7 @@
                           -->
                           <button
                             type="button"
-                            class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
+                            class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                             (click)="cancelDeleteTrackRequest()"
                           >
                             {{ 'common.cancel' | translate }}
@@ -383,7 +383,7 @@
                             </button>
                             <button
                               type="button"
-                              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
+                              class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover"
                               (click)="cancelDeleteRequest()"
                             >
                               {{ 'common.cancel' | translate }}

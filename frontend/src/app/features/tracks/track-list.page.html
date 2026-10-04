@@ -18,7 +18,7 @@
       <p class="mt-1 text-text">{{ failureKey | translate }}</p>
       <button
         type="button"
-        class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+        class="mt-3 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         (click)="load()"
       >
         {{ 'common.retry' | translate }}
@@ -66,14 +66,14 @@
           download into; on the web they are not empty, they are absent.
         -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-lg bg-surface p-4" data-testid="stat-lessons-completed">
+          <div class="rounded-lg border border-border bg-surface p-4 shadow-card" data-testid="stat-lessons-completed">
             <p class="text-2xl font-semibold tabular-nums text-text">
               {{ completedLessonTotal() }} / {{ lessonTotal() }}
             </p>
             <p class="text-xs text-text-muted">{{ 'tracks.stats.lessonsCompleted' | translate }}</p>
           </div>
 
-          <div class="rounded-lg bg-surface p-4" data-testid="stat-paths-completed">
+          <div class="rounded-lg border border-border bg-surface p-4 shadow-card" data-testid="stat-paths-completed">
             <p class="text-2xl font-semibold tabular-nums text-text">
               {{ completedTrackTotal() }} / {{ tracks().length }}
             </p>
@@ -88,7 +88,7 @@
               from assistive technology and the whole sentence is given
               instead, the same split the shell's queue badge uses.
             -->
-            <div class="rounded-lg bg-surface p-4" data-testid="stat-downloaded">
+            <div class="rounded-lg border border-border bg-surface p-4 shadow-card" data-testid="stat-downloaded">
               <p class="text-2xl font-semibold tabular-nums text-text" aria-hidden="true">
                 {{ downloadedLessonTotal() }} / {{ lessonTotal() }}
               </p>
@@ -104,7 +104,7 @@
             </div>
 
             @let storage = storageBytes() | bytesFormat;
-            <div class="rounded-lg bg-surface p-4" data-testid="stat-storage">
+            <div class="rounded-lg border border-border bg-surface p-4 shadow-card" data-testid="stat-storage">
               <p class="text-2xl font-semibold tabular-nums text-text" aria-hidden="true">
                 {{ storage }}
               </p>
@@ -161,7 +161,7 @@
           <!-- flex-col + the meta line's mt-auto (below) keep the meta row flush
                with each card's own bottom edge regardless of how long that
                card's description is, instead of trailing it at a fixed mt-4. -->
-          <li class="flex flex-col rounded-lg border border-border bg-surface p-5">
+          <li class="flex flex-col rounded-lg border border-border bg-surface p-5 shadow-card">
             <div class="flex items-start gap-3">
               <!--
                 A letter, not an icon. The library has no icon set and adding
@@ -279,7 +279,7 @@
       -->
       @if (canDownload) {
         <aside
-          class="order-3 flex flex-col gap-3 self-start rounded-lg bg-surface p-4 lg:col-span-2 xl:sticky xl:top-20 xl:col-span-1"
+          class="order-3 flex flex-col gap-3 self-start rounded-lg border border-border bg-surface p-4 shadow-card lg:col-span-2 xl:sticky xl:top-20 xl:col-span-1"
           data-testid="library-status"
           [attr.aria-label]="'tracks.libraryStatus' | translate"
         >
@@ -321,7 +321,7 @@
             the resume tile on the other side of the board.
           -->
           <a
-            class="mt-1 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-center text-sm font-medium text-text no-underline hover:bg-surface-hover"
+            class="mt-1 rounded-md border border-border-strong bg-surface px-3 py-2 text-center text-sm font-medium text-text no-underline hover:bg-surface-hover"
             data-testid="library-status-link"
             [routerLink]="nav.commands(['/downloads'])"
           >

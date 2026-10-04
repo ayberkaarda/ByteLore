@@ -42,7 +42,7 @@ import { DateTimePipe } from './date-time.pipe';
     @if (hasSomethingToSay()) {
       <div class="border-t border-border bg-surface">
         <div
-          class="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2"
+          class="flex w-full flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 sm:px-6"
           role="status"
           data-testid="sync-status"
           [attr.aria-label]="'sync.statusLabel' | translate"

@@ -110,7 +110,7 @@
             -->
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
               [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.download' | translate: { title: title() }"
               (click)="onDownload()"
@@ -122,7 +122,7 @@
           @case ('UPDATE_AVAILABLE') {
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
               [attr.aria-disabled]="busy() ? true : null"
               [title]="'download.hint.update' | translate: { title: title() }"
               (click)="onDownload()"

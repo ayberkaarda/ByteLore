@@ -115,7 +115,7 @@ describe('ContainerDownloadAction', () => {
 
     expect(button?.classList.contains('bg-accent')).toBe(false);
     expect(button?.className).toContain('border-border-strong');
-    expect(button?.className).toContain('bg-surface-raised');
+    expect(button?.classList.contains('bg-surface')).toBe(true);
   });
 
   it('drops to the unfilled recipe at the ghost tier', () => {

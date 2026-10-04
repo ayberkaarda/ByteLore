@@ -5,7 +5,15 @@
     <title>ByteLore</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="any" />
+    <!--
+      Browser chrome colour for each palette. A meta tag cannot read a CSS
+      custom property, so these repeat the page background of the two palettes
+      in the token layer and have to be changed together with it.
+    -->
+    <meta name="theme-color" content="#f5f7f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e191b" media="(prefers-color-scheme: dark)" />
     <script>
       /*
        * Theme resolution before first paint.

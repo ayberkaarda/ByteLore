@@ -7,6 +7,7 @@ import { DownloadStore } from './core/library/download-store';
 import { LocalizedNav } from './core/nav/localized-nav';
 import { ConnectivityService } from './core/net/connectivity.service';
 import { PlatformService } from './core/platform/platform.service';
+import { BrandMark } from './shared/brand-mark';
 import { SyncStatus } from './shared/sync-status';
 import { ThemeToggle } from './shared/theme-toggle';
 
@@ -31,7 +32,15 @@ import { ThemeToggle } from './shared/theme-toggle';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, SyncStatus, ThemeToggle],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    TranslatePipe,
+    BrandMark,
+    SyncStatus,
+    ThemeToggle,
+  ],
   styleUrl: './app.css',
   templateUrl: './app.html',
 })

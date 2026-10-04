@@ -74,7 +74,7 @@ import { PlatformService } from '../../core/platform/platform.service';
       <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
         <button
           type="button"
-          class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+          class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
           data-testid="blog-offline-retry"
           (click)="retry.emit()"
         >

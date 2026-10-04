@@ -1,27 +1,52 @@
 /*
- * ByteLore design token layer — single source of truth for color, radius
- * and motion values used across the app.
+ * ByteLore design token layer: the single source of truth for colour, type,
+ * radius, elevation and motion values used across the app.
  *
  * Tailwind 4 is CSS-first: values declared inside @theme become both a
  * plain CSS custom property (usable as var(--color-accent)) and a
  * matching Tailwind utility class (bg-accent, text-accent, border-accent,
- * rounded-md, ...). There is no tailwind.config.js — this file is the
- * theme source.
+ * rounded-md, shadow-card, font-mono, ...). There is no tailwind.config.js;
+ * this file is the theme source.
  *
- * Colors are indirected through a --bl-* variable so the same @theme keys
+ * Colours are indirected through a --bl-* variable so the same @theme keys
  * can be redefined per data-theme without touching the @theme block
  * itself: light values live on :root, dark values override them under
  * [data-theme="dark"]. Components must consume tokens (Tailwind utility
- * or var(--token)) — no raw hex/rgb outside this file.
+ * or var(--token)); no raw hex/rgb outside this file.
+ *
+ * The identity in one paragraph. The palette is "petrol and paper": a cool,
+ * slightly green-tinted paper ground with white working surfaces in light, a
+ * deep spruce ink ground in dark, and a single petrol accent in both. Petrol
+ * was picked because it sits clear of the three state families (moss green,
+ * ochre, brick red), so an accent-coloured element is never mistaken for a
+ * status, and clear of the generic blue most developer tools default to. Every
+ * neutral carries the same blue-green tint, so greys never drift warm against
+ * cool. Ratios quoted in the comments below were measured with the WCAG 2.x
+ * relative luminance formula against the values in this file.
  */
 
 @theme {
   /*
+   * Type. One sans family for interface and prose, one monospace family for
+   * source code only; the monospace face is never used for labels or numbers,
+   * which use tabular figures of the sans instead. Both are variable fonts
+   * shipped with the application (see styles.css), so the desktop client renders
+   * identically offline and no request leaves for a font host. The system
+   * stacks after them are what a reader sees for the instant before the
+   * font file is decoded.
+   */
+  --font-sans:
+    'Instrument Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  /*
    * Surfaces, in elevation order: bg (the page) < surface (a resting
    * container) < surface-hover (a row or link under the pointer) <
    * surface-raised (something that stays lifted: an active nav item, a
-   * control that reads as pressable). Each step is a real luminance step in
-   * both palettes, so elevation is legible without a shadow.
+   * secondary button). Each step is a real luminance step in both palettes,
+   * so elevation stays legible even where no shadow is drawn.
    */
   --color-bg: var(--bl-bg);
   --color-surface: var(--bl-surface);
@@ -45,9 +70,9 @@
   --color-accent: var(--bl-accent);
   --color-accent-contrast: var(--bl-accent-contrast);
   /* A soft accent fill for a selected/active surface or an in-progress
-     status pill. It is a background only: text placed on it must stay the
-     default text colour, because the accent colour itself falls short of
-     4.5:1 there in both palettes. */
+     status pill. It is a background only: text placed on it stays the
+     default text colour, the one pairing that is comfortably past 4.5:1 there
+     in both palettes. */
   --color-accent-soft: var(--bl-accent-soft);
 
   /*
@@ -65,17 +90,15 @@
   --color-danger: var(--bl-danger);
   --color-danger-soft: var(--bl-danger-soft);
   --color-danger-strong: var(--bl-danger-strong);
-  /* Text on a danger-filled control. It exists so a destructive button does
-     not borrow the accent's text colour: the two happen to be the same value
-     in both palettes today, and a button that reads correctly only by that
-     coincidence breaks silently the first time one of them is retuned. */
+  /* Text on a danger-filled control. Kept apart from the accent's text colour
+     so retuning one of them can never silently break the other. */
   --color-danger-contrast: var(--bl-danger-contrast);
 
   /* Code blocks */
   --color-code-bg: var(--bl-code-bg);
 
   /*
-   * Focus ring — a single token so every interactive element agrees. It is
+   * Focus ring: a single token so every interactive element agrees. It is
    * deliberately not the accent colour: the ring has to stay visible when it
    * lands on an accent-filled button, which a ring painted in the accent
    * cannot do.
@@ -87,17 +110,33 @@
   --color-badge-text: var(--bl-badge-text);
 
   /* Word-level diff backgrounds, used by the review screen's client-side
-     diff (added/removed spans) -- no server-shipped diff format, so these
-     exist purely for the admin UI's own rendering. */
+     diff (added/removed spans). */
   --color-diff-add-bg: var(--bl-diff-add-bg);
   --color-diff-remove-bg: var(--bl-diff-remove-bg);
 
-  /* Radii */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  /*
+   * Radii. A tight, precise scale: controls at 6px, containers at 10px, small
+   * inline marks at 3px. Inner corners are always the smaller step so nested
+   * shapes stay concentric rather than all sharing one radius.
+   */
+  --radius-sm: 0.1875rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
 
-  /* Spacing scale — component styles use these rather than ad hoc lengths */
+  /*
+   * Elevation. Shadows are tinted with the palette's own ink rather than drawn
+   * in neutral black, so a card on the paper ground reads as lifted paper
+   * rather than as a grey smudge. There are only two: card, for a resting
+   * container that also has its 1px edge, and overlay, for something that
+   * floats above the page (a menu, a popover). In the dark palette the ink is
+   * near-black and the same values read only as a faint darkening, which is
+   * intended: there, elevation is carried by the surface steps instead.
+   */
+  --shadow-card: 0 1px 2px var(--bl-shadow-near), 0 2px 6px -2px var(--bl-shadow-far);
+  --shadow-overlay: 0 2px 4px var(--bl-shadow-near), 0 12px 32px -8px var(--bl-shadow-far);
+
+  /* Spacing scale: component styles use these rather than ad hoc lengths */
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
@@ -108,92 +147,98 @@
   --spacing-10: 2.5rem;
   --spacing-12: 3rem;
 
-  /* Type scale */
+  /*
+   * Type scale. Roughly a major third from the base up, with the page title
+   * opened up to 2.5rem: the title is the one place the interface is allowed
+   * to be loud, so it is drawn large and tight rather than merely bold.
+   */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.5rem;
   --text-2xl: 2rem;
-  --text-3xl: 2.25rem;
+  --text-3xl: 2.5rem;
+
+  /* Tracking. Large type is set tighter than body text, which a sans at
+     display size needs in order not to look loosely spaced. */
+  --tracking-tight: -0.021em;
+  --tracking-display: -0.032em;
 }
 
 :root {
   /*
-   * Light elevation runs from white downwards: a lifted layer is more tinted,
-   * not lighter, because white is already the ceiling. Measured contrast
-   * ratios: surface is 1.09 above bg, and hover (1.10) and raised (1.17) are
-   * both measured against surface, since they are two states of the layer
-   * that sits on it rather than two layers stacked on each other. A step
-   * below about 1.05 disappears on a cheap panel; every step here clears it,
-   * and the scale spans 1.28 from page to raised.
+   * Light: a tinted paper page under white working surfaces. surface is 1.08
+   * above bg; hover (1.14) and raised (1.12 above hover) are measured against
+   * surface, since they are states of the layer that sits on it. The page tint
+   * is what lets a white card read as a card with only a hairline and a soft
+   * shadow, rather than needing a heavy frame.
    */
-  --bl-bg: #ffffff;
-  --bl-surface: #f4f5f7;
-  --bl-surface-hover: #e8eaef;
-  --bl-surface-raised: #e0e4eb;
+  --bl-bg: #f5f7f7;
+  --bl-surface: #ffffff;
+  --bl-surface-hover: #ebf1f1;
+  --bl-surface-raised: #dce5e5;
 
-  /* Kept light enough to stay a divider, dark enough to remain visible on
-     the raised layer (1.11) rather than dissolving into it. */
-  --bl-border: #d4d9e0;
-  --bl-border-strong: #767e8c;
+  /* Divider at 1.39 against a white surface; the control edge at 4.20 on the
+     page and 3.52 on the raised layer, past the 3:1 non-text floor. */
+  --bl-border: #d3dddd;
+  --bl-border-strong: #677a7c;
 
-  --bl-text: #1a1d21;
-  --bl-text-muted: #5b6270;
+  /* Ink: 15.1 on the page. Muted text: 6.4 on the page, 5.8 on accent-soft. */
+  --bl-text: #122326;
+  --bl-text-muted: #4b5d60;
 
-  /* Dark enough that accent-coloured text clears 4.5:1 at normal size on the
-     card surface (4.70) as well as on the page (5.13), not only on the page.
-     A link inside a card is the commonest place the accent is read as text,
-     and it was the one place it fell short of AA. The value is also bounded
-     from the other side: the focus ring has to keep 3:1 against an
-     accent-filled button, which it does at 3.22. */
-  --bl-accent: #2f63ea;
+  /* Petrol. 5.33 as text on the page and 5.73 on a card; white on it is 5.73.
+     Bounded from the other side by the focus ring, which keeps 3.20 against
+     an accent-filled button. */
+  --bl-accent: #0b717b;
   --bl-accent-contrast: #ffffff;
-  --bl-accent-soft: #e8effd;
+  --bl-accent-soft: #ddeff0;
 
-  --bl-success: #15803d;
-  --bl-success-soft: #e3f6e9;
-  --bl-success-strong: #166534;
-  --bl-warning: #9a5f0a;
-  --bl-warning-soft: #fdf3dd;
-  --bl-warning-strong: #7a5209;
-  --bl-danger: #d1373f;
+  /* Moss, ochre and brick. Each bare tone clears 5.2 on the page; each
+     strong-on-soft badge pair clears 7.0 (measured 7.06 to 7.58). */
+  --bl-success: #3a7413;
+  --bl-success-soft: #e7f3dc;
+  --bl-success-strong: #2b590c;
+  --bl-warning: #965700;
+  --bl-warning-soft: #fbefd8;
+  --bl-warning-strong: #6f4100;
+  --bl-danger: #be3329;
   --bl-danger-contrast: #ffffff;
-  --bl-danger-soft: #fbe7e8;
-  --bl-danger-strong: #a12a31;
+  --bl-danger-soft: #fbe5e2;
+  --bl-danger-strong: #922219;
 
   /*
-   * The code well. One step off the page in the same direction as every other
-   * light surface -- darker, since white is the ceiling -- measured at 1.11
-   * against the page, with the 1px edge (1.42 against the page) carrying the
-   * rest of the box.
-   *
-   * The value is bounded from the other side by the text printed on it: the
-   * syntax theme's comment colour is the faintest thing a code block contains,
-   * and it clears 4.5:1 here at 4.54. Every step darker trades that margin for
-   * box contrast one-for-one -- 1.12 would leave the comment at exactly 4.50 --
-   * so this is very nearly the whole usable band, and the two requirements are
-   * genuinely in tension in a light palette. Retuning this value means
-   * re-measuring the comment colour, not only the box.
+   * The code well: 1.11 below a white card, with the 1px edge carrying the box
+   * on the paper page. Bounded from the other side by the syntax theme's
+   * comment colour, the faintest thing a code block contains, which clears
+   * 4.5:1 here at 4.55. Retuning this value means re-measuring that colour.
    */
-  --bl-code-bg: #f2f3f6;
+  --bl-code-bg: #f1f4f4;
 
-  --bl-focus: #082036;
-  --bl-badge-bg: #fdf3dd;
-  --bl-badge-text: #7a5209;
+  --bl-focus: #06171a;
+  --bl-badge-bg: #fbefd8;
+  --bl-badge-text: #6f4100;
 
-  --bl-diff-add-bg: #e3f6e9;
-  --bl-diff-remove-bg: #fbe7e8;
+  --bl-diff-add-bg: #e7f3dc;
+  --bl-diff-remove-bg: #fbe5e2;
+
+  /* Shadow ink: the text ink at low alpha, so shadows share the palette hue. */
+  --bl-shadow-near: color-mix(in oklab, var(--bl-text) 7%, transparent);
+  --bl-shadow-far: color-mix(in oklab, var(--bl-text) 9%, transparent);
 
   /*
-   * Tells the user agent which palette its own widgets — scrollbars, form
-   * controls, the canvas behind the document — should use. Without it a dark
+   * Tells the user agent which palette its own widgets (scrollbars, form
+   * controls, the canvas behind the document) should use. Without it a dark
    * page keeps a white scrollbar and a white flash between paints.
    */
   color-scheme: light;
 
-  /* Motion — duration tokens only; animate transform/opacity only,
-     and always respect prefers-reduced-motion at the call site. */
+  /*
+   * Motion: duration tokens only; animate transform/opacity only, and always
+   * respect prefers-reduced-motion. The standard curve decelerates hard, so a
+   * response starts at once and settles rather than easing in.
+   */
   --motion-fast: 120ms;
   --motion-base: 200ms;
   --motion-slow: 320ms;
@@ -204,72 +249,62 @@
    * reader spends minutes in, distinct from the --text-* scale above.
    *
    * Deliberately plain custom properties rather than @theme keys. Tailwind 4
-   * treats a --text-* theme key as a paired font-size/line-height utility (a
-   * --text-reading--line-height companion would set the line height for you),
-   * and this pair's line height is chosen independently as --leading-reading.
+   * treats a --text-* theme key as a paired font-size/line-height utility, and
+   * this pair's line height is chosen independently as --leading-reading.
    * Consuming code writes font-size: var(--text-reading); line-height:
-   * var(--leading-reading) directly rather than reaching for a generated
-   * text-reading utility class, so the two never fight over which one wins.
-   * Same value in both palettes: reading comfort does not change with theme.
+   * var(--leading-reading) directly. Same value in both palettes: reading
+   * comfort does not change with theme.
    */
   --text-reading: 1.0625rem;
   --leading-reading: 1.7;
 }
 
 [data-theme='dark'] {
-  /* Same ordering as light, mirrored: here elevation adds light rather than
-     tint. surface is 1.09 above bg; hover (1.12) and raised (1.29) are both
-     measured against surface, and the scale spans 1.41 from page to raised.
-     Raised was retuned from #232b3a to #262f3f: measured against hover it was
-     1.09, under this file's own 1.1 "distinguishable" floor, so a pointer
-     hover and the raised layer read as nearly the same surface. The new
-     value clears hover at 1.15 while keeping border-strong on raised at
-     3.42, still past the 3:1 non-text floor. */
-  --bl-bg: #0d1117;
-  --bl-surface: #161b22;
-  --bl-surface-hover: #1d2531;
-  --bl-surface-raised: #262f3f;
+  /* Dark: a deep spruce ink rather than a neutral near-black, so the dark
+     palette is recognisably the same brand as the light one. Elevation adds
+     light: surface is 1.10 above bg; hover (1.14) and raised (1.18 above
+     hover) are measured against surface. */
+  --bl-bg: #0e191b;
+  --bl-surface: #142225;
+  --bl-surface-hover: #1b2d31;
+  --bl-surface-raised: #24393e;
 
-  --bl-border: #323a48;
-  --bl-border-strong: #78818f;
+  --bl-border: #29393d;
+  --bl-border-strong: #6d8588;
 
-  --bl-text: #e6e9ef;
-  --bl-text-muted: #98a1b0;
+  --bl-text: #e3ecec;
+  --bl-text-muted: #9db1b3;
 
-  --bl-accent: #5b8def;
-  --bl-accent-contrast: #0d1117;
-  --bl-accent-soft: #1a2a4a;
+  /* 5.89 as text on the page and on it as a fill; the white focus ring keeps
+     3.04 against it. */
+  --bl-accent: #2fa3a6;
+  --bl-accent-contrast: #0e191b;
+  --bl-accent-soft: #123a3d;
 
-  --bl-success: #3fb873;
-  --bl-success-soft: #103524;
-  --bl-success-strong: #5fd08f;
-  --bl-warning: #d9a441;
-  --bl-warning-soft: #3a2f14;
-  --bl-warning-strong: #f0cf88;
-  --bl-danger: #e2626b;
-  --bl-danger-contrast: #0d1117;
-  --bl-danger-soft: #3a1a1e;
-  --bl-danger-strong: #f08a92;
+  --bl-success: #93cf62;
+  --bl-success-soft: #1c3012;
+  --bl-success-strong: #b9e48f;
+  --bl-warning: #e3a94a;
+  --bl-warning-soft: #36290f;
+  --bl-warning-strong: #f4d293;
+  --bl-danger: #f07d70;
+  --bl-danger-contrast: #0e191b;
+  --bl-danger-soft: #3e1c19;
+  --bl-danger-strong: #f7a89d;
 
-  /*
-   * The code well, one step off the page the way the dark surfaces are: by
-   * adding light, not by removing it. It used to sit below the page instead
-   * (#10151d, measured 1.03 against the page), and a well sunk into a
-   * near-black page has nowhere to go -- pure black would reach only 1.11 --
-   * so the box was carried by its 1px edge alone. Lifting it instead gives
-   * 1.13, matching the step the light palette gets, and leaves the syntax
-   * theme's comment colour at 9.5 here rather than the 3.80 it measured
-   * before. Above surface (1.09) and below surface-hover (1.23), so the well
-   * is not mistaken for a row under the pointer.
-   */
-  --bl-code-bg: #181e28;
+  /* The code well, 1.11 above a card and 1.21 above the page; the syntax
+     theme's comment colour reads at 8.37 on it. */
+  --bl-code-bg: #182b2f;
 
   --bl-focus: #ffffff;
-  --bl-badge-bg: #3a2f14;
-  --bl-badge-text: #f0cf88;
+  --bl-badge-bg: #36290f;
+  --bl-badge-text: #f4d293;
 
-  --bl-diff-add-bg: #103524;
-  --bl-diff-remove-bg: #3a1a1e;
+  --bl-diff-add-bg: #1c3012;
+  --bl-diff-remove-bg: #3e1c19;
+
+  --bl-shadow-near: color-mix(in oklab, #000000 30%, transparent);
+  --bl-shadow-far: color-mix(in oklab, #000000 40%, transparent);
 
   color-scheme: dark;
 }
@@ -277,52 +312,51 @@
 /*
  * System preference, used only until the user makes a choice. The explicit
  * [data-theme] attributes above are written by the pre-paint script and by the
- * theme service. Measured: this block's own selector, :root:not([data-theme=
- * 'light']), is actually the more specific one of the two (:not() adds the
- * specificity of its argument, so :root plus :not([data-theme='light']) beats
- * a bare [data-theme='dark']) -- it is not the [data-theme='dark'] rule above
- * that wins when both apply. The two blocks are kept holding identical values
- * for the dark palette so the outcome does not depend on which one wins; if
- * that ever changes, this block's values are the ones that take effect while
- * the system preference is dark. The :not() guard is what makes a manual
+ * theme service. This block's selector, :root:not([data-theme='light']), is
+ * the more specific of the two (:not() adds the specificity of its argument),
+ * so the two blocks hold identical values for the dark palette and the outcome
+ * does not depend on which one wins. The :not() guard is what makes a manual
  * choice of light stick on a machine whose system preference is dark.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bl-bg: #0d1117;
-    --bl-surface: #161b22;
-    --bl-surface-hover: #1d2531;
-    --bl-surface-raised: #262f3f;
+    --bl-bg: #0e191b;
+    --bl-surface: #142225;
+    --bl-surface-hover: #1b2d31;
+    --bl-surface-raised: #24393e;
 
-    --bl-border: #323a48;
-    --bl-border-strong: #78818f;
+    --bl-border: #29393d;
+    --bl-border-strong: #6d8588;
 
-    --bl-text: #e6e9ef;
-    --bl-text-muted: #98a1b0;
+    --bl-text: #e3ecec;
+    --bl-text-muted: #9db1b3;
 
-    --bl-accent: #5b8def;
-    --bl-accent-contrast: #0d1117;
-    --bl-accent-soft: #1a2a4a;
+    --bl-accent: #2fa3a6;
+    --bl-accent-contrast: #0e191b;
+    --bl-accent-soft: #123a3d;
 
-    --bl-success: #3fb873;
-    --bl-success-soft: #103524;
-    --bl-success-strong: #5fd08f;
-    --bl-warning: #d9a441;
-    --bl-warning-soft: #3a2f14;
-    --bl-warning-strong: #f0cf88;
-    --bl-danger: #e2626b;
-    --bl-danger-contrast: #0d1117;
-    --bl-danger-soft: #3a1a1e;
-    --bl-danger-strong: #f08a92;
+    --bl-success: #93cf62;
+    --bl-success-soft: #1c3012;
+    --bl-success-strong: #b9e48f;
+    --bl-warning: #e3a94a;
+    --bl-warning-soft: #36290f;
+    --bl-warning-strong: #f4d293;
+    --bl-danger: #f07d70;
+    --bl-danger-contrast: #0e191b;
+    --bl-danger-soft: #3e1c19;
+    --bl-danger-strong: #f7a89d;
 
-    --bl-code-bg: #181e28;
+    --bl-code-bg: #182b2f;
 
     --bl-focus: #ffffff;
-    --bl-badge-bg: #3a2f14;
-    --bl-badge-text: #f0cf88;
+    --bl-badge-bg: #36290f;
+    --bl-badge-text: #f4d293;
 
-    --bl-diff-add-bg: #103524;
-    --bl-diff-remove-bg: #3a1a1e;
+    --bl-diff-add-bg: #1c3012;
+    --bl-diff-remove-bg: #3e1c19;
+
+    --bl-shadow-near: color-mix(in oklab, #000000 30%, transparent);
+    --bl-shadow-far: color-mix(in oklab, #000000 40%, transparent);
 
     color-scheme: dark;
   }

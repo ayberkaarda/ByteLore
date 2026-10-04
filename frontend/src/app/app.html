@@ -8,7 +8,7 @@
     screen instead, because a control that is used once a month still costs
     attention on every screen it sits on.
   -->
-  <header class="sticky top-0 z-10 border-b border-border bg-surface">
+  <header class="sticky top-0 z-10 border-b border-border bg-surface/90 backdrop-blur-md">
     <!--
       Below `sm` the row is two lines: the wordmark and the right-hand
       controls share the first, primary navigation gets a full-width second
@@ -21,7 +21,7 @@
       markup.
     -->
     <div
-      class="flex w-full flex-col gap-2 px-6 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-2"
+      class="flex w-full flex-col gap-2 px-4 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8 sm:gap-y-2 sm:px-6"
     >
       <!--
         `items-start` rather than `items-center`: below `sm` the right-hand
@@ -32,11 +32,17 @@
         lines instead of anchoring it to the first one.
       -->
       <div class="flex items-start justify-between gap-4 sm:contents">
+        <!--
+          The brand lock-up: the mark, then the name. The name is the link's
+          accessible text; the mark beside it is decorative.
+        -->
         <a
-          class="text-lg font-semibold tracking-tight text-text no-underline"
+          class="inline-flex items-center gap-2.5 text-lg font-semibold tracking-tight text-text no-underline"
+          data-testid="brand"
           [routerLink]="nav.commands(['/tracks'])"
         >
-          {{ 'app.title' | translate }}
+          <app-brand-mark class="h-7 w-7" />
+          <span>{{ 'app.title' | translate }}</span>
         </a>
 
         <!--
@@ -65,7 +71,7 @@
           <a
             class="rounded-md px-3 py-1.5 text-sm text-text-muted no-underline hover:bg-surface-hover hover:text-text"
             [routerLink]="nav.commands(['/settings'])"
-            routerLinkActive="bg-surface-raised text-text"
+            routerLinkActive="bg-surface-raised !text-text"
             ariaCurrentWhenActive="page"
             data-testid="nav-settings"
             [title]="'nav.settings' | translate"
@@ -84,7 +90,7 @@
           </a>
           @if (session.user() === null) {
             <a
-              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
+              class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
               [routerLink]="nav.commands(['/login'])"
             >
               {{ 'nav.signIn' | translate }}
@@ -116,7 +122,7 @@
         [attr.aria-label]="'nav.label' | translate"
       >
         <a
-          class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+          class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
           [routerLink]="nav.commands(['/tracks'])"
           routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
@@ -130,7 +136,7 @@
           entry gains offline is a mark, not an absence.
         -->
         <a
-          class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+          class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
           [routerLink]="nav.commands(['/blog'])"
           routerLinkActive="!border-accent text-text"
           ariaCurrentWhenActive="page"
@@ -158,7 +164,7 @@
         -->
         @if (session.user() !== null) {
           <a
-            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/puzzle'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
@@ -168,7 +174,7 @@
         }
         @if (canDownload) {
           <a
-            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/downloads'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
@@ -197,7 +203,7 @@
         }
         @if (session.canAdminister()) {
           <a
-            class="rounded-md border-b-2 border-transparent px-3 py-1.5 text-sm text-text-muted no-underline hover:text-text"
+            class="border-b-2 border-transparent px-3 py-2 text-sm font-medium text-text-muted no-underline hover:text-text"
             [routerLink]="nav.commands(['/admin'])"
             routerLinkActive="!border-accent text-text"
             ariaCurrentWhenActive="page"
@@ -216,7 +222,7 @@
     the exact journey the link exists to avoid. It is -1 rather than 0 so the
     region is reachable by the link and not by tabbing.
   -->
-  <main id="main-content" tabindex="-1" class="w-full flex-1 px-6 py-8">
+  <main id="main-content" tabindex="-1" class="w-full flex-1 px-4 py-8 sm:px-6 lg:py-10">
     <router-outlet />
   </main>
 

@@ -1,4 +1,14 @@
 @import 'tailwindcss';
+/*
+ * The two brand typefaces, bundled from npm rather than fetched from a font
+ * host: the desktop client has to look the same with no network at all, and
+ * its content security policy allows fonts from its own origin only. Each
+ * package splits the face by unicode range, so a reader downloads only the
+ * subsets the page actually uses (Latin plus Latin Extended for the Turkish,
+ * French and German interfaces).
+ */
+@import '@fontsource-variable/instrument-sans';
+@import '@fontsource-variable/jetbrains-mono';
 @import './styles/tokens.css';
 
 /*
@@ -13,17 +23,56 @@ body {
   min-height: 100%;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Headings. The page title is the loudest thing the interface draws, so it
+ * gets the display tracking; every heading balances its lines so a title that
+ * wraps does not leave one word stranded on the second line.
+ */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+h1 {
+  letter-spacing: var(--tracking-display);
+}
+
+/* Paragraph text avoids a single orphaned word on its last line. */
+p {
+  text-wrap: pretty;
+}
+
+/*
+ * Source code never uses programming ligatures. This is a teaching product:
+ * a reader who is learning what `=>` or `!=` means has to see the characters
+ * they will type, not a glyph that merges them into a symbol no keyboard has.
+ */
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+/* Selected text takes the accent tint, with the ink colour kept on top. */
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+}
+
+/* Scrollbars in the palette's own control tone instead of the platform grey,
+   which in the dark theme would otherwise be the brightest thing on screen. */
+html {
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 
 /*
@@ -134,7 +183,9 @@ a:active {
 
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface-raised);
+  /* A field, not a button: it takes the working surface, the same fill as a
+     text input, so every place a person types or picks a value looks alike. */
+  background-color: var(--color-surface);
   color: var(--color-text);
   font-family: inherit;
   font-size: var(--text-sm);
@@ -248,6 +299,18 @@ a:active {
 .lesson-body a,
 .markdown-body a {
   color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.lesson-body h2,
+.lesson-body h3,
+.lesson-body h4,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.25;
 }
 
 /*
@@ -344,6 +407,11 @@ a:active {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-code-bg) !important;
+  /* The petrol cap: a 2px rule in the accent along the top inner edge. Source
+     code is what this product teaches, so its box is the one container that
+     carries the brand colour at rest; drawn as an inset shadow so it follows
+     the rounded corners and adds nothing to the box's size. */
+  box-shadow: inset 0 2px 0 var(--color-accent);
   overflow-x: auto;
 }
 
@@ -407,6 +475,7 @@ a:active {
   border: 0;
   border-radius: 0;
   background: transparent !important;
+  box-shadow: none;
 }
 
 /*
@@ -543,7 +612,8 @@ a:active {
   color: var(--color-text);
   overflow-x: auto;
 
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
   font-size: var(--text-sm);
   line-height: 1.6;
 }

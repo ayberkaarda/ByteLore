@@ -25,37 +25,37 @@
 } @else if (detail(); as detail) {
   <dl class="mt-6 grid gap-4 sm:grid-cols-2">
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.source' | translate }}
       </dt>
       <dd class="mt-1 text-sm">{{ detail.whitelistSource.name }}</dd>
     </div>
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.feedUrl' | translate }}
       </dt>
       <dd class="mt-1 break-all text-sm">{{ detail.whitelistSource.feedUrl }}</dd>
     </div>
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.versionString' | translate }}
       </dt>
       <dd class="mt-1 text-sm">{{ detail.versionString }}</dd>
     </div>
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.fetchedAt' | translate }}
       </dt>
       <dd class="mt-1 text-sm">{{ detail.fetchedAt | dateTime }}</dd>
     </div>
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.contentHash' | translate }}
       </dt>
       <dd class="mt-1 font-mono text-sm" [title]="detail.contentHash">{{ hashPreview() }}</dd>
     </div>
     <div>
-      <dt class="text-xs uppercase text-text-muted">
+      <dt class="text-xs font-medium text-text-muted">
         {{ 'admin.sourceUpdate.verifyStatus' | translate }}
       </dt>
       <dd class="mt-1 text-sm">
@@ -78,7 +78,7 @@
       {{ 'admin.sourceUpdate.rawContentHeading' | translate }}
     </h2>
     <pre
-      class="mt-2 whitespace-pre-wrap break-words rounded-lg border border-border bg-surface p-4 text-sm"
+      class="mt-2 whitespace-pre-wrap break-words rounded-lg border border-border bg-surface p-4 text-sm shadow-card"
       >{{ detail.rawContent }}</pre>
   </section>
 }

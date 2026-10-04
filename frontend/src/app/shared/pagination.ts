@@ -53,7 +53,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <button
         type="button"
         data-testid="pagination-previous"
-        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+        class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
         [attr.aria-disabled]="page() <= 0 ? true : null"
         [title]="'admin.common.previousPage' | translate"
         (click)="goToPrevious()"
@@ -71,7 +71,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <button
         type="button"
         data-testid="pagination-next"
-        class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+        class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
         [attr.aria-disabled]="isOnLastPage() ? true : null"
         [title]="'admin.common.nextPage' | translate"
         (click)="goToNext()"

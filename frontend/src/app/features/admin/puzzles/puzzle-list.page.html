@@ -61,7 +61,7 @@
     </label>
     <input
       id="puzzles-filter-search"
-      class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text placeholder:text-text-muted"
+      class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text placeholder:text-text-muted"
       type="search"
       [attr.placeholder]="'admin.puzzles.filter.searchPlaceholder' | translate"
       [value]="qDraft()"
@@ -78,7 +78,7 @@
     <p class="mt-1 text-text">{{ key | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+      class="mt-3 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
       (click)="retry()"
     >
       {{ 'common.retry' | translate }}

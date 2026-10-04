@@ -23,7 +23,7 @@
     <p class="mt-1 text-text">{{ failureKey | translate }}</p>
     <button
       type="button"
-      class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+      class="mt-3 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
       (click)="retryLoad()"
     >
       {{ 'common.retry' | translate }}
@@ -50,7 +50,7 @@
         </label>
         <input
           id="puzzle-date"
-          class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text disabled:opacity-60"
+          class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text disabled:opacity-60"
           type="date"
           [value]="puzzleDate()"
           [disabled]="!editable()"
@@ -72,7 +72,7 @@
         </label>
         <input
           id="puzzle-language"
-          class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+          class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
           type="text"
           [value]="language()"
           [disabled]="!editable()"
@@ -97,7 +97,7 @@
         </label>
         <input
           id="puzzle-buggy-line"
-          class="h-9 w-28 rounded-md border border-border-strong bg-surface-raised px-3 text-sm tabular-nums text-text disabled:opacity-60"
+          class="h-9 w-28 rounded-md border border-border-strong bg-surface px-3 text-sm tabular-nums text-text disabled:opacity-60"
           type="number"
           min="1"
           step="1"
@@ -130,7 +130,7 @@
       </label>
       <input
         id="puzzle-title"
-        class="h-9 rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        class="h-9 rounded-md border border-border-strong bg-surface px-3 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         type="text"
         [value]="title()"
         [disabled]="!editable()"
@@ -152,7 +152,7 @@
       </label>
       <textarea
         id="puzzle-prompt"
-        class="min-h-20 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        class="min-h-20 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         [value]="promptMarkdown()"
         [disabled]="!editable()"
         [attr.placeholder]="'admin.puzzles.editor.promptPlaceholder' | translate"
@@ -174,7 +174,7 @@
         </label>
         <textarea
           id="puzzle-code"
-          class="min-h-80 rounded-md border border-border-strong bg-surface-raised px-3 py-2 font-mono text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+          class="min-h-80 rounded-md border border-border-strong bg-surface px-3 py-2 font-mono text-sm text-text placeholder:text-text-muted disabled:opacity-60"
           spellcheck="false"
           [value]="code()"
           [disabled]="!editable()"
@@ -219,7 +219,7 @@
       </label>
       <textarea
         id="puzzle-explanation"
-        class="min-h-32 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
+        class="min-h-32 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted disabled:opacity-60"
         [value]="explanationMarkdown()"
         [disabled]="!editable()"
         aria-required="true"
@@ -297,7 +297,7 @@
           <textarea
             #reasonField
             id="puzzle-reason"
-            class="mt-1 w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text placeholder:text-text-muted"
+            class="mt-1 w-full rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-text placeholder:text-text-muted"
             aria-required="true"
             aria-describedby="puzzle-reason-hint"
             [attr.placeholder]="'admin.puzzles.editor.reasonPlaceholder' | translate"
@@ -315,7 +315,7 @@
           <div class="mt-3 flex gap-2">
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
               data-testid="puzzle-confirm-action"
               [attr.aria-disabled]="transitioning() || reasonTooShort() ? true : null"
               (click)="confirmPendingAction()"
@@ -342,7 +342,7 @@
             -->
             <button
               type="button"
-              class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+              class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
               [class.text-danger]="action === 'delete'"
               [attr.data-action]="action"
               [attr.aria-disabled]="transitioning() ? true : null"

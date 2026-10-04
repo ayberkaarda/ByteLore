@@ -15,7 +15,7 @@
     </label>
     <select
       id="sources-filter-sort"
-      class="bl-select rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm text-text"
+      class="bl-select rounded-md border border-border-strong bg-surface px-3 py-2 text-sm text-text"
       [value]="sort()"
       (change)="onSortChange($event)"
     >
@@ -172,7 +172,7 @@
                   -->
                   <button
                     type="button"
-                    class="rounded-md border border-border-strong bg-surface-raised px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface-raised"
+                    class="rounded-md border border-border-strong bg-surface px-2 py-1 text-xs font-medium text-text hover:bg-surface-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-surface"
                     [attr.data-fetch-for]="source.id"
                     [attr.aria-disabled]="busyId() !== null ? true : null"
                     (click)="fetchNow(source)"

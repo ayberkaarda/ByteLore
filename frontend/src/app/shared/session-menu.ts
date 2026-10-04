@@ -33,7 +33,7 @@ import { AuthSession } from '../core/auth/auth-session';
         </span>
         <button
           type="button"
-          class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+          class="rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
           (click)="signOut()"
         >
           {{ 'auth.signOut' | translate }}

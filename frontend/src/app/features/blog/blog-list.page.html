@@ -16,7 +16,7 @@
       <p class="mt-1 text-text">{{ failureKey | translate }}</p>
       <button
         type="button"
-        class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+        class="mt-3 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         (click)="retry()"
       >
         {{ 'common.retry' | translate }}
@@ -42,7 +42,7 @@
         <span>{{ 'blog.offline.lastLoaded' | translate: { date: (at | dateTime) } }}</span>
         <button
           type="button"
-          class="ml-auto rounded-md border border-border-strong bg-surface-raised px-3 py-1 text-sm font-medium text-text hover:bg-surface-hover"
+          class="ml-auto rounded-md border border-border-strong bg-surface px-3 py-1 text-sm font-medium text-text hover:bg-surface-hover"
           data-testid="blog-stale-retry"
           (click)="retry()"
         >

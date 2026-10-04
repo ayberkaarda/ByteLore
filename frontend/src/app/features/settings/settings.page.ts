@@ -77,7 +77,7 @@ import { ThemeSelect } from '../../shared/theme-select';
           -->
           @if (session.user() === null) {
             <a
-              class="inline-block rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
+              class="inline-block w-fit rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
               [routerLink]="nav.commands(['/login'])"
               data-testid="settings-sign-in"
             >

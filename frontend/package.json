@@ -24,6 +24,8 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@ngx-translate/core": "^18.0.0",
     "@tauri-apps/api": "^2.11.1",
     "d3-hierarchy": "^3.1.2",

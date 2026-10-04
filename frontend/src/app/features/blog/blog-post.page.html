@@ -28,7 +28,7 @@
       <p class="mt-1 text-text">{{ failureKey | translate }}</p>
       <button
         type="button"
-        class="mt-3 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
+        class="mt-3 rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text hover:bg-surface-hover"
         (click)="retry()"
       >
         {{ 'common.retry' | translate }}
@@ -56,7 +56,7 @@
            claim the post makes, and a source is only a source if it is easy
            to reach. -->
         <aside
-          class="mt-6 rounded-lg border border-border bg-surface p-5"
+          class="mt-6 rounded-lg border border-border bg-surface p-5 shadow-card"
           data-testid="blog-source"
           aria-labelledby="blog-source-heading"
         >
@@ -67,7 +67,7 @@
             {{ 'blog.source.hint' | translate }}
           </p>
           <a
-            class="mt-3 inline-block rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
+            class="mt-3 inline-block rounded-md border border-border-strong bg-surface px-3 py-2 text-sm font-medium text-text no-underline hover:bg-surface-hover"
             rel="noopener noreferrer"
             target="_blank"
             [href]="current.sourceUrl"
